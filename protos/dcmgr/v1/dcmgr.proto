@@ -23,11 +23,24 @@ service DCAPI {
       rpc DataCenterList (common.proto.Empty) returns (DataCenterListResponse) {}
       rpc DataCenterLeaderBoard (common.proto.Empty) returns (DataCenterLeaderBoardResponse) {}
       rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){}
+      rpc RegisterDataCenter(common.proto.Empty) returns (NetworkInfoResponse){}
 }
 
 message DataCenterListResponse {
   repeated common.proto.DataCenterStatus dcList= 1; // repeated groups of DataCenterInfo list
 }
+
+message RegisterDataCenterRequest {
+  string uid = 1;
+}
+
+
+message RegisterDataCenterResponse {
+  string client_key = 1;
+  string client_csr_cert = 2;
+  string ca_cert = 3;
+}
+
 
 message NetworkInfoResponse {
   int32 user_count = 1;
