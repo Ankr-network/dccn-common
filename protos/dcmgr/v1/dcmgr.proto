@@ -18,12 +18,13 @@ service DC {
 }
 
 //
+
 // The dclist service definition.
 service DCAPI {
       rpc DataCenterList (common.proto.Empty) returns (DataCenterListResponse) {}
       rpc DataCenterLeaderBoard (common.proto.Empty) returns (DataCenterLeaderBoardResponse) {}
       rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){}
-      rpc RegisterDataCenter(common.proto.Empty) returns (NetworkInfoResponse){}
+      rpc RegisterDataCenter(DataCenterListResponse) returns (RegisterDataCenterResponse){}
 }
 
 message DataCenterListResponse {
