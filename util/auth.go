@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/micro/go-micro/metadata"
 	"strings"
+	jwt_token "github.com/dgrijalva/jwt-go"
 )
 
 
@@ -26,7 +27,7 @@ func GetUserID(ctx context.Context) string{
 	}
 	parts := strings.Split(token, ".")
 
-	decoded, err := base64.StdEncoding.DecodeString(parts[1])
+	decoded, err := jwt_token.DecodeSegment(parts[1])
 	if err != nil {
 		fmt.Println("decode error:", err)
 
@@ -39,7 +40,3 @@ func GetUserID(ctx context.Context) string{
 	}
 	return string(dat.Jti)
 }
-
-
-
-
