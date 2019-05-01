@@ -24,7 +24,7 @@ service DCAPI {
       rpc DataCenterList (common.proto.Empty) returns (DataCenterListResponse) {}
       rpc DataCenterLeaderBoard (common.proto.Empty) returns (DataCenterLeaderBoardResponse) {}
       rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){}
-      rpc RegisterDataCenter(DataCenterListResponse) returns (RegisterDataCenterResponse){}
+      rpc RegisterDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
 }
 
 message DataCenterListResponse {

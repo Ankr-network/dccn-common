@@ -246,7 +246,7 @@ type DCAPIService interface {
 	DataCenterList(ctx context.Context, in *common_proto1.Empty, opts ...client.CallOption) (*DataCenterListResponse, error)
 	DataCenterLeaderBoard(ctx context.Context, in *common_proto1.Empty, opts ...client.CallOption) (*DataCenterLeaderBoardResponse, error)
 	NetworkInfo(ctx context.Context, in *common_proto1.Empty, opts ...client.CallOption) (*NetworkInfoResponse, error)
-	RegisterDataCenter(ctx context.Context, in *DataCenterListResponse, opts ...client.CallOption) (*RegisterDataCenterResponse, error)
+	RegisterDataCenter(ctx context.Context, in *RegisterDataCenterRequest, opts ...client.CallOption) (*RegisterDataCenterResponse, error)
 }
 
 type dCAPIService struct {
@@ -297,7 +297,7 @@ func (c *dCAPIService) NetworkInfo(ctx context.Context, in *common_proto1.Empty,
 	return out, nil
 }
 
-func (c *dCAPIService) RegisterDataCenter(ctx context.Context, in *DataCenterListResponse, opts ...client.CallOption) (*RegisterDataCenterResponse, error) {
+func (c *dCAPIService) RegisterDataCenter(ctx context.Context, in *RegisterDataCenterRequest, opts ...client.CallOption) (*RegisterDataCenterResponse, error) {
 	req := c.c.NewRequest(c.name, "DCAPI.RegisterDataCenter", in)
 	out := new(RegisterDataCenterResponse)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -313,7 +313,7 @@ type DCAPIHandler interface {
 	DataCenterList(context.Context, *common_proto1.Empty, *DataCenterListResponse) error
 	DataCenterLeaderBoard(context.Context, *common_proto1.Empty, *DataCenterLeaderBoardResponse) error
 	NetworkInfo(context.Context, *common_proto1.Empty, *NetworkInfoResponse) error
-	RegisterDataCenter(context.Context, *DataCenterListResponse, *RegisterDataCenterResponse) error
+	RegisterDataCenter(context.Context, *RegisterDataCenterRequest, *RegisterDataCenterResponse) error
 }
 
 func RegisterDCAPIHandler(s server.Server, hdlr DCAPIHandler, opts ...server.HandlerOption) error {
@@ -321,7 +321,7 @@ func RegisterDCAPIHandler(s server.Server, hdlr DCAPIHandler, opts ...server.Han
 		DataCenterList(ctx context.Context, in *common_proto1.Empty, out *DataCenterListResponse) error
 		DataCenterLeaderBoard(ctx context.Context, in *common_proto1.Empty, out *DataCenterLeaderBoardResponse) error
 		NetworkInfo(ctx context.Context, in *common_proto1.Empty, out *NetworkInfoResponse) error
-		RegisterDataCenter(ctx context.Context, in *DataCenterListResponse, out *RegisterDataCenterResponse) error
+		RegisterDataCenter(ctx context.Context, in *RegisterDataCenterRequest, out *RegisterDataCenterResponse) error
 	}
 	type DCAPI struct {
 		dCAPI
@@ -346,6 +346,6 @@ func (h *dCAPIHandler) NetworkInfo(ctx context.Context, in *common_proto1.Empty,
 	return h.DCAPIHandler.NetworkInfo(ctx, in, out)
 }
 
-func (h *dCAPIHandler) RegisterDataCenter(ctx context.Context, in *DataCenterListResponse, out *RegisterDataCenterResponse) error {
+func (h *dCAPIHandler) RegisterDataCenter(ctx context.Context, in *RegisterDataCenterRequest, out *RegisterDataCenterResponse) error {
 	return h.DCAPIHandler.RegisterDataCenter(ctx, in, out)
 }
