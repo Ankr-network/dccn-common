@@ -1,0 +1,100 @@
+package main
+
+import (
+	"crypto/tls"
+	"crypto/x509"
+	"log"
+	"net/rpc"
+)
+
+const (
+	address     = "127.0.0.1:50051"
+
+	CLIENT_CERT = `
+-----BEGIN CERTIFICATE-----
+MIIDtDCCApygAwIBAgIUG540wQi1hD527yBbZ2cmkkcenSQwDQYJKoZIhvcNAQEL
+BQAwdDELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMQswCQYDVQQHEwJTRjEUMBIG
+A1UECRMLTUlTU0lPTiBTVC4xDjAMBgNVBBETBTk0MTA1MQ4wDAYDVQQKEwVIVUJD
+QTEVMBMGA1UEAxMMbXlodWItY2EuY29tMB4XDTE5MDQxMzIzNDEzNFoXDTI5MDQx
+MzIzNDEzNFowfTELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMQswCQYDVQQHEwJT
+RjEUMBIGA1UECRMLTUlTU0lPTiBTVC4xDjAMBgNVBBETBTk0MTA1MRMwEQYDVQQK
+EwpEYXRhQ2VudGVyMRkwFwYDVQQDExBteWRhdGFjZW50ZXIuY29tMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtwc/T0hsNTzxwMBUBSchS3lpd2QoAFmJ
+Bv4cdwywz6do1nIYEGUyr1Y0fzNfKYh8NzgbwSMHDxvHd2sAupuiNDH1bsWTeLvQ
+A8hmExUMgMGy9vR/le8eONdxbMrbET8zjvTLPh5NBLP7N71f2lI29pz4UPvNSZJf
+9rE12ZPSmqHmPiCvwHe3FHIn8I1IDro0+jhE/j92D/7kpytnoRu0kBZ3n7x4T0ir
+gZyiirbEf0kRVPITEJJXvo8Dt+oa+cX+SkowXHatM4UkSFkV1ur6V5FqlIcculaU
+q/CyGIM7qCsUp/HJh9TXQ0uWVZ97K9cdyzNiFl1XWKXALG1flGJoBwIDAQABozUw
+MzAOBgNVHQ8BAf8EBAMCB4AwEwYDVR0lBAwwCgYIKwYBBQUHAwIwDAYDVR0TAQH/
+BAIwADANBgkqhkiG9w0BAQsFAAOCAQEAkM8RjqLf5ZVg7DbVEQ23WohzEQ3UR+dm
+KXKw3zEbd4TqbKYEg3nlpo0DcLnPTsRq/TbjIKvfUCQ0sX3HDMoM+KBM0Go+SChJ
+Q0fRs8t11iH8J/wcIHMTO4el1XjJE5NS8FqQ/KY7fyFzc/sIGbIqcnCPbyd0gqmR
+Cb2gyfOaCNAcdXjjPdXaCpVS3RLCbpJqUs8ql+INcPlFADIxiRBQyGD6lnpJriyW
+2qoHyyR/gAy2isQMLts8jIs451TUEdM2FzPyzT4fO3PFtEViSLQQ9ScOw2jMW25c
+EMKN93FGr18hcOSalODb+sowAvZuSlU5o8NBTs/XZfLGbo9ijubL4Q==
+-----END CERTIFICATE-----`
+
+	CLIENT_KEY = `
+-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEAtwc/T0hsNTzxwMBUBSchS3lpd2QoAFmJBv4cdwywz6do1nIY
+EGUyr1Y0fzNfKYh8NzgbwSMHDxvHd2sAupuiNDH1bsWTeLvQA8hmExUMgMGy9vR/
+le8eONdxbMrbET8zjvTLPh5NBLP7N71f2lI29pz4UPvNSZJf9rE12ZPSmqHmPiCv
+wHe3FHIn8I1IDro0+jhE/j92D/7kpytnoRu0kBZ3n7x4T0irgZyiirbEf0kRVPIT
+EJJXvo8Dt+oa+cX+SkowXHatM4UkSFkV1ur6V5FqlIcculaUq/CyGIM7qCsUp/HJ
+h9TXQ0uWVZ97K9cdyzNiFl1XWKXALG1flGJoBwIDAQABAoIBAEOOe0HKW5Zy/lDF
+LL4SKWnwUItu/ozSf4+DMAKJPqIHCt1Mk7FJiSHK0em5joCIDkFbhnMNeMeM210q
+s8QtOfvGDO9sIfjIaglbaMHWXR0RYfthV86Bykf0zbr4TU/aYi98D6DIEmmP/UQf
+tEejXQI+AjHyH13ul1k5I8VBmNTWGOdaC0Ock/Q3TNogGt/pPzZxm62VGJxE25ri
+R6/mcqenyAOq9Ll6rskxQ1dt3m9k2akK/lMjjHMdTWGfYVx+RG4qkBvsVQv5/n5c
+FM8o3iHCig9p89lV8tN7SaL8frHObY33iEX0mYWT+3u0PBAITgr0m47XjuIMAy4A
+RpIZGnECgYEA7Y4CO9RjWCk152u2Q7Mq6XxGpH8ZVedEP60RL1tl5C/IfpN42G8k
+07p3GXqE2XfkYNOOHJLhtFqpVuTYNUNwWlXwlSCoKGKJJsR+844+x1gvnXDWSlfs
+uf5myimYj9QIVhIRhjRrpuncss/PuSIMv/OimyjIvpZx9mnLH5hgHusCgYEAxT1j
+9GbtaMCoYGv7LcH6yLDWvsBJ+ng2UT92wCIr5FWceu1J0mowf0j/hBpnvnuUbaTW
+Ev/3dpiv7hGbUPXmNsxLO15jDMgwhM2Lk0vEKpaP4ZCcEOT8vjHdqxQqw7i8PtMe
+RrJUg/PHejnvbKcXMpDdbx35iggKNKBJmgUHbFUCgYEAuS83/I3/980AcWxdRH9a
+V3OC2l8eUAIeCQmQWPuF/ZFmWY366bYS3l8A00LYZ3L3/KdOpGW4P1FhqxRwm2z8
+G9/c0VQI4pqV0jvhv1nHBL1xOOmqk3/hUcjJNpWgkZa3/OjO8nDQ7uhmHJq1ktvB
+Vq3Ft/DeNPyw0Gf+aZ3uaIsCgYB1G/49Ht/XUoyms3ZvtL0ya80VdRZ3oOifVQ8t
+BR0KdcpzMnCifmpNKQqNZSAz+Swn7bctkM1dnUrYD5woddg6sRH6LhChhjtInsJA
+srvGjZ7gTvxbC5sFUpZK/a5mh0k+BBv13exQbG4EJGIEITGk1F6lmyaOzjdBB+qr
+iFDgAQKBgAka+ODDgcfMR/MCl4DSY/H2eoK5kOdvZKDU+8ab4LYJSW65mKGiN0ug
+HayzfVysp5bmmFeTIGNyg2uDewwnPgeENUAd4tdUhIu/KY5n9ExZC+yUDffHx5Iu
+SX4U+l+9HgaHBown5qHbtbY/VzwzqxOfpdaXbRIpxjffvN5sT7VY
+-----END RSA PRIVATE KEY-----`
+)
+
+
+// hash
+func Hash(orignal string)string {
+	return "xxxxx"
+}
+
+func Sign(orginal string){
+	hash_string := Hash(orginal)
+	//use private key sign
+
+	return
+
+}
+
+func Varify(orginal string, signature string) bool{
+	hash_string := Hash(orginal)
+	// use public key decode signature
+	hash_string_from_signature := "xxxx"
+
+	if hash_string == hash_string_from_signature {
+		return true
+	}else{
+		return false
+	}
+
+
+}
+
+
+func main() {
+	datacenterId := "xxxx-11123-dasdf-sssdq"
+
+	client(CLIENT_CERT, CLIENT_KEY, CA_CERT)
+}
