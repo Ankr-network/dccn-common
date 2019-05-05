@@ -1,10 +1,8 @@
-package main
+package sign_test
 
 import (
-	"crypto/tls"
-	"crypto/x509"
-	"log"
-	"net/rpc"
+        "testing"
+        signmanager "github.com/Ankr-network/dccn-common/cert/sign"
 )
 
 const (
@@ -65,36 +63,25 @@ SX4U+l+9HgaHBown5qHbtbY/VzwzqxOfpdaXbRIpxjffvN5sT7VY
 )
 
 
-// hash
-func Hash(orignal string)string {
-	return "xxxxx"
+func TestRsaSign(t *testing.T) {
+        t.Log("Testing RsaSign")
+
+        _, err := signmanager.RsaSign(CLIENT_KEY, "123456789")
+        if err != nil {
+                t.Error(err)
+        }
 }
 
-func Sign(orginal string){
-	hash_string := Hash(orginal)
-	//use private key sign
+func TestRsaVerify(t *testing.T) {
+        t.Log("Testing RsaVerify")
 
-	return
+	result_str, err := signmanager.RsaSign(CLIENT_KEY, "123456789")
+        if err != nil {
+                t.Error(err)
+        }
 
-}
-
-func Varify(orginal string, signature string) bool{
-	hash_string := Hash(orginal)
-	// use public key decode signature
-	hash_string_from_signature := "xxxx"
-
-	if hash_string == hash_string_from_signature {
-		return true
-	}else{
-		return false
-	}
-
-
-}
-
-
-func main() {
-	datacenterId := "xxxx-11123-dasdf-sssdq"
-
-	client(CLIENT_CERT, CLIENT_KEY, CA_CERT)
+        bResult := signmanager.RsaVerify(CLIENT_CERT, "123456789", result_str)
+        if !bResult {
+                t.Error(err)
+        }
 }
