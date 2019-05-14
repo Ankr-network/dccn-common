@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"io/ioutil"
 	"math/big"
+	"crypto/rand"
 
 	_ "github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
@@ -19,6 +20,8 @@ import (
 	"github.com/tendermint/tendermint/rpc/client"
 	"github.com/tendermint/tendermint/types"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
+
+	signmanager "github.com/Ankr-network/dccn-common/cert/sign"
 )
 
 const PubKeyEd25519Size = 32
@@ -487,6 +490,47 @@ func GetHistoryReceive(ip, port, address string, prove bool, page, perPage int) 
 
 	return btr, err
 }
+
+/*
+priv_key_pem: private key in pem format
+dc: datacenter name
+ns: name space
+value: metering value, marshled json file.
+*/
+func SetMetering(ip, port, priv_key_pem, dc, ns, value string) error {
+	randbyte := make([]byte, 4)
+        _, err := rand.Read(randbyte)
+        if err != nil {
+                fmt.Println(err)
+		return err
+        }
+        randstring := fmt.Sprintf("%X", randbyte)
+
+	sigX, sigY, err := signmanager.EcdsaSign(priv_key_pem, dc + ns + value)
+        if err != nil {
+                return err
+        }
+
+	cl := getHTTPClient(ip, port)
+
+	_, err = cl.Status()
+	if err != nil {
+		return err
+	}
+
+	//fmt.Printf("%s=%s:%s:%s:%s:%s:%s\n", string("set_mtr"), dc, ns, value, sigX, sigY, randstring)
+	btr, err := cl.BroadcastTxCommit(types.Tx(
+		fmt.Sprintf("%s=%s:%s:%s:%s:%s:%s", string("set_mtr"), dc, ns, value, sigX, sigY, randstring)))
+
+	if err != nil {
+		return err
+	}
+	client.WaitForHeight(cl, btr.Height+1, nil)
+
+	return nil
+}
+
+
 
 /**
 based on the datacentername and namespace, return metering history. 
