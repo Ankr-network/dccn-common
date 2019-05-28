@@ -14,6 +14,7 @@ const (
 	HashError = "HashError:"
 	PublishError = "PublishError:"
 	DecodeError = "DecodeError:"
+	WalletError = "WalletError:"
 )
 var (
 	ErrDataCenterNotExist        = errors.New(NotFoundError+"DataCenter does not exist")
