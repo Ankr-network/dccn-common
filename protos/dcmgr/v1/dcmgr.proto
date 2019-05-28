@@ -75,6 +75,8 @@ message RegisterDataCenterResponse {
   string client_key = 1;
   string client_csr_cert = 2;
   string ca_cert = 3;
+  string cluster_id = 4;
+  string cluster_name = 5;
 }
 
 message DataCenterListResponse {
