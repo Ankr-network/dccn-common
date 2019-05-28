@@ -5,10 +5,13 @@ import "errors"
 // List execution errors
 const (
 	AuthError = "AuthError:"
+	ArgumentError = "ArgumentError:"
 	MarshalError = "MarshalError:"
 	NotFoundError = "NotFoundError:"
 	TokenError = "TokenError:"
 	LogicError = "LogicError:"
+	DbError = "DatabaseError:"
+	HashError = "HashError:"
 )
 var (
 	ErrDataCenterNotExist        = errors.New(NotFoundError+"DataCenter does not exist")
@@ -28,7 +31,7 @@ var (
 	ErrPublish                   = errors.New("mq publish message error")
 	ErrConnection                = errors.New("connection error")
 	ErrNoAvailableDataCenter     = errors.New("no available data center")
-	ErrEmailFormat               = errors.New("email invalid format")
+	ErrEmailFormat               = errors.New(ArgumentError+"email invalid format")
 	ErrEmailShouldNotSame        = errors.New("email should not same as before")
 	ErrPasswordFormat            = errors.New("password invalid format")
 	ErrUserNameFormat            = errors.New("user name invalid format")
