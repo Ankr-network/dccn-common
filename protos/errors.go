@@ -12,6 +12,8 @@ const (
 	LogicError = "LogicError:"
 	DbError = "DatabaseError:"
 	HashError = "HashError:"
+	PublishError = "PublishError:"
+	DecodeError = "DecodeError:"
 )
 var (
 	ErrDataCenterNotExist        = errors.New(NotFoundError+"DataCenter does not exist")
