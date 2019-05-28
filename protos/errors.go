@@ -53,4 +53,5 @@ var (
 	ErrUserDeactive              = errors.New("login failed, account has been locked, please contact admin")
 	ErrEmailNoExit               = errors.New("email does not exist")
 	ErrEmailNoMatch              = errors.New("email does not match")
+	ErrCanNotApplyAsProvider     = errors.New("user already has applied as a cluster provider")
 )
