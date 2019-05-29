@@ -30,7 +30,6 @@ func getRabbitMQHost() string {
 	return host
 }
 
-
 // Send function send message to RabbitMQ queue
 func Send(topic string, e interface{}) {
 
@@ -43,14 +42,12 @@ func Send(topic string, e interface{}) {
 
 	defer conn.Close()
 
-
 	ch, err := conn.Channel()
 	failOnError(err, "Failed to open a channel")
 	if ch == nil {
 		return
 	}
 	defer ch.Close()
-
 
 	err = ch.ExchangeDeclare(
 		defaultExchange, // name
