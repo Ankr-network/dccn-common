@@ -15,8 +15,12 @@ const (
 	PublishError = "PublishError:"
 	DecodeError = "DecodeError:"
 	WalletError = "WalletError:"
+	CertificationError = "CertificationError"
+	DialError = "DialError"
 )
 var (
+	ErrNsEmpty				= errors.New(NotFoundError+"Namespace is empty/nil")
+	ErrNsClEmpty				= errors.New(NotFoundError+"Namespace or ClusterId is empty/nil")
 	ErrDataCenterNotExist        = errors.New(NotFoundError+"DataCenter does not exist")
 	ErrUserNotExist              = errors.New(TokenError+"Can not find user")
 	ErrAppNotExist              = errors.New(NotFoundError+"App does not exist")
