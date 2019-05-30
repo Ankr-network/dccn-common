@@ -11,6 +11,7 @@ enum AppStatus {
     APP_UPDATE_FAILED = 5;
     APP_CANCELING = 6;
     APP_CANCELED = 7;
+    APP_UNAVAILABLE = 8;
 }
 // Hub application event
 enum AppEvent {
@@ -24,6 +25,8 @@ enum AppEvent {
     CANCEL_APP = 7;
     CANCEL_APP_FAILED = 8;
     CANCEL_APP_SUCCEED = 9;
+    APP_HEARTBEAT_FAILED = 10;
+    APP_HEARTBEAT_SUCCEED = 11;
 }
 
 // Hub namespace status
@@ -36,6 +39,7 @@ enum NamespaceStatus {
     NS_UPDATE_FAILED = 5;
     NS_CANCELING = 6;
     NS_CANCELED = 7;
+    NS_UNAVAILABLE = 8;
 }
 // Hub namespace event
 enum NamespaceEvent {
@@ -49,4 +53,6 @@ enum NamespaceEvent {
     CANCEL_NS = 7;
     CANCEL_NS_FAILED = 8;
     CANCEL_NS_SUCCEED = 9;
+    NS_HEARBEAT_FAILED = 10;
+    NS_HEARBEAT_SUCCEED = 11;
 }
