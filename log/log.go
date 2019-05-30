@@ -21,7 +21,7 @@ Example:
 
 const (
 	FIELD_CALLER = "caller"
-	CTX_REQID    = "req_id"
+	CTX_REQID    = "ankr_req_id"
 )
 
 
