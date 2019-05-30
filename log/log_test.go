@@ -7,66 +7,66 @@ import (
 	"github.com/Ankr-network/dccn-common/log"
 )
 
-func TestLogger_Println(t *testing.T) {
+func TestLogger_PrintlnWithContext(t *testing.T) {
 	logger := log.New()
 	ctx, cancelctx := context.WithCancel(context.Background())
 	defer cancelctx()
 	reqIDctx := context.WithValue(ctx, log.CTX_REQID, "req_0001")
-	logger.Println(reqIDctx,"hello")
+	logger.PrintlnWithContext(reqIDctx,"hello")
 }
 
-func TestLogger_Printf(t *testing.T) {
+func TestLogger_PrintfWithContext(t *testing.T) {
 	logger := log.New()
 	ctx, cancelctx := context.WithCancel(context.Background())
 	defer cancelctx()
 	reqIDctx := context.WithValue(ctx, log.CTX_REQID, "req_0001")
-	logger.Printf(reqIDctx, "%s","hello")
+	logger.PrintfWithContext(reqIDctx, "%s","hello")
 }
 
-func TestLogger_Debug(t *testing.T) {
+func TestLogger_DebugWithContext(t *testing.T) {
 	logger := log.New()
 	ctx, cancelctx := context.WithCancel(context.Background())
 	defer cancelctx()
 	reqIDctx := context.WithValue(ctx, log.CTX_REQID, "req_0001")
-	logger.Debug(reqIDctx,"hello")
+	logger.DebugWithContext(reqIDctx,"hello")
 }
 
-func TestLogger_Debugf(t *testing.T) {
+func TestLogger_DebugfWithContext(t *testing.T) {
 	logger := log.New()
 	ctx, cancelctx := context.WithCancel(context.Background())
 	defer cancelctx()
 	reqIDctx := context.WithValue(ctx, log.CTX_REQID, "req_0001")
-	logger.Debugf(reqIDctx, "%s","hello")
+	logger.DebugfWithContext(reqIDctx, "%s","hello")
 }
 
-func TestLogger_Warn(t *testing.T) {
+func TestLogger_WarnWithContext(t *testing.T) {
 	logger := log.New()
 	ctx, cancelctx := context.WithCancel(context.Background())
 	defer cancelctx()
 	reqIDctx := context.WithValue(ctx, log.CTX_REQID, "req_0001")
-	logger.Warn(reqIDctx, "hello")
+	logger.WarnWithContext(reqIDctx, "hello")
 }
 
-func TestLogger_Warnf(t *testing.T) {
+func TestLogger_WarnfWithContext(t *testing.T) {
 	logger := log.New()
 	ctx, cancelctx := context.WithCancel(context.Background())
 	defer cancelctx()
 	reqIDctx := context.WithValue(ctx, log.CTX_REQID, "req_0001")
-	logger.Warnf(reqIDctx, "%s","hello")
+	logger.WarnfWithContext(reqIDctx, "%s","hello")
 }
 
-func TestLogger_Info(t *testing.T) {
+func TestLogger_InfoWithContext(t *testing.T) {
 	logger := log.New()
 	ctx, cancelctx := context.WithCancel(context.Background())
 	defer cancelctx()
 	reqIDctx := context.WithValue(ctx, log.CTX_REQID, "req_0001")
-	logger.Info(reqIDctx, "hello")
+	logger.InfoWithContext(reqIDctx, "hello")
 }
 
-func TestLogger_Infof(t *testing.T) {
+func TestLogger_InfofWithContext(t *testing.T) {
 	logger := log.New()
 	ctx, cancelctx := context.WithCancel(context.Background())
 	defer cancelctx()
 	reqIDctx := context.WithValue(ctx, log.CTX_REQID, "req_0001")
-	logger.Infof(reqIDctx, "%s","hello")
+	logger.InfofWithContext(reqIDctx, "%s","hello")
 }

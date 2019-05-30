@@ -1,6 +1,5 @@
 package log
 
-
 import (
 	"context"
 	"encoding/json"
@@ -36,12 +35,14 @@ type AnkrTextFormatter struct {
 }
 
 func (f *AnkrTextFormatter) Format(entry *log.Entry) ([]byte, error) {
-	var caller string
+	var caller,req_id string
 	if _, ok := entry.Data[FIELD_CALLER]; ok {
 		caller = entry.Data[FIELD_CALLER].(string)
 	}
-	req_id := entry.Context.Value(CTX_REQID).(string)
-	msg, err := json.Marshal(Message{req_id, strings.Trim(entry.Message,"[]")})
+	if entry.Context != nil {
+		req_id = entry.Context.Value(CTX_REQID).(string)
+	}
+	msg, err := json.Marshal(Message{req_id, entry.Message})
 	if err != nil {
 		return nil, fmt.Errorf("Failed to marshal fields to JSON, %v", err)
 	}
@@ -64,43 +65,43 @@ func New() *Logger {
 	return &Logger{lg}
 }
 
-func (l *Logger) Println(ctx context.Context, args ...interface{}) {
-	l.WithContext(ctx).Println(args)
+func (l *Logger) PrintlnWithContext(ctx context.Context, args ...interface{}) {
+	l.WithContext(ctx).Println(args...)
 }
 
-func (l *Logger) Printf(ctx context.Context,format string, args ...interface{}) {
-	l.WithContext(ctx).Printf(format, args)
+func (l *Logger) PrintfWithContext(ctx context.Context,format string, args ...interface{}) {
+	l.WithContext(ctx).Printf(format, args...)
 }
 
-func (l *Logger) Debug(ctx context.Context,args ...interface{}) {
-	l.WithContext(ctx).Debug(args)
+func (l *Logger) DebugWithContext(ctx context.Context,args ...interface{}) {
+	l.WithContext(ctx).Debug(args...)
 }
 
-func (l *Logger) Debugf(ctx context.Context,format string, args interface{}) {
-	l.WithContext(ctx).Debugf(format, args)
+func (l *Logger) DebugfWithContext(ctx context.Context,format string, args ...interface{}) {
+	l.WithContext(ctx).Debugf(format, args...)
 }
 
-func (l *Logger) Info(ctx context.Context,args ...interface{}) {
-	l.WithContext(ctx).Info(args)
+func (l *Logger) InfoWithContext(ctx context.Context,args ...interface{}) {
+	l.WithContext(ctx).Info(args...)
 }
 
-func (l *Logger) Infof(ctx context.Context,format string, args ...interface{}) {
-	l.WithContext(ctx).Infof(format, args)
+func (l *Logger) InfofWithContext(ctx context.Context,format string, args ...interface{}) {
+	l.WithContext(ctx).Infof(format, args...)
 }
 
-func (l *Logger) Warn(ctx context.Context,args ...interface{}) {
-	l.WithContext(ctx).Warn(args)
+func (l *Logger) WarnWithContext(ctx context.Context,args ...interface{}) {
+	l.WithContext(ctx).Warn(args...)
 }
 
-func (l *Logger) Warnf(ctx context.Context,format string, args ...interface{}) {
-	l.WithContext(ctx).Warnf(format, args)
+func (l *Logger) WarnfWithContext(ctx context.Context,format string, args ...interface{}) {
+	l.WithContext(ctx).Warnf(format, args...)
 }
 
-func (l *Logger) Error(ctx context.Context,args ...interface{}) {
-	l.WithContext(ctx).Error(args)
+func (l *Logger) ErrorWithContext(ctx context.Context,args ...interface{}) {
+	l.WithContext(ctx).Error(args...)
 }
 
-func (l *Logger) Errorf(ctx context.Context,format string, args ...interface{}) {
-	l.WithContext(ctx).Errorf(format, args)
+func (l *Logger) ErrorfWithContext(ctx context.Context,format string, args ...interface{}) {
+	l.WithContext(ctx).Errorf(format, args...)
 }
 
