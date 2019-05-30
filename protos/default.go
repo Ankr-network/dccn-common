@@ -5,7 +5,7 @@ const (
 	MQDeployApp           = "topic.deploy.app"
 	MQFeedbackApp         = "topic.feedback.app"
 	MQMail                = "topic.mail.handler"
-	AccessTokenValidTime  = 3600 * 2  // second   2 hours
+	AccessTokenValidTime  = 36 * 2  // second   2 hours
 	RefreshTokenValidTime = 86400 * 7 // second   7 days
 	CleanupInterval       = 20        // minute
 	NoReplyEmailAddress   = "no-reply@ankr.com"
