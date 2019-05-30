@@ -25,6 +25,7 @@ service DCAPI {
       rpc RegisterDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
       rpc ResetDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
       rpc MyDataCenter(MyDataCenterRequest) returns (common.proto.DataCenterStatus){}
+      rpc GetClusterCertificate (GetClusterCertificateRequest) returns (GetClusterCertificateResponse) {}
 }
 
 
@@ -32,6 +33,13 @@ service ClusterDashBoard {
       rpc DashBoard (DashBoardRequest) returns (DashBoardResponse) {}
 }
 
+message GetClusterCertificateRequest {
+  string cluster_id = 1;
+}
+
+message GetClusterCertificateResponse {
+  string client_csr_cert = 1;
+}
 
 message DashBoardRequest {
   string uid = 1;

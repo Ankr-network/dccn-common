@@ -219,6 +219,7 @@ type DCAPIService interface {
 	RegisterDataCenter(ctx context.Context, in *RegisterDataCenterRequest, opts ...client.CallOption) (*RegisterDataCenterResponse, error)
 	ResetDataCenter(ctx context.Context, in *RegisterDataCenterRequest, opts ...client.CallOption) (*RegisterDataCenterResponse, error)
 	MyDataCenter(ctx context.Context, in *MyDataCenterRequest, opts ...client.CallOption) (*common.DataCenterStatus, error)
+	GetClusterCertificate(ctx context.Context, in *GetClusterCertificateRequest, opts ...client.CallOption) (*GetClusterCertificateResponse, error)
 }
 
 type dCAPIService struct {
@@ -289,6 +290,16 @@ func (c *dCAPIService) MyDataCenter(ctx context.Context, in *MyDataCenterRequest
 	return out, nil
 }
 
+func (c *dCAPIService) GetClusterCertificate(ctx context.Context, in *GetClusterCertificateRequest, opts ...client.CallOption) (*GetClusterCertificateResponse, error) {
+	req := c.c.NewRequest(c.name, "DCAPI.GetClusterCertificate", in)
+	out := new(GetClusterCertificateResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for DCAPI service
 
 type DCAPIHandler interface {
@@ -297,6 +308,7 @@ type DCAPIHandler interface {
 	RegisterDataCenter(context.Context, *RegisterDataCenterRequest, *RegisterDataCenterResponse) error
 	ResetDataCenter(context.Context, *RegisterDataCenterRequest, *RegisterDataCenterResponse) error
 	MyDataCenter(context.Context, *MyDataCenterRequest, *common.DataCenterStatus) error
+	GetClusterCertificate(context.Context, *GetClusterCertificateRequest, *GetClusterCertificateResponse) error
 }
 
 func RegisterDCAPIHandler(s server.Server, hdlr DCAPIHandler, opts ...server.HandlerOption) error {
@@ -306,6 +318,7 @@ func RegisterDCAPIHandler(s server.Server, hdlr DCAPIHandler, opts ...server.Han
 		RegisterDataCenter(ctx context.Context, in *RegisterDataCenterRequest, out *RegisterDataCenterResponse) error
 		ResetDataCenter(ctx context.Context, in *RegisterDataCenterRequest, out *RegisterDataCenterResponse) error
 		MyDataCenter(ctx context.Context, in *MyDataCenterRequest, out *common.DataCenterStatus) error
+		GetClusterCertificate(ctx context.Context, in *GetClusterCertificateRequest, out *GetClusterCertificateResponse) error
 	}
 	type DCAPI struct {
 		dCAPI
@@ -336,6 +349,10 @@ func (h *dCAPIHandler) ResetDataCenter(ctx context.Context, in *RegisterDataCent
 
 func (h *dCAPIHandler) MyDataCenter(ctx context.Context, in *MyDataCenterRequest, out *common.DataCenterStatus) error {
 	return h.DCAPIHandler.MyDataCenter(ctx, in, out)
+}
+
+func (h *dCAPIHandler) GetClusterCertificate(ctx context.Context, in *GetClusterCertificateRequest, out *GetClusterCertificateResponse) error {
+	return h.DCAPIHandler.GetClusterCertificate(ctx, in, out)
 }
 
 // Client API for ClusterDashBoard service
