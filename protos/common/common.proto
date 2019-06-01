@@ -144,6 +144,7 @@ enum DCOperation {
     NS_CREATE = 5;
     NS_CANCEL = 6;
     NS_UPDATE = 7;
+    DCSTATUS_UPDATE = 8;
 }
 
 message AppReport {
