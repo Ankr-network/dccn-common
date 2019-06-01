@@ -227,6 +227,10 @@ func GetBalance(ip, port, address string) (balance string, err_ret error) {
 	if !qres.IsOK() {
 		return "", errors.New("Query balance failure, connect error.")
 	} else {
+		if len(string(qres.Value)) == 0 {
+			return "", errors.New("Query balance failure, Address does not exist.")
+		}
+
 		balanceNonceSlices := strings.Split(string(qres.Value), ":")
 		if len(balanceNonceSlices) == 2 {
 			balance = balanceNonceSlices[0]
