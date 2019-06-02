@@ -2,80 +2,108 @@ package pgrpc
 
 import (
 	"net"
+	"time"
 
-	"github.com/hashicorp/yamux"
 	"github.com/pkg/errors"
-	"google.golang.org/grpc"
 )
 
-type Server struct {
-	*grpc.Server
-	sess *Session
+type listener struct {
+	addr net.Addr
 
-	addr   string
-	config *yamux.Config
-	hook   Hook
+	connCh chan net.Conn
+	stopCh chan struct{}
 }
 
-func NewServer(addr string, hook Hook, conf *yamux.Config, opt ...grpc.ServerOption) *Server {
-	return &Server{
-		Server: grpc.NewServer(opt...),
-		addr:   addr,
-		config: conf,
-		hook:   hook,
-	}
-}
-
-func (s *Server) Serve() error {
-	if err := s.dial(); err != nil {
-		return err
-	}
-
-	RegisterStreamPingServer(s.Server, &ping{s.addr, s.sess, s.hook})
-
-	return errors.Wrap(s.Server.Serve(s.sess), "serve grpc")
-}
-
-func (s *Server) dial() (err error) {
-	var conn net.Conn
-	conn, err = net.Dial("tcp", s.addr)
-	if err != nil {
-		return errors.Wrap(err, "tcp dail")
-	}
-
-	defer func() {
-		if err != nil {
-			conn.Close()
+func Listen(network, address string, onAccept func(*net.Conn, error)) (net.Listener, error) {
+	var (
+		ln = listener{
+			connCh: make(chan net.Conn),
+			stopCh: make(chan struct{}),
 		}
-	}()
+		err error
+	)
 
-	if s.hook != nil {
-		if err := s.hook.OnAccept(&s.addr, &conn); err != nil {
-			return errors.Wrap(err, "on accept hook")
-		}
-	}
-
-	session, err := yamux.Server(conn, s.config)
-	if err != nil {
-		return errors.Wrap(err, "build sess")
-	} else if _, err = session.Ping(); err != nil {
-		return errors.Wrap(err, "ping session")
-	}
-
-	s.sess = &Session{Session: session, Name: s.addr}
-
-	if s.hook != nil {
-		if err := s.hook.OnBuild(&s.addr, s.sess); err != nil {
-			return errors.Wrap(err, "build hook")
-		}
+	if ln.addr, err = net.ResolveTCPAddr(network, address); err != nil {
+		return nil, err
 	}
 
 	go func() {
-		<-s.sess.CloseChan()
-		if s.hook != nil {
-			s.hook.OnClose(s.addr, s.sess)
+		for {
+			conn, err := net.Dial(network, address)
+			if onAccept != nil {
+				onAccept(&conn, err)
+			}
+			if err != nil {
+				time.Sleep(5 * time.Second)
+			} else {
+				c := conn.(*net.TCPConn)
+				c.SetKeepAlive(true)
+				c.SetKeepAlivePeriod(5 * time.Second)
+				c.SetLinger(1)
+			}
+
+			conn, sig := newActiveConn(conn)
+			select {
+			case <-sig:
+				ln.connCh <- conn
+			case <-ln.stopCh:
+				return
+			}
 		}
 	}()
+	return &ln, nil
+}
 
+func (ln *listener) Accept() (net.Conn, error) {
+	select {
+	case conn := <-ln.connCh:
+		return conn, nil
+	case <-ln.stopCh:
+		return nil, errors.New("listener has been stoped")
+	}
+}
+func (ln *listener) Close() error {
+	close(ln.stopCh)
 	return nil
+}
+func (ln *listener) Addr() net.Addr {
+	return ln.addr
+}
+
+// activeConn is a net.Conn that can detect conn first activaty
+type activeConn struct {
+	b    byte
+	n    int
+	err  error
+	init bool
+
+	net.Conn
+}
+
+func newActiveConn(conn net.Conn) (net.Conn, <-chan struct{}) {
+	aConn := activeConn{Conn: conn}
+	sig := make(chan struct{})
+
+	go func() {
+		buf := make([]byte, 1)
+		aConn.n, aConn.err = conn.Read(buf)
+		aConn.b = buf[0]
+		close(sig)
+	}()
+
+	return &aConn, sig
+}
+
+func (a *activeConn) Read(b []byte) (n int, err error) {
+	if !a.init {
+		if len(b) == 0 {
+			return 0, a.err
+		}
+
+		a.init = true
+		b[0] = a.b
+		return a.n, a.err
+	}
+
+	return a.Conn.Read(b)
 }

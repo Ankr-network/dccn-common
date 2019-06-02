@@ -1,12 +1,8 @@
 syntax = "proto3";
 package api;
-message PingMessage {
-  string greeting = 1;
-}
+
 service Ping {
   rpc SayHello(PingMessage) returns (PingMessage) {}
 }
 
-service StreamPing {
-  rpc HelloStream(stream PingMessage) returns ( stream PingMessage) {}
-}
+message PingMessage { string greeting = 1; }

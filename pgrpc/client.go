@@ -1,235 +1,143 @@
 package pgrpc
 
 import (
-	"context"
+	context "context"
 	"net"
-	"strings"
 	"sync"
-	"time"
 
-	"github.com/hashicorp/yamux"
 	"github.com/pkg/errors"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/keepalive"
+	grpc "google.golang.org/grpc"
 )
 
+const MAX_IDLE = 2
+
 type Client struct {
-	port   string
-	config *yamux.Config
-	conns  *sync.Map
-	hook   Hook
-	mu     *sync.Mutex
+	sync.Map
 }
 
 var DefaultClient *Client
 
-func InitClient(port string, conf *yamux.Config, hook Hook, opts ...grpc.DialOption) (err error) {
-	DefaultClient, err = NewClient(port, conf, hook, opts...)
-	return
+func InitClient(network, addr string, onAccept func(*net.Conn, error), opts ...grpc.DialOption) error {
+	var err error
+	DefaultClient, err = NewClient(network, addr, onAccept, opts...)
+	return err
 }
-func NewClient(port string, conf *yamux.Config, hook Hook, opts ...grpc.DialOption) (*Client, error) {
-	// init yamux
-	if conf == nil {
-		conf = yamux.DefaultConfig()
-	}
-	if hook == nil {
-		hook = new(EmptyHook)
-	}
-	if len(opts) == 0 {
-		opts = []grpc.DialOption{
-			grpc.WithInsecure(),
-			grpc.WithKeepaliveParams(keepalive.ClientParameters{
-				Time:                conf.KeepAliveInterval,
-				Timeout:             conf.ConnectionWriteTimeout,
-				PermitWithoutStream: true,
-			}),
-		}
-	}
 
-	// dial
-	if !strings.Contains(port, ":") {
-		port = ":" + port
-	}
-
-	ln, err := net.Listen("tcp", port)
+func NewClient(network, addr string, onAccept func(*net.Conn, error), opts ...grpc.DialOption) (*Client, error) {
+	ln, err := net.Listen(network, addr)
 	if err != nil {
-		return nil, errors.Wrap(err, "pgrpc listen")
+		return nil, err
 	}
 
-	conns := &sync.Map{}
+	var c = &Client{}
 	go func() {
 		for {
 			conn, err := ln.Accept()
+			if onAccept != nil {
+				onAccept(&conn, err)
+			}
 			if err != nil {
-				if conf.Logger != nil {
-					conf.Logger.Println("accept", port, err)
-				}
 				continue
 			}
 
-			host, _, err := net.SplitHostPort(conn.RemoteAddr().String())
+			ip, _, _ := net.SplitHostPort(conn.RemoteAddr().String())
+
+			opts = append(opts, grpc.WithContextDialer(
+				func(context.Context, string) (net.Conn, error) { return conn, nil }))
+			cc, err := grpc.DialContext(context.Background(), ip, opts...)
 			if err != nil {
-				if conf.Logger != nil {
-					conf.Logger.Println("parse new connection address fail:", err)
-				}
-				continue
+				panic(err)
 			}
 
-			if hook != nil {
-				if err := hook.OnAccept(&host, &conn); err != nil {
-					conn.Close()
-					if conf.Logger != nil {
-						conf.Logger.Println("on accept hook:", err)
-					}
-					continue
-				}
-			}
-
-			session, err := yamux.Client(conn, conf)
-			if err != nil {
-				if conf.Logger != nil {
-					conf.Logger.Println("mux conn", port, err)
-				}
-				continue
-			}
-
-			sess := &Session{
-				Session: session,
-				Name:    host,
-				Opts:    opts,
-			}
-			if err := hook.OnBuild(&host, sess); err != nil {
-				if conf.Logger != nil {
-					conf.Logger.Println("on build hook:", err)
-				}
-				continue
-			}
-
-			pgrpcKeepalive(sess, conf.Logger)
-			if conf.Logger != nil {
-				conf.Logger.Println("new connection from:", host)
-			}
-
-			if session, ok := conns.LoadOrStore(host, sess); ok {
-				conns.Store(host, sess) // force store
-
-				go func() {
-					<-sess.CloseChan()
-					if val, ok := conns.Load(host); ok && val.(*Session).Name == host {
-						hook.OnClose(host, val.(*Session))
-					}
-					conns.Delete(host)
-				}()
-
-				if err := session.(*Session).GoAway(); err != nil && conf.Logger != nil {
-					conf.Logger.Printf("session(%s) go away fail: %s", host, err)
-				}
+			if val, ok := c.LoadOrStore(ip, &stack{ccs: []*grpc.ClientConn{cc}}); ok {
+				val.(*stack).Put(cc)
 			}
 		}
 	}()
-
-	return &Client{
-		port:   port,
-		config: conf,
-		conns:  conns,
-		hook:   hook,
-		mu:     &sync.Mutex{},
-	}, nil
-}
-
-func Alias(key, alias string, force bool) error {
-	return DefaultClient.Alias(key, alias, force)
-}
-func (c *Client) Alias(key, alias string, force bool) error {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
-	val, ok := c.conns.Load(key)
-	if !ok {
-		return errors.New("alias key not found")
-	}
-
-	if _, ok = c.conns.LoadOrStore(alias, val); !ok {
-		val.(*Session).Name = alias
-	} else if force {
-		c.conns.Store(alias, val)
-		val.(*Session).Name = alias
-	} else {
-		return errors.New("alias name has been occupied")
-	}
-
-	go func() {
-		<-val.(*Session).CloseChan()
-		// avoid rerun hook
-		if val, ok := c.conns.Load(alias); ok && val.(*Session).Name == alias {
-			c.hook.OnClose(alias, val.(*Session))
-		}
-		c.conns.Delete(alias)
-	}()
-	return nil
+	return c, nil
 }
 
 func Dial(key string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
 	return DefaultClient.Dial(key)
 }
+
 func (c *Client) Dial(key string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
-	sess, ok := c.conns.Load(key)
+	val, ok := c.Load(key)
 	if !ok {
-		return nil, errors.New("no pgrpc connection target to " + key)
+		return nil, errors.Errorf("connection point to %s not found", key)
 	}
 
-	if len(opts) == 0 {
-		opts = sess.(*Session).Opts
+	cc := val.(*stack).Get()
+	if cc == nil {
+		return nil, errors.Errorf("no available connection point to %s", key)
 	}
-	opts = append(opts, grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) {
-		return sess.(*Session).Open()
-	}))
-
-	return grpc.DialContext(context.Background(), key, opts...)
+	return cc, nil
 }
 
-func GoAway(key string) {
-	DefaultClient.GoAway(key)
+func Each(fn func(key string, cc *grpc.ClientConn)) {
+	DefaultClient.Each(fn)
 }
-func (c *Client) GoAway(key string) {
-	if val, ok := c.conns.Load(key); ok {
-		val.(*Session).GoAway()
-	}
-}
-
-func Each(fn func(key string, conn *grpc.ClientConn, err error), opts ...grpc.DialOption) {
-	DefaultClient.Each(fn, opts...)
-}
-func (c *Client) Each(fn func(key string, conn *grpc.ClientConn, err error), opts ...grpc.DialOption) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+func (c *Client) Each(fn func(key string, cc *grpc.ClientConn)) {
 	wg := sync.WaitGroup{}
 	defer wg.Wait()
 
-	c.conns.Range(func(key, val interface{}) bool {
-		if v, ok := c.conns.Load(key); !ok || v.(*Session).Name != key.(string) {
-			return true
-		}
-
+	c.Range(func(key, val interface{}) bool {
 		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
-			if len(opts) == 0 {
-				opts = val.(*Session).Opts
+		go func(key string, stack *stack) {
+			cc := stack.Get()
+			if cc == nil {
+				return
 			}
-			opts = append(opts, grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) {
-				sess := val.(*Session)
-				if _, err := sess.Ping(); err != nil {
-					return nil, err
-				}
-				return sess.Open()
-			}))
 
-			conn, err := grpc.DialContext(ctx, key.(string), opts...)
-			fn(key.(string), conn, errors.Wrapf(err, "pgrpc dial (%s)", key))
-		}()
+			defer func() {
+				wg.Done()
+				stack.Put(cc)
+			}()
 
+			if cc.Target() != key {
+				return
+			}
+
+			fn(key, cc)
+		}(key.(string), val.(*stack))
 		return true
 	})
+}
+
+func Alias(key, alias string) {
+	DefaultClient.Alias(key, alias)
+}
+func (c *Client) Alias(key, alias string) {
+	if val, ok := c.Load(key); ok {
+		c.Store(alias, val)
+	} else {
+		c.Delete(alias)
+	}
+}
+
+// stack maintain idle connections
+type stack struct {
+	ccs []*grpc.ClientConn
+	mu  sync.Mutex
+}
+
+func (s *stack) Get() (cc *grpc.ClientConn) {
+	s.mu.Lock()
+	if length := len(s.ccs); length != 0 {
+		cc = s.ccs[length-1]
+		s.ccs = s.ccs[:length-1]
+	}
+	s.mu.Unlock()
+	return
+}
+func (s *stack) Put(cc *grpc.ClientConn) {
+	s.mu.Lock()
+	if len(s.ccs) != MAX_IDLE {
+		s.ccs = append(s.ccs, cc)
+		s.mu.Unlock()
+		return
+	}
+	s.mu.Unlock()
+
+	cc.Close()
 }

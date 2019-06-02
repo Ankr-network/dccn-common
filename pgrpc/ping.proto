@@ -1,7 +1,0 @@
-syntax = "proto3";
-package pgrpc;
-
-message PingMessage {}
-service StreamPing {
-  rpc Ping(stream PingMessage) returns (stream PingMessage) {}
-}

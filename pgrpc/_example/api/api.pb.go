@@ -3,13 +3,14 @@
 
 package api
 
-import proto "github.com/golang/protobuf/proto"
-import fmt "fmt"
-import math "math"
-
 import (
-	context "golang.org/x/net/context"
+	context "context"
+	fmt "fmt"
+	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
+	math "math"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -21,7 +22,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type PingMessage struct {
 	Greeting             string   `protobuf:"bytes,1,opt,name=greeting,proto3" json:"greeting,omitempty"`
@@ -34,16 +35,17 @@ func (m *PingMessage) Reset()         { *m = PingMessage{} }
 func (m *PingMessage) String() string { return proto.CompactTextString(m) }
 func (*PingMessage) ProtoMessage()    {}
 func (*PingMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_api_aa99210ec98b75c7, []int{0}
+	return fileDescriptor_00212fb1f9d3bf1c, []int{0}
 }
+
 func (m *PingMessage) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PingMessage.Unmarshal(m, b)
 }
 func (m *PingMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	return xxx_messageInfo_PingMessage.Marshal(b, m, deterministic)
 }
-func (dst *PingMessage) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PingMessage.Merge(dst, src)
+func (m *PingMessage) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PingMessage.Merge(m, src)
 }
 func (m *PingMessage) XXX_Size() int {
 	return xxx_messageInfo_PingMessage.Size(m)
@@ -63,6 +65,19 @@ func (m *PingMessage) GetGreeting() string {
 
 func init() {
 	proto.RegisterType((*PingMessage)(nil), "api.PingMessage")
+}
+
+func init() { proto.RegisterFile("api.proto", fileDescriptor_00212fb1f9d3bf1c) }
+
+var fileDescriptor_00212fb1f9d3bf1c = []byte{
+	// 111 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4c, 0x2c, 0xc8, 0xd4,
+	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x4e, 0x2c, 0xc8, 0x54, 0xd2, 0xe4, 0xe2, 0x0e, 0xc8,
+	0xcc, 0x4b, 0xf7, 0x4d, 0x2d, 0x2e, 0x4e, 0x4c, 0x4f, 0x15, 0x92, 0xe2, 0xe2, 0x48, 0x2f, 0x4a,
+	0x4d, 0x2d, 0xc9, 0xcc, 0x4b, 0x97, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x82, 0xf3, 0x8d, 0x2c,
+	0xb8, 0x58, 0x40, 0x4a, 0x85, 0x0c, 0xb8, 0x38, 0x82, 0x13, 0x2b, 0x3d, 0x52, 0x73, 0x72, 0xf2,
+	0x85, 0x04, 0xf4, 0x40, 0xe6, 0x21, 0x99, 0x20, 0x85, 0x21, 0xa2, 0xc4, 0x90, 0xc4, 0x06, 0xb6,
+	0xd0, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff, 0xf8, 0x4a, 0xe3, 0x1e, 0x7d, 0x00, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -102,6 +117,14 @@ type PingServer interface {
 	SayHello(context.Context, *PingMessage) (*PingMessage, error)
 }
 
+// UnimplementedPingServer can be embedded to have forward compatible implementations.
+type UnimplementedPingServer struct {
+}
+
+func (*UnimplementedPingServer) SayHello(ctx context.Context, req *PingMessage) (*PingMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
+}
+
 func RegisterPingServer(s *grpc.Server, srv PingServer) {
 	s.RegisterService(&_Ping_serviceDesc, srv)
 }
@@ -135,115 +158,4 @@ var _Ping_serviceDesc = grpc.ServiceDesc{
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "api.proto",
-}
-
-// StreamPingClient is the client API for StreamPing service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type StreamPingClient interface {
-	HelloStream(ctx context.Context, opts ...grpc.CallOption) (StreamPing_HelloStreamClient, error)
-}
-
-type streamPingClient struct {
-	cc *grpc.ClientConn
-}
-
-func NewStreamPingClient(cc *grpc.ClientConn) StreamPingClient {
-	return &streamPingClient{cc}
-}
-
-func (c *streamPingClient) HelloStream(ctx context.Context, opts ...grpc.CallOption) (StreamPing_HelloStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_StreamPing_serviceDesc.Streams[0], "/api.StreamPing/HelloStream", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &streamPingHelloStreamClient{stream}
-	return x, nil
-}
-
-type StreamPing_HelloStreamClient interface {
-	Send(*PingMessage) error
-	Recv() (*PingMessage, error)
-	grpc.ClientStream
-}
-
-type streamPingHelloStreamClient struct {
-	grpc.ClientStream
-}
-
-func (x *streamPingHelloStreamClient) Send(m *PingMessage) error {
-	return x.ClientStream.SendMsg(m)
-}
-
-func (x *streamPingHelloStreamClient) Recv() (*PingMessage, error) {
-	m := new(PingMessage)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// StreamPingServer is the server API for StreamPing service.
-type StreamPingServer interface {
-	HelloStream(StreamPing_HelloStreamServer) error
-}
-
-func RegisterStreamPingServer(s *grpc.Server, srv StreamPingServer) {
-	s.RegisterService(&_StreamPing_serviceDesc, srv)
-}
-
-func _StreamPing_HelloStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(StreamPingServer).HelloStream(&streamPingHelloStreamServer{stream})
-}
-
-type StreamPing_HelloStreamServer interface {
-	Send(*PingMessage) error
-	Recv() (*PingMessage, error)
-	grpc.ServerStream
-}
-
-type streamPingHelloStreamServer struct {
-	grpc.ServerStream
-}
-
-func (x *streamPingHelloStreamServer) Send(m *PingMessage) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-func (x *streamPingHelloStreamServer) Recv() (*PingMessage, error) {
-	m := new(PingMessage)
-	if err := x.ServerStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-var _StreamPing_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "api.StreamPing",
-	HandlerType: (*StreamPingServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "HelloStream",
-			Handler:       _StreamPing_HelloStream_Handler,
-			ServerStreams: true,
-			ClientStreams: true,
-		},
-	},
-	Metadata: "api.proto",
-}
-
-func init() { proto.RegisterFile("api.proto", fileDescriptor_api_aa99210ec98b75c7) }
-
-var fileDescriptor_api_aa99210ec98b75c7 = []byte{
-	// 137 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4c, 0x2c, 0xc8, 0xd4,
-	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x4e, 0x2c, 0xc8, 0x54, 0xd2, 0xe4, 0xe2, 0x0e, 0xc8,
-	0xcc, 0x4b, 0xf7, 0x4d, 0x2d, 0x2e, 0x4e, 0x4c, 0x4f, 0x15, 0x92, 0xe2, 0xe2, 0x48, 0x2f, 0x4a,
-	0x4d, 0x2d, 0xc9, 0xcc, 0x4b, 0x97, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x82, 0xf3, 0x8d, 0x2c,
-	0xb8, 0x58, 0x40, 0x4a, 0x85, 0x0c, 0xb8, 0x38, 0x82, 0x13, 0x2b, 0x3d, 0x52, 0x73, 0x72, 0xf2,
-	0x85, 0x04, 0xf4, 0x40, 0xe6, 0x21, 0x99, 0x20, 0x85, 0x21, 0xa2, 0xc4, 0x60, 0xe4, 0xca, 0xc5,
-	0x15, 0x5c, 0x52, 0x94, 0x9a, 0x98, 0x0b, 0xd6, 0x6f, 0xce, 0xc5, 0x0d, 0xd6, 0x0c, 0x11, 0x22,
-	0xce, 0x08, 0x0d, 0x46, 0x03, 0xc6, 0x24, 0x36, 0xb0, 0xbb, 0x8d, 0x01, 0x01, 0x00, 0x00, 0xff,
-	0xff, 0x73, 0x34, 0xce, 0x81, 0xc4, 0x00, 0x00, 0x00,
 }
