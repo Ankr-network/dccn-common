@@ -9,8 +9,6 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-const MAX_IDLE = 2
-
 type Client struct {
 	sync.Map
 }
@@ -41,16 +39,8 @@ func NewClient(network, addr string, onAccept func(*net.Conn, error), opts ...gr
 			}
 
 			ip, _, _ := net.SplitHostPort(conn.RemoteAddr().String())
-
-			opts = append(opts, grpc.WithContextDialer(
-				func(context.Context, string) (net.Conn, error) { return conn, nil }))
-			cc, err := grpc.DialContext(context.Background(), ip, opts...)
-			if err != nil {
-				panic(err)
-			}
-
-			if val, ok := c.LoadOrStore(ip, &stack{ccs: []*grpc.ClientConn{cc}}); ok {
-				val.(*stack).Put(cc)
+			if val, ok := c.LoadOrStore(ip, &pool{conns: []net.Conn{conn}, opts: opts}); ok {
+				val.(*pool).Put(nil, conn)
 			}
 		}
 	}()
@@ -67,7 +57,7 @@ func (c *Client) Dial(key string, opts ...grpc.DialOption) (*grpc.ClientConn, er
 		return nil, errors.Errorf("connection point to %s not found", key)
 	}
 
-	cc := val.(*stack).Get()
+	cc := val.(*pool).Get()
 	if cc == nil {
 		return nil, errors.Errorf("no available connection point to %s", key)
 	}
@@ -83,15 +73,15 @@ func (c *Client) Each(fn func(key string, cc *grpc.ClientConn)) {
 
 	c.Range(func(key, val interface{}) bool {
 		wg.Add(1)
-		go func(key string, stack *stack) {
-			cc := stack.Get()
+		go func(key string, pool *pool) {
+			cc := pool.Get()
 			if cc == nil {
 				return
 			}
 
 			defer func() {
 				wg.Done()
-				stack.Put(cc)
+				pool.Put(cc, nil)
 			}()
 
 			if cc.Target() != key {
@@ -99,7 +89,7 @@ func (c *Client) Each(fn func(key string, cc *grpc.ClientConn)) {
 			}
 
 			fn(key, cc)
-		}(key.(string), val.(*stack))
+		}(key.(string), val.(*pool))
 		return true
 	})
 }
@@ -115,29 +105,62 @@ func (c *Client) Alias(key, alias string) {
 	}
 }
 
-// stack maintain idle connections
-type stack struct {
-	ccs []*grpc.ClientConn
-	mu  sync.Mutex
+// pool maintain idle connections
+const MAX_IDLE = 2
+
+type pool struct {
+	conns []net.Conn
+	ccs   []*grpc.ClientConn
+	opts  []grpc.DialOption
+
+	mu sync.Mutex
 }
 
-func (s *stack) Get() (cc *grpc.ClientConn) {
+func (s *pool) Get() *grpc.ClientConn {
 	s.mu.Lock()
 	if length := len(s.ccs); length != 0 {
-		cc = s.ccs[length-1]
+		cc := s.ccs[length-1]
 		s.ccs = s.ccs[:length-1]
-	}
-	s.mu.Unlock()
-	return
-}
-func (s *stack) Put(cc *grpc.ClientConn) {
-	s.mu.Lock()
-	if len(s.ccs) != MAX_IDLE {
-		s.ccs = append(s.ccs, cc)
 		s.mu.Unlock()
-		return
+		return cc
+	}
+
+	if length := len(s.conns); length != 0 {
+		conn := s.conns[length-1]
+		s.conns = s.conns[:length-1]
+		s.mu.Unlock()
+
+		ip, _, _ := net.SplitHostPort(conn.RemoteAddr().String())
+		opts := append(s.opts, grpc.WithContextDialer(
+			func(context.Context, string) (net.Conn, error) { return conn, nil }))
+		cc, err := grpc.DialContext(context.Background(), ip, opts...)
+		if err != nil {
+			panic(err)
+		}
+		return cc
+	}
+
+	s.mu.Unlock()
+	return nil
+}
+
+func (s *pool) Put(cc *grpc.ClientConn, conn net.Conn) {
+	s.mu.Lock()
+	count := len(s.ccs) + len(s.conns)
+	if cc != nil {
+		if count != MAX_IDLE {
+			s.ccs = append(s.ccs, cc)
+			count++
+		} else {
+			go cc.Close()
+		}
+	}
+	if conn != nil {
+		if count != MAX_IDLE {
+			s.conns = append(s.conns, conn)
+		} else {
+			go conn.Close()
+		}
 	}
 	s.mu.Unlock()
-
-	cc.Close()
 }
