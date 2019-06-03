@@ -2,6 +2,7 @@ package pgrpc
 
 import (
 	context "context"
+	"io"
 	"net"
 	"sync"
 
@@ -145,22 +146,32 @@ func (s *pool) Get() *grpc.ClientConn {
 }
 
 func (s *pool) Put(cc *grpc.ClientConn, conn net.Conn) {
+	if cc != nil && conn != nil {
+		panic("just support put back only one connection")
+	}
+
+	var dropped io.Closer
 	s.mu.Lock()
-	count := len(s.ccs) + len(s.conns)
-	if cc != nil {
-		if count != MAX_IDLE {
-			s.ccs = append(s.ccs, cc)
-			count++
+
+	if count := len(s.ccs) + len(s.conns); count == MAX_IDLE {
+		if len(s.ccs) >= 1 { // drop client conn first
+			dropped = s.ccs[0]
+			s.ccs = s.ccs[1:]
 		} else {
-			go cc.Close()
+			dropped = s.conns[0]
+			s.conns = s.conns[1:]
 		}
+	}
+
+	if cc != nil {
+		s.ccs = append(s.ccs, cc)
 	}
 	if conn != nil {
-		if count != MAX_IDLE {
-			s.conns = append(s.conns, conn)
-		} else {
-			go conn.Close()
-		}
+		s.conns = append(s.conns, conn)
 	}
+
 	s.mu.Unlock()
+	if dropped != nil {
+		dropped.Close()
+	}
 }
