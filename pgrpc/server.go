@@ -35,6 +35,7 @@ func Listen(network, address string, onAccept func(*net.Conn, error)) (net.Liste
 			}
 			if err != nil {
 				time.Sleep(5 * time.Second)
+				continue
 			} else {
 				c := conn.(*net.TCPConn)
 				c.SetKeepAlive(true)
