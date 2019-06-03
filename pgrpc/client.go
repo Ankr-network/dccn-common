@@ -2,12 +2,12 @@ package pgrpc
 
 import (
 	context "context"
-	"io"
 	"net"
 	"sync"
 
 	"github.com/pkg/errors"
-	grpc "google.golang.org/grpc"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/connectivity"
 )
 
 type Client struct {
@@ -132,8 +132,21 @@ func (s *pool) Get() *grpc.ClientConn {
 		// pop the last one
 		cc := s.ccs[length-1]
 		s.ccs = s.ccs[:length-1]
-		s.mu.Unlock()
-		return cc
+		switch cc.GetState() {
+		case connectivity.Connecting:
+			if length != 1 {
+				cc = s.ccs[length-2]
+				s.ccs = s.ccs[:length-2]
+			}
+			fallthrough
+		case connectivity.Ready:
+			fallthrough
+		case connectivity.Idle:
+			s.mu.Unlock()
+			return cc
+		default:
+			cc.Close()
+		}
 	}
 
 	length := len(s.conns)
@@ -161,16 +174,15 @@ func (s *pool) Put(cc *grpc.ClientConn, conn net.Conn) {
 		panic("just support put back only one connection")
 	}
 
-	var dropped io.Closer
+	var dropped net.Conn
 	s.mu.Lock()
 
 	if count := len(s.ccs) + len(s.conns); count == MAX_IDLE_CONN {
-		if len(s.ccs) != 0 { // drop client conn first
-			dropped = s.ccs[0]
-			s.ccs = s.ccs[1:]
+		if length := len(s.conns); length != 0 {
+			dropped = s.conns[length-1]
+			s.conns = s.conns[:length-1]
 		} else {
-			dropped = s.conns[0]
-			s.conns = s.conns[1:]
+			dropped = conn
 		}
 	}
 
