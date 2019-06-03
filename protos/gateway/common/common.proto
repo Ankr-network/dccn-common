@@ -192,6 +192,7 @@ message AppReport {
     AppStatus app_status = 3;
     AppEvent app_event = 4;
     string detail = 5; //string for app resource detail
+    string endpoint = 6;
 }
 
 enum TransactionState {
