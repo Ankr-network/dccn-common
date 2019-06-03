@@ -12,7 +12,7 @@ import (
 )
 
 func client() {
-	if err := pgrpc.InitClient("tcp", ":50051", nil, grpc.WithInsecure()); err != nil {
+	if err := pgrpc.InitClient("tcp", ":50051", genHook("client"), grpc.WithInsecure()); err != nil {
 		log.Fatalln(err)
 	}
 
@@ -21,17 +21,19 @@ func client() {
 
 	var oneKey string
 	{ // test loop all
-		pgrpc.Each(func(key string, conn *grpc.ClientConn) {
+		pgrpc.Each(func(key string, conn *grpc.ClientConn) error {
 			resp, err := api.NewPingClient(conn).SayHello(context.Background(), &api.PingMessage{
 				Greeting: "Hello " + key,
 			})
 			if err != nil {
 				log.Fatalln(err)
+				return err
 			}
 
 			log.Println(resp.Greeting)
 
 			oneKey = key
+			return nil
 		})
 	}
 

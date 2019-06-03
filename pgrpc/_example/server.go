@@ -9,7 +9,7 @@ import (
 )
 
 func server() {
-	ln, err := pgrpc.Listen("tcp", "127.0.0.1:50051", nil)
+	ln, err := pgrpc.Listen("tcp", "127.0.0.1:50051", genHook("server"))
 	if err != nil {
 		log.Fatalln(err)
 	}
