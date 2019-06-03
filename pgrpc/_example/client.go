@@ -12,7 +12,7 @@ import (
 )
 
 func client() {
-	if err := pgrpc.InitClient("tcp", ":50051", genHook("client"), grpc.WithInsecure()); err != nil {
+	if err := pgrpc.InitClient("tcp", ":50051", nil, grpc.WithInsecure()); err != nil {
 		log.Fatalln(err)
 	}
 

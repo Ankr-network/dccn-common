@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net"
 
 	"github.com/Ankr-network/dccn-common/pgrpc"
 	"github.com/Ankr-network/dccn-common/pgrpc/_example/api"
@@ -9,7 +10,11 @@ import (
 )
 
 func server() {
-	ln, err := pgrpc.Listen("tcp", "127.0.0.1:50051", genHook("server"))
+	ln, err := pgrpc.Listen("tcp", "127.0.0.1:50051", func(conn *net.Conn, err error) {
+		if err != nil {
+			log.Println(err)
+		}
+	})
 	if err != nil {
 		log.Fatalln(err)
 	}

@@ -16,13 +16,13 @@ type Client struct {
 
 var DefaultClient *Client
 
-func InitClient(network, addr string, onAccept func(*net.Conn, error), opts ...grpc.DialOption) error {
+func InitClient(network, addr string, onAccept func(*net.Conn) string, opts ...grpc.DialOption) error {
 	var err error
 	DefaultClient, err = NewClient(network, addr, onAccept, opts...)
 	return err
 }
 
-func NewClient(network, addr string, onAccept func(*net.Conn, error), opts ...grpc.DialOption) (*Client, error) {
+func NewClient(network, addr string, onAccept func(*net.Conn) string, opts ...grpc.DialOption) (*Client, error) {
 	ln, err := net.Listen(network, addr)
 	if err != nil {
 		return nil, err
@@ -32,15 +32,19 @@ func NewClient(network, addr string, onAccept func(*net.Conn, error), opts ...gr
 	go func() {
 		for {
 			conn, err := ln.Accept()
-			if onAccept != nil {
-				onAccept(&conn, err)
-			}
 			if err != nil {
 				continue
 			}
 
-			ip, _, _ := net.SplitHostPort(conn.RemoteAddr().String())
-			if val, ok := c.LoadOrStore(ip, &pool{conns: []net.Conn{conn}, opts: opts}); ok {
+			var key string
+			if onAccept != nil {
+				key = onAccept(&conn)
+			}
+			if key == "" {
+				key, _, _ = net.SplitHostPort(conn.RemoteAddr().String())
+			}
+
+			if val, ok := c.LoadOrStore(key, &pool{key: key, conns: []net.Conn{conn}, opts: opts}); ok {
 				val.(*pool).Put(nil, conn)
 			}
 		}
@@ -77,10 +81,14 @@ func (c *Client) Each(fn func(key string, cc *grpc.ClientConn) error) {
 		go func(key string, pool *pool) {
 			defer wg.Done()
 
-			cc := pool.Get()
-			if cc == nil {
+			// avoid send by alias pool in loop
+			if pool.key != key {
 				return
-			} else if cc.Target() != key {
+			}
+
+			cc := pool.Get()
+			// no available connection
+			if cc == nil {
 				return
 			}
 
@@ -110,6 +118,7 @@ func (c *Client) Alias(key, alias string) {
 const MAX_IDLE_CONN = 2
 
 type pool struct {
+	key   string
 	conns []net.Conn
 	ccs   []*grpc.ClientConn
 	opts  []grpc.DialOption
@@ -128,7 +137,6 @@ func (s *pool) Get() *grpc.ClientConn {
 	}
 
 	length := len(s.conns)
-
 	if length == 0 {
 		s.mu.Unlock()
 		return nil
@@ -139,15 +147,13 @@ func (s *pool) Get() *grpc.ClientConn {
 	s.mu.Unlock()
 
 	// dial client conn
-	ip, _, _ := net.SplitHostPort(conn.RemoteAddr().String())
 	opts := append(s.opts, grpc.WithContextDialer(
 		func(context.Context, string) (net.Conn, error) { return conn, nil }))
-	cc, err := grpc.DialContext(context.Background(), ip, opts...)
+	cc, err := grpc.DialContext(context.Background(), conn.RemoteAddr().String(), opts...)
 	if err != nil {
 		panic(err)
 	}
 	return cc
-
 }
 
 func (s *pool) Put(cc *grpc.ClientConn, conn net.Conn) {
