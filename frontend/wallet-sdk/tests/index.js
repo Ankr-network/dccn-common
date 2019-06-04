@@ -38,7 +38,7 @@ const echo =
       set_balance_bc_addr('chain-stage.dccn.ankr.com:26657')
 
       const balance =
-          await get_balance('B508ED0D54597D516A680E7951F18CAD24C7EC9F');
+          await get_balance('B508ED0D54597D516A680E7951F18CAD24C7EC9FCFCD67');
       element = document.getElementById('get_balance');
 
       echo();
@@ -52,14 +52,14 @@ const echo =
       set_coin_bc_addr('chain-stage.dccn.ankr.com:26657')
 
           await send_coin(
-              'B508ED0D54597D516A680E7951F18CAD24C7EC9F',
-              '0D9FE6A785C830D2BE66FE40E0E7FE3D9838456C', '88',
+              'B508ED0D54597D516A680E7951F18CAD24C7EC9FCFCD67',
+              '0D9FE6A785C830D2BE66FE40E0E7FE3D9838456CE15D2C', '88000000000000000000',
               'wmyZZoMedWlsPUDVCOy+TiVcrIBPcn3WJN8k5cPQgIvC8cbcR10FtdAdzIlqXQJL9hBw1i0RsVjF6Oep/06Ezg==',
               'wvHG3EddBbXQHcyJal0CS/YQcNYtEbFYxejnqf9OhM4=');
 
       set_balance_bc_addr('chain-stage.dccn.ankr.com:26657')
       const balance =
-          await get_balance('B508ED0D54597D516A680E7951F18CAD24C7EC9F');
+          await get_balance('B508ED0D54597D516A680E7951F18CAD24C7EC9FCFCD67');
       element = document.getElementById('send_coin');
 
       echo();
@@ -73,7 +73,7 @@ const echo =
       set_history_bc_addr('chain-stage.dccn.ankr.com:26657')
 
       const historys =
-          await get_send_history('B508ED0D54597D516A680E7951F18CAD24C7EC9F');
+          await get_send_history('B508ED0D54597D516A680E7951F18CAD24C7EC9FCFCD67');
       element = document.getElementById('get_send_history');
 
       echo();
@@ -85,13 +85,15 @@ const echo =
     echo('At: ' + history.timestamp)
         echo()
     });
-    } document.getElementById('get_recv_history_btn')
+    } 
+
+    document.getElementById('get_recv_history_btn')
                                     .onclick =
                         async () => {
       set_history_bc_addr('chain-stage.dccn.ankr.com:26657')
 
       const historys =
-          await get_recv_history('0D9FE6A785C830D2BE66FE40E0E7FE3D9838456C');
+          await get_recv_history('0D9FE6A785C830D2BE66FE40E0E7FE3D9838456CE15D2C');
       element = document.getElementById('get_recv_history');
 
       echo();
@@ -110,7 +112,7 @@ const echo =
       set_history_bc_addr('chain-stage.dccn.ankr.com:26657')
 
       const historys =
-          await get_history('B508ED0D54597D516A680E7951F18CAD24C7EC9F');
+          await get_history('B508ED0D54597D516A680E7951F18CAD24C7EC9FCFCD67');
       element = document.getElementById('get_history');
 
       echo();
