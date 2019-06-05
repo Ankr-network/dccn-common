@@ -41,33 +41,6 @@ message GetClusterCertificateResponse {
   string client_csr_cert = 1;
 }
 
-message DashBoardRequest {
-  string uid = 1;
-}
-message DashBoardResponse{
-   int32 total_income = 1;
-   Usage current_usage = 2;
-   repeated Income week = 3;
-   repeated Income month = 4;
-   repeated Income year = 5;
-}
-
-
-message Income {
-   int32 income = 1;
-   google.protobuf.Timestamp date = 2;
-   Usage usage = 3;
-}
-
-message Usage {
-    int32 cpu_total = 1;
-    int32 cpu_used = 2;
-    int32 memory_total = 3;
-    int32 memory_used = 4;
-    int32 storage_total = 5;
-    int32 storage_used = 6;
-}
-
 
 message MyDataCenterRequest {
   string uid = 1;
@@ -119,4 +92,33 @@ message DCOverviewResponse {
   string timestamp = 3;  // the timestamp is same as request timestamp
   string r_signature = 4; // EcdsaSign this is r signature of  timestamp with private key
   string s_signature = 5;  // EcdsaSign this is s  signature of timestamp with private key
+}
+
+
+
+message DashBoardRequest {
+  string uid = 1;
+}
+message DashBoardResponse{
+   int32 total_income = 1;
+   Usage current_usage = 2;
+   repeated Income week = 3;
+   repeated Income month = 4;
+   repeated Income year = 5;
+}
+
+
+message Income {
+   int32 income = 1;
+   google.protobuf.Timestamp date = 2;
+   Usage usage = 3;
+}
+
+message Usage {
+    int32 cpu_total = 1;
+    int32 cpu_used = 2;
+    int32 memory_total = 3;
+    int32 memory_used = 4;
+    int32 storage_total = 5;
+    int32 storage_used = 6;
 }

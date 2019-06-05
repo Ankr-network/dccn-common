@@ -1,6 +1,7 @@
 syntax = "proto3";
 import "google/api/annotations.proto";
 import "common/common.proto";
+import "google/protobuf/timestamp.proto";
 
 package gwexdcmgr;
 
@@ -34,6 +35,7 @@ service DCAPI {
       }
 
 }
+
 
 message DataCenterListResponse {
   repeated common.proto.DataCenterStatus dcList= 1; // repeated groups of DataCenterInfo list
@@ -75,4 +77,40 @@ message RegisterDataCenterResponse {
   string client_key = 1;
   string client_csr_cert = 2;
   string ca_cert = 3;
+  string cluster_id = 4;
+  string cluster_name = 5;
+  string configmap = 6;
+}
+
+
+service ClusterDashBoard {
+      rpc DashBoard (DashBoardRequest) returns (DashBoardResponse) {}
+}
+
+
+message DashBoardRequest {
+  string uid = 1;
+}
+message DashBoardResponse{
+   int32 total_income = 1;
+   Usage current_usage = 2;
+   repeated Income week = 3;
+   repeated Income month = 4;
+   repeated Income year = 5;
+}
+
+
+message Income {
+   int32 income = 1;
+   google.protobuf.Timestamp date = 2;
+   Usage usage = 3;
+}
+
+message Usage {
+    int32 cpu_total = 1;
+    int32 cpu_used = 2;
+    int32 memory_total = 3;
+    int32 memory_used = 4;
+    int32 storage_total = 5;
+    int32 storage_used = 6;
 }
