@@ -85,6 +85,7 @@ message RegisterDataCenterResponse {
   string ca_cert = 3;
   string cluster_id = 4;
   string cluster_name = 5;
+  string content = 6;
 }
 
 message DataCenterListResponse {
