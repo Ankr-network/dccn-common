@@ -85,6 +85,7 @@ message RegisterDataCenterResponse {
   string ca_cert = 3;
   string cluster_id = 4;
   string cluster_name = 5;
+  string content = 6;
 }
 
 message DataCenterListResponse {
@@ -116,5 +117,6 @@ message DCOverviewResponse {
   string cluster_id = 1;
   common.proto.DataCenterStatus status = 2;
   string timestamp = 3;  // the timestamp is same as request timestamp
-  string signature = 4; // this is signature of timestamp with private key
+  string r_signature = 4; // EcdsaSign this is r signature of  timestamp with private key
+  string s_signature = 5;  // EcdsaSign this is s  signature of timestamp with private key
 }

@@ -71,7 +71,8 @@ message ClusterProviderApplyRequest{
       string job_title = 4;
       string company = 5;
       string country = 6;
-      string cluster_name = 7;
+      string city = 7;
+      int32  time_zone = 8;
 }
 
 message SearchDepositRequest {
