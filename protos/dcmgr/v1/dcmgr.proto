@@ -85,11 +85,7 @@ message RegisterDataCenterResponse {
   string ca_cert = 3;
   string cluster_id = 4;
   string cluster_name = 5;
-<<<<<<< HEAD
-  string configmapgit pull = 6;
-=======
-  string content = 6;
->>>>>>> bb9d1c5c91289759a0622fbd17c311c058567b8e
+  string configmap = 6;
 }
 
 message DataCenterListResponse {
