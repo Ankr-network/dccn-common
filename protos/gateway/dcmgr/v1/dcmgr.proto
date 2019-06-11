@@ -34,6 +34,16 @@ service DCAPI {
         option (google.api.http).get = "/dc/mydc";
       }
 
+
+    rpc ClusterDashBoard (DashBoardRequest) returns (DashBoardResponse) {
+       option (google.api.http).get = "/dc/dashboard";
+    }
+    rpc UserHistoryFeesList (HistoryFeesRequest) returns (HistoryFeesResponse) {
+        option (google.api.http).get = "/fees/history_list";
+    }
+    rpc MonthFeesDetail (FeesDetailRequest) returns (FeesDetailResponse) {
+         option (google.api.http).get = "/fees/month_detail";
+    }
 }
 
 
@@ -113,4 +123,48 @@ message Usage {
     int32 memory_used = 4;
     int32 storage_total = 5;
     int32 storage_used = 6;
+}
+
+message HistoryFeesRequest {
+  string uid = 1;
+  string start = 2;
+  string end = 3;
+}
+
+
+message MonthRecord{
+  string payment_date = 1;
+  string payment_status = 2;
+  string method = 3;
+  int32 amount = 4;
+  string invoice = 5;
+}
+
+message HistoryFeesResponse {
+  repeated MonthRecord records= 1;
+}
+
+message FeesDetailRequest {
+  string uid = 1;
+  string month = 2;
+}
+
+message NamespaceFees {
+  string name = 1;
+  int32 charge = 2;
+
+}
+
+message FeesDetailResponse {
+  string account = 1;
+  string attn = 2;
+  string invoice_number = 3;
+  int32 total = 4;
+  string issue_date = 5;
+  string start = 6;
+  string end = 7;
+  int32 charges = 8;
+  int32 credits = 9;
+  int32 tax = 10;
+  repeated NamespaceFees ns_fees = 11;
 }

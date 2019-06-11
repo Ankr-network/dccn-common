@@ -4,7 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/micro/go-micro/metadata"
+	"google.golang.org/grpc/metadata"
+	"log"
 	"strings"
 	jwt_token "github.com/dgrijalva/jwt-go"
 )
@@ -18,13 +19,23 @@ type Token struct {
 
 
 func GetUserID(ctx context.Context) string{
-	meta, ok := metadata.FromContext(ctx)
+	meta, ok := metadata.FromIncomingContext(ctx)
+	log.Printf("meta %+v \n", meta)
 	// Note this is now uppercase (not entirely sure why this is...)
 	var token string
 	if ok {
-		token = meta["token"]
+		tokenArray := meta["token"]
+		token = tokenArray[0]
 	}
+	log.Printf("token %+v \n", token)
+
+
 	parts := strings.Split(token, ".")
+
+	if len(parts) != 3 {
+		log.Printf("GetUserID parse error. format error token %s => %+v \n", token, parts)
+		return ""
+	}
 
 	decoded, err := jwt_token.DecodeSegment(parts[1])
 	if err != nil {
