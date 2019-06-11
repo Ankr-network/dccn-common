@@ -130,8 +130,12 @@ func Sign(input, priv_key string) (result string, err_ret error) {
 	return
 }
 
-func SetValidator(ip, port, pubkey, power string) (err_ret error) {
-
+/*
+Format:
+val:public_key:power:nonce:admin_pub:sig
+*/
+func SetValidator(ip, port, pubkey, power, admin_priv_key string) (err_ret error) {
+	var nonce string = "0"
         _, err := strconv.ParseInt(string(power), 10, 64)
         if err != nil {
                 return err
@@ -143,6 +147,31 @@ func SetValidator(ip, port, pubkey, power string) (err_ret error) {
 		return err
 	}
 
+	admin_pub_key, err := GetPublicKeyByPrivateKey(admin_priv_key)
+	if err != nil {
+		return err
+	}
+
+	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "val_nonce")))
+        qres := res.Response
+        if !qres.IsOK() {
+                return errors.New("Query nonce failure, connect error.")
+        } else {
+                if string(qres.Value) != "" {
+                        nonce = string(qres.Value)
+                } else {
+			nonce = "0"
+                }
+        }
+
+	nonceInt, err := strconv.ParseInt(string(nonce), 10, 64)
+        if err != nil {
+                return err
+        }
+
+        nonceInt++
+        nonce = fmt.Sprintf("%d", nonceInt)
+
 	pubKeyObject, err := deserilizePubKey(pubkey)
         if err != nil {
                 return err
@@ -150,10 +179,15 @@ func SetValidator(ip, port, pubkey, power string) (err_ret error) {
 
 	mystr := fmt.Sprintf("%s", pubKeyObject)
         mystr = mystr[len(PubkeyStart) : len(PubkeyStart)+PrivKeyEd25519Size]
-	fmt.Println(mystr)
 
+	sig, err := Sign(fmt.Sprintf("%s%s%s", mystr, power, nonce), admin_priv_key)
+        if err != nil {
+                return err
+        }
+
+	fmt.Println(mystr)
 	btr, err := cl.BroadcastTxCommit(types.Tx(
-		fmt.Sprintf("%s:%s/%s", string("val"), mystr, power)))
+		fmt.Sprintf("%s:%s:%s:%s:%s:%s", string("val"), mystr, power, nonce, admin_pub_key, sig)))
 
         if err != nil {
                 return err
@@ -165,42 +199,11 @@ func SetValidator(ip, port, pubkey, power string) (err_ret error) {
 
         client.WaitForHeight(cl, btr.Height+1, nil)
 
-	fmt.Println(btr)
 	return nil
 }
 
-func RemoveValidator(ip, port, pubkey string) (err_ret error) {
-
-        cl := getHTTPClient(ip, port)
-	_, err := cl.Status()
-        if err != nil {
-                return err
-        }
-
-        pubKeyObject, err := deserilizePubKey(pubkey)
-        if err != nil {
-                return err
-        }
-
-        mystr := fmt.Sprintf("%s", pubKeyObject)
-        mystr = mystr[len(PubkeyStart) : len(PubkeyStart)+PrivKeyEd25519Size]
-        fmt.Println(mystr)
-
-        btr, err := cl.BroadcastTxCommit(types.Tx(
-                fmt.Sprintf("%s:%s/%s", string("val"), mystr, "0")))
-
-        if err != nil {
-                return err
-        } else if btr.CheckTx.Code != 0 {
-                return errors.New(btr.CheckTx.Log)
-        } else if btr.DeliverTx.Code != 0{
-                return errors.New(btr.DeliverTx.Log)
-        }
-
-        client.WaitForHeight(cl, btr.Height+1, nil)
-
-        fmt.Println(btr)
-        return nil
+func RemoveValidator(ip, port, pubkey, admin_priv_key string) (err_ret error) {
+	return SetValidator(ip, port, pubkey, "0", admin_priv_key)
 }
 
 /*
@@ -399,11 +402,16 @@ address: set amount to this address
 amount: token amount
 public_key: admin pubic_key
 */
-func SetBalance(ip, port, priv_key, address, amount, public_key string) error {
+func SetBalance(ip, port, address, amount, admin_priv_key string) error {
 	var nonce string = "0"
 	cl := getHTTPClient(ip, port)
 
 	_, err := cl.Status()
+	if err != nil {
+		return err
+	}
+
+	admin_pub_key, err := GetPublicKeyByPrivateKey(admin_priv_key)
 	if err != nil {
 		return err
 	}
@@ -431,18 +439,23 @@ func SetBalance(ip, port, priv_key, address, amount, public_key string) error {
 	nonceInt++
 	nonce = fmt.Sprintf("%d", nonceInt)
 
-	sig, err := Sign(fmt.Sprintf("%s%s%s", address, amount, nonce), priv_key)
+	sig, err := Sign(fmt.Sprintf("%s%s%s", address, amount, nonce), admin_priv_key)
 	if err != nil {
 		return err
 	}
 
 	//fmt.Printf("%s=%s:%s:%s:%s:%s\n", string("set_bal"), address, amount, nonce, public_key, sig)
 	btr, err := cl.BroadcastTxCommit(types.Tx(
-		fmt.Sprintf("%s=%s:%s:%s:%s:%s", string("set_bal"), address, amount, nonce, public_key, sig)))
+		fmt.Sprintf("%s=%s:%s:%s:%s:%s", string("set_bal"), address, amount, nonce, admin_pub_key, sig)))
 
-	if err != nil {
-		return err
-	}
+        if err != nil {
+                return err
+        } else if btr.CheckTx.Code != 0 {
+                return errors.New(btr.CheckTx.Log)
+        } else if btr.DeliverTx.Code != 0{
+                return errors.New(btr.DeliverTx.Log)
+        }
+
 	client.WaitForHeight(cl, btr.Height+1, nil)
 
 	return nil
