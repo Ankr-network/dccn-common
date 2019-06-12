@@ -191,4 +191,5 @@ message Deposit {
     string amount = 7;
     string confirmedBlockHeight = 8;
     TransactionState txState = 9;
+    string toTxHash = 10;
 }
