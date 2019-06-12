@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package esmgr;
+package logmgr;
 
-service EsMgr {
+service LogMgr {
    rpc  GetLogCountByAppId (LogAppCountRequest) returns (LogAppCountResponse) {}
    rpc  GetLogCountByPodName (LogPodCountRequest) returns (LogPodCountResponse) {}
    rpc  ListLogByAppId (LogAppRequest) returns (LogAppResponse) {}

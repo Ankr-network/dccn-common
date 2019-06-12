@@ -99,5 +99,5 @@ var (
 	ErrElasticsearchPing         = errors.New(LogMgrError + "Elasticsearch can not connect")
 	ErrElasticsearchSearchAfter  = errors.New(LogMgrError + "Elasticsearch search after failed")
 	ErrElasticsearchCount        = errors.New(LogMgrError + "Elasticsearch count failed")
-	ErrErrElasticsearchQuery     = errors.New(LogMgrError + "Elasticsearch query syntax wrong")
+	ErrElasticsearchQuery        = errors.New(LogMgrError + "Elasticsearch query syntax wrong")
 )
