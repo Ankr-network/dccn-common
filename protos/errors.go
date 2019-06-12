@@ -18,8 +18,12 @@ const (
 	CertificationError = "CertificationError:"
 	DialError = "DialError:"
 	LoadError = "LoadError:"
+	ReCaptchaError = "reCAPTCHAError:"
+	PasswordCharError = "PasswordCharError:"
 )
 var (
+	ErrPasswordForbiddenChar	= errors.New(PasswordCharError + "There are not allowed characters in the password. Please only use the combination of letters, numbers and symbols.")
+	ErrTimeoutorDuplicate		= errors.New(ReCaptchaError + "Your reCAPTCHA token is timeout or duplicate")
 	ErrNoChartReadme			= errors.New(NotFoundError + "Cannot find readme in chart tarball")
 	ErrCreateRequest			= errors.New(DialError + "Cannot create request")
 	ErrCannotReadDownload	 	= errors.New(ArgumentError + "Cannot read chart tarball")
