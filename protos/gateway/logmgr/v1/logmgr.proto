@@ -1,0 +1,114 @@
+syntax = "proto3";
+import "google/api/annotations.proto";
+package gwlogmgr;
+
+service LogMgr {
+   rpc  GetLogCountByAppId (LogAppCountRequest) returns (LogAppCountResponse) {
+       option (google.api.http) = {
+	             get:"/log/count/appid"
+	        };
+   }
+   rpc  GetLogCountByPodName (LogPodCountRequest) returns (LogPodCountResponse) {
+       option (google.api.http) = {
+	             get:"/log/count/podname"
+	        };
+   }
+   rpc  ListLogByAppId (LogAppRequest) returns (LogAppResponse) {
+       option (google.api.http) = {
+	             get:"/log/list/appid"
+	        };
+   }
+   rpc  ListLogByPodName (LogPodRequest) returns (LogPodResponse) {
+       option (google.api.http) = {
+	             get:"/log/list/podname"
+	        };
+   }
+}
+
+message LogMetaData {
+    string pod_name = 1;
+    string pod_id = 2;
+    string namespace_name = 3;
+    string namespace_id = 4;
+}
+
+message LogItem {
+	string timestamp = 1;
+	string msg = 2;
+}
+
+message LogEntry {
+    LogMetaData meta_data = 1;
+    repeated LogItem log_items = 2;
+}
+
+message LogAppRequest {
+	string app_id = 1;
+	repeated string keywords = 2;
+	uint64 start_time = 3;
+	uint64 end_time = 4;
+    uint64 search_after = 5;  //search_after: timestamp
+    uint32 size = 6;  //max 1000
+    string sort = 7; //asc, desc
+    bool   is_test = 8;
+}
+
+message LogAppResponse {
+	int32  code = 1;
+	string msg = 2;
+    uint64 total_count = 3;
+    uint64 last_search_end = 4;
+	repeated LogEntry log_details = 5;
+}
+
+message LogAppCountRequest {
+    string app_id = 2;
+    repeated string keywords = 3;
+    uint64 start_time = 4;
+    uint64 end_time = 5;
+    bool   is_test = 6;
+}
+
+message LogAppCountResponse {
+    string req_id = 1;
+    int32  code = 2;
+    string msg = 3;
+    uint64 count = 4;
+}
+
+message LogPodRequest {
+    string req_id = 1;
+    string pod_name = 2;
+    repeated string keywords = 3;
+    uint64 start_time = 4;
+    uint64 end_time = 5;
+    uint64 search_after = 6;
+    uint32 size = 7;
+    string sort = 8;
+    bool   is_test = 9;
+}
+
+message LogPodResponse {
+    string req_id = 1;
+    int32  code = 2;
+    string msg = 3;
+    uint64 total_count = 4;
+    uint64 last_search_end = 5;
+    LogEntry log_details = 6;
+}
+
+message LogPodCountRequest {
+    string req_id = 1;
+    string pod_name = 2;
+    repeated string keywords = 3;
+    uint64 start_time = 4;
+    uint64 end_time = 5;
+    bool   is_test = 6;
+}
+
+message LogPodCountResponse {
+    string req_id = 1;
+    int32  code = 2;
+    string msg = 3;
+    uint64 count = 4;
+}
