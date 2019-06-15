@@ -24,7 +24,7 @@ func GetUserID(ctx context.Context) string{
 	// Note this is now uppercase (not entirely sure why this is...)
 	var token string
 	if ok {
-		tokenArray := meta["token"]
+		tokenArray := meta["authorization"]
 		token = tokenArray[0]
 	}
 	log.Printf("token %+v \n", token)
