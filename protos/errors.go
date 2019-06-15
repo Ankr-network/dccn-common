@@ -21,6 +21,7 @@ const (
 	ReCaptchaError     = "ReCaptchaError:"
 	PasswordCharError  = "PasswordCharError:"
 	LogMgrError        = "LogMgrError:"
+	ClusterError       = "DcMgrError:"
 )
 
 var (
@@ -100,4 +101,6 @@ var (
 	ErrElasticsearchSearchAfter  = errors.New(LogMgrError + "Elasticsearch search after failed")
 	ErrElasticsearchCount        = errors.New(LogMgrError + "Elasticsearch count failed")
 	ErrElasticsearchQuery        = errors.New(LogMgrError + "Elasticsearch query syntax wrong")
+	ErrUserStillPending          = errors.New(ClusterError + "User is still pending for a becoming cluster provider, can not register now")
+	ErrUserRegisteredCluster     = errors.New(ClusterError + "User has already registered one cluster, can not register again")
 )
