@@ -12,7 +12,7 @@ import (
 	"net/http"
 	"io/ioutil"
 	"math/big"
-	"crypto/rand"
+	_ "crypto/rand"
 
 	_ "github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/crypto/ed25519"
@@ -511,7 +511,7 @@ func GetHistoryReceive(ip, port, address string, prove bool, page, perPage int) 
 	btr, err := cl.TxSearch(query, prove, page, perPage)
 	if err != nil {
 		return nil, err
-	} 
+	}
 
 	return btr, err
 }
@@ -522,35 +522,54 @@ dc: datacenter name
 ns: name space
 value: metering value, marshled json file.
 */
-func SetMetering(ip, port, priv_key_pem, dc, ns, value string) error {
-	randbyte := make([]byte, 4)
-        _, err := rand.Read(randbyte)
-        if err != nil {
-                fmt.Println(err)
-		return err
-        }
-        randstring := fmt.Sprintf("%X", randbyte)
-
-	sigX, sigY, err := signmanager.EcdsaSign(priv_key_pem, dc + ns + value)
+func SetMetering(ip, port, priv_key_pem, admin_priv_key_pem, dc, ns, value string) error {
+        cl := getHTTPClient(ip, port)
+        _, err := cl.Status()
         if err != nil {
                 return err
         }
 
-	cl := getHTTPClient(ip, port)
+	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s:%s:%s", "mtr", dc, ns)))
+        qres := res.Response
+	nonce := "0"
+        if !qres.IsOK() {
+                return errors.New("Query nonce failure, connect error.")
+        } else {
+                balanceNonceSlices := strings.Split(string(qres.Value), ":")
+                if len(balanceNonceSlices) == 6 {
+                        nonce = balanceNonceSlices[5]
+                }
+        }
 
-	_, err = cl.Status()
-	if err != nil {
-		return err
-	}
+	nonceInt, err := strconv.ParseInt(string(nonce), 10, 64)
+        if err != nil {
+                return err
+        }
+        nonceInt++
+	nonce = fmt.Sprintf("%d", nonceInt)
+
+	sigX, sigY, err := signmanager.EcdsaSign(priv_key_pem, dc + ns + value + nonce)
+        if err != nil {
+                return err
+        }
+
+	sigA, sigB, err := signmanager.EcdsaSign(admin_priv_key_pem, dc + ns + value + nonce)
+        if err != nil {
+                return err
+        }
 
 	//fmt.Printf("%s=%s:%s:%s:%s:%s:%s\n", string("set_mtr"), dc, ns, value, sigX, sigY, randstring)
 	btr, err := cl.BroadcastTxCommit(types.Tx(
-		fmt.Sprintf("%s=%s:%s:%s:%s:%s:%s", string("set_mtr"), dc, ns, sigX, sigY, randstring, value)))
+		fmt.Sprintf("%s=%s:%s:%s:%s:%s:%s:%s:%s", string("set_mtr"),
+			dc, ns, sigX, sigY, sigA, sigB, nonce, value)))
 
 	if err != nil {
-		return err
-	}
-	client.WaitForHeight(cl, btr.Height+1, nil)
+                return err
+        } else if btr.CheckTx.Code != 0 {
+                return errors.New(btr.CheckTx.Log)
+        } else if btr.DeliverTx.Code != 0{
+                return errors.New(btr.DeliverTx.Log)
+        }
 
 	return nil
 }

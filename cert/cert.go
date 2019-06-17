@@ -347,6 +347,53 @@ func GenerateEcdsaClientCert(name, certCAPem, keyCAPem string) (scert string, pr
 	return certOut.String(), keyOut.String(), nil
 }
 
+// Generate an ecdsa self-signed cert
+// input: name
+// output: cert, priv_key
+func GenerateEcdsaSelfsignCert(name string) (scert string, priv_key string, err error) {
+	sn, err := generateSerialNumber()
+	if err != nil {
+		return "", "", err
+	}
+
+	cert := &x509.Certificate{
+		SerialNumber: sn,
+		Subject: pkix.Name{
+			CommonName: name,
+			Organization:  []string{"DataCenter"},
+			Country:       []string{"US"},
+			Province:      []string{"CA"},
+			Locality:      []string{"SF"},
+			StreetAddress: []string{"MISSION ST."},
+			PostalCode:    []string{"94105"},
+		},
+		NotBefore:    time.Now(),
+		NotAfter:     time.Now().AddDate(10, 0, 0),
+		ExtKeyUsage:  []x509.ExtKeyUsage{x509.ExtKeyUsageClientAuth},
+		KeyUsage:     x509.KeyUsageDigitalSignature,
+		IsCA:                  false,
+		BasicConstraintsValid: true,
+	}
+	priv, _ := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	pub := &priv.PublicKey
+
+	// Sign the certificate
+	cert_b, err := x509.CreateCertificate(rand.Reader, cert, cert, pub, priv)
+
+	// Public key
+	certOut := new(bytes.Buffer)
+	pem.Encode(certOut, &pem.Block{Type: "CERTIFICATE", Bytes: cert_b})
+	//fmt.Println(certOut.String())
+
+	// Private key
+	keyOut := new(bytes.Buffer)
+	priv_marshal, _ := x509.MarshalECPrivateKey(priv)
+	pem.Encode(keyOut, &pem.Block{Type: "EC PRIVATE KEY", Bytes: priv_marshal})
+	//fmt.Println(keyOut.String())
+
+	return certOut.String(), keyOut.String(), nil
+}
+
 // GenerateSerialNumber generates a serial number suitable for a certificate
 func generateSerialNumber() (*big.Int, error) {
         serial, err := rand.Int(rand.Reader, (&big.Int{}).Exp(big.NewInt(2), big.NewInt(159), nil))

@@ -172,3 +172,18 @@ func TestGenerateEcdsaServerAndClientCert(t *testing.T) {
 	fmt.Println("ECDSA CLIENT KEY:")
 	fmt.Println(cprivateKey)
 }
+
+func TestGenerateEcdsaSelfsignCert(t *testing.T) {
+	t.Log("Testing GenerateSelfsignCert")
+	scert, sprivateKey, err := certmanager.GenerateEcdsaSelfsignCert("ankr-metering")
+
+        if err == nil {
+                t.Logf("\ncert: %s\n private key: %s\n", scert, sprivateKey)
+        } else {
+                t.Error(err)
+        }
+        fmt.Println("ECDSA Metering CERT:")
+        fmt.Println(scert)
+        fmt.Println("ECDSA Metering KEY:")
+        fmt.Println(sprivateKey)
+}
