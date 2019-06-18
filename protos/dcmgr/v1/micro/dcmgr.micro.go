@@ -361,6 +361,7 @@ type FeesService interface {
 	ClusterDashBoard(ctx context.Context, in *DashBoardRequest, opts ...client.CallOption) (*DashBoardResponse, error)
 	UserHistoryFeesList(ctx context.Context, in *HistoryFeesRequest, opts ...client.CallOption) (*HistoryFeesResponse, error)
 	MonthFeesDetail(ctx context.Context, in *FeesDetailRequest, opts ...client.CallOption) (*FeesDetailResponse, error)
+	InvoiceDetail(ctx context.Context, in *InvoiceDetailRequest, opts ...client.CallOption) (*FeesDetailResponse, error)
 }
 
 type feesService struct {
@@ -411,12 +412,23 @@ func (c *feesService) MonthFeesDetail(ctx context.Context, in *FeesDetailRequest
 	return out, nil
 }
 
+func (c *feesService) InvoiceDetail(ctx context.Context, in *InvoiceDetailRequest, opts ...client.CallOption) (*FeesDetailResponse, error) {
+	req := c.c.NewRequest(c.name, "FeesService.InvoiceDetail", in)
+	out := new(FeesDetailResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for FeesService service
 
 type FeesServiceHandler interface {
 	ClusterDashBoard(context.Context, *DashBoardRequest, *DashBoardResponse) error
 	UserHistoryFeesList(context.Context, *HistoryFeesRequest, *HistoryFeesResponse) error
 	MonthFeesDetail(context.Context, *FeesDetailRequest, *FeesDetailResponse) error
+	InvoiceDetail(context.Context, *InvoiceDetailRequest, *FeesDetailResponse) error
 }
 
 func RegisterFeesServiceHandler(s server.Server, hdlr FeesServiceHandler, opts ...server.HandlerOption) error {
@@ -424,6 +436,7 @@ func RegisterFeesServiceHandler(s server.Server, hdlr FeesServiceHandler, opts .
 		ClusterDashBoard(ctx context.Context, in *DashBoardRequest, out *DashBoardResponse) error
 		UserHistoryFeesList(ctx context.Context, in *HistoryFeesRequest, out *HistoryFeesResponse) error
 		MonthFeesDetail(ctx context.Context, in *FeesDetailRequest, out *FeesDetailResponse) error
+		InvoiceDetail(ctx context.Context, in *InvoiceDetailRequest, out *FeesDetailResponse) error
 	}
 	type FeesService struct {
 		feesService
@@ -446,4 +459,8 @@ func (h *feesServiceHandler) UserHistoryFeesList(ctx context.Context, in *Histor
 
 func (h *feesServiceHandler) MonthFeesDetail(ctx context.Context, in *FeesDetailRequest, out *FeesDetailResponse) error {
 	return h.FeesServiceHandler.MonthFeesDetail(ctx, in, out)
+}
+
+func (h *feesServiceHandler) InvoiceDetail(ctx context.Context, in *InvoiceDetailRequest, out *FeesDetailResponse) error {
+	return h.FeesServiceHandler.InvoiceDetail(ctx, in, out)
 }

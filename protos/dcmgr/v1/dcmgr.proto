@@ -128,6 +128,12 @@ service FeesService {
       rpc ClusterDashBoard (DashBoardRequest) returns (DashBoardResponse) {}
       rpc UserHistoryFeesList (HistoryFeesRequest) returns (HistoryFeesResponse) {}
       rpc MonthFeesDetail (FeesDetailRequest) returns (FeesDetailResponse) {}
+      rpc InvoiceDetail (InvoiceDetailRequest) returns (FeesDetailResponse) {}
+}
+
+message InvoiceDetailRequest{
+   string uid = 1;
+   string invoice_id = 2;
 }
 
 message HistoryFeesRequest {

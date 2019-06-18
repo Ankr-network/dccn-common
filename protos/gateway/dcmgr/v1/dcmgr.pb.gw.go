@@ -141,6 +141,23 @@ func request_DCAPI_MonthFeesDetail_0(ctx context.Context, marshaler runtime.Mars
 
 }
 
+var (
+	filter_DCAPI_InvoiceDetail_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_DCAPI_InvoiceDetail_0(ctx context.Context, marshaler runtime.Marshaler, client DCAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq InvoiceDetailRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_DCAPI_InvoiceDetail_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.InvoiceDetail(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
 // RegisterDCAPIHandlerFromEndpoint is same as RegisterDCAPIHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
 func RegisterDCAPIHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
@@ -339,6 +356,26 @@ func RegisterDCAPIHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 
 	})
 
+	mux.Handle("GET", pattern_DCAPI_InvoiceDetail_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_DCAPI_InvoiceDetail_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_DCAPI_InvoiceDetail_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	return nil
 }
 
@@ -358,6 +395,8 @@ var (
 	pattern_DCAPI_UserHistoryFeesList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"fees", "history_list"}, ""))
 
 	pattern_DCAPI_MonthFeesDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"fees", "month_detail"}, ""))
+
+	pattern_DCAPI_InvoiceDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"fees", "invoice_detail"}, ""))
 )
 
 var (
@@ -376,4 +415,6 @@ var (
 	forward_DCAPI_UserHistoryFeesList_0 = runtime.ForwardResponseMessage
 
 	forward_DCAPI_MonthFeesDetail_0 = runtime.ForwardResponseMessage
+
+	forward_DCAPI_InvoiceDetail_0 = runtime.ForwardResponseMessage
 )

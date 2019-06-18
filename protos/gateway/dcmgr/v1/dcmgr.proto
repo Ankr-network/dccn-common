@@ -44,6 +44,10 @@ service DCAPI {
     rpc MonthFeesDetail (FeesDetailRequest) returns (FeesDetailResponse) {
          option (google.api.http).get = "/fees/month_detail";
     }
+
+    rpc InvoiceDetail (InvoiceDetailRequest) returns (FeesDetailResponse) {
+         option (google.api.http).get = "/fees/invoice_detail";
+    }
 }
 
 
@@ -87,9 +91,6 @@ message RegisterDataCenterResponse {
 }
 
 
-service ClusterDashBoard {
-      rpc DashBoard (DashBoardRequest) returns (DashBoardResponse) {}
-}
 
 
 message DashBoardRequest {
@@ -159,4 +160,10 @@ message FeesDetailResponse {
   int32 credits = 9;
   int32 tax = 10;
   repeated NamespaceFees ns_fees = 11;
+}
+
+
+message InvoiceDetailRequest{
+   string uid = 1;
+   string invoice_id = 2;
 }
