@@ -119,6 +119,7 @@ message UserAttribute {
         bool bool_value = 5;
         // null null_value = 6;
     }
+    bool muted = 7;
 }
 
 message UserAttributes {

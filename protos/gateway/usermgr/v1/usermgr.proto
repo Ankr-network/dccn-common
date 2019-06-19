@@ -217,6 +217,7 @@ message ConfirmRegistrationRequest {
 
 message ForgotPasswordRequest {
     string email = 1;
+    string token = 2;
 }
 
 message ConfirmPasswordRequest {
