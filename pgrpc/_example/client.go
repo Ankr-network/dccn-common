@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/Ankr-network/dccn-common/pgrpc"
-	"github.com/Ankr-network/dccn-common/pgrpc/_example/api"
+	"github.com/Ankr-network/dccn-common/pgrpc/api"
 	grpc "google.golang.org/grpc"
 )
 
@@ -22,15 +22,15 @@ func client() {
 	var oneKey string
 	{ // test loop all
 		pgrpc.Each(func(key string, conn *grpc.ClientConn) error {
-			resp, err := api.NewPingClient(conn).SayHello(context.Background(), &api.PingMessage{
-				Greeting: "Hello " + key,
+			resp, err := api.NewPingClient(conn).Ping(context.Background(), &api.PingMsg{
+				Id: "Hello " + key,
 			})
 			if err != nil {
 				log.Fatalln(err)
 				return err
 			}
 
-			log.Println(resp.Greeting)
+			log.Println(resp.Id)
 
 			oneKey = key
 			return nil
@@ -42,14 +42,14 @@ func client() {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		resp, err := api.NewPingClient(cc).SayHello(context.Background(), &api.PingMessage{
-			Greeting: "dial",
+		resp, err := api.NewPingClient(cc).Ping(context.Background(), &api.PingMsg{
+			Id: "dial",
 		})
 		if err != nil {
 			log.Fatalln(err)
 		}
 
-		log.Println(resp.Greeting)
+		log.Println(resp.Id)
 		cc.Close()
 	}
 	{ // test alias
@@ -61,14 +61,14 @@ func client() {
 		defer cc.Close()
 
 		for i := 0; i < 2; i++ {
-			resp, err := api.NewPingClient(cc).SayHello(context.Background(), &api.PingMessage{
-				Greeting: "test-" + strconv.Itoa(i),
+			resp, err := api.NewPingClient(cc).Ping(context.Background(), &api.PingMsg{
+				Id: "test-" + strconv.Itoa(i),
 			})
 			if err != nil {
 				log.Fatalln(err)
 			}
 
-			log.Println(resp.Greeting)
+			log.Println(resp.Id)
 		}
 	}
 }

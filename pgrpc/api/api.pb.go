@@ -24,60 +24,59 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type PingMessage struct {
-	Greeting             string   `protobuf:"bytes,1,opt,name=greeting,proto3" json:"greeting,omitempty"`
+type PingMsg struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *PingMessage) Reset()         { *m = PingMessage{} }
-func (m *PingMessage) String() string { return proto.CompactTextString(m) }
-func (*PingMessage) ProtoMessage()    {}
-func (*PingMessage) Descriptor() ([]byte, []int) {
+func (m *PingMsg) Reset()         { *m = PingMsg{} }
+func (m *PingMsg) String() string { return proto.CompactTextString(m) }
+func (*PingMsg) ProtoMessage()    {}
+func (*PingMsg) Descriptor() ([]byte, []int) {
 	return fileDescriptor_00212fb1f9d3bf1c, []int{0}
 }
 
-func (m *PingMessage) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_PingMessage.Unmarshal(m, b)
+func (m *PingMsg) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_PingMsg.Unmarshal(m, b)
 }
-func (m *PingMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_PingMessage.Marshal(b, m, deterministic)
+func (m *PingMsg) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_PingMsg.Marshal(b, m, deterministic)
 }
-func (m *PingMessage) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PingMessage.Merge(m, src)
+func (m *PingMsg) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PingMsg.Merge(m, src)
 }
-func (m *PingMessage) XXX_Size() int {
-	return xxx_messageInfo_PingMessage.Size(m)
+func (m *PingMsg) XXX_Size() int {
+	return xxx_messageInfo_PingMsg.Size(m)
 }
-func (m *PingMessage) XXX_DiscardUnknown() {
-	xxx_messageInfo_PingMessage.DiscardUnknown(m)
+func (m *PingMsg) XXX_DiscardUnknown() {
+	xxx_messageInfo_PingMsg.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_PingMessage proto.InternalMessageInfo
+var xxx_messageInfo_PingMsg proto.InternalMessageInfo
 
-func (m *PingMessage) GetGreeting() string {
+func (m *PingMsg) GetId() string {
 	if m != nil {
-		return m.Greeting
+		return m.Id
 	}
 	return ""
 }
 
 func init() {
-	proto.RegisterType((*PingMessage)(nil), "api.PingMessage")
+	proto.RegisterType((*PingMsg)(nil), "api.PingMsg")
 }
 
 func init() { proto.RegisterFile("api.proto", fileDescriptor_00212fb1f9d3bf1c) }
 
 var fileDescriptor_00212fb1f9d3bf1c = []byte{
-	// 111 bytes of a gzipped FileDescriptorProto
+	// 93 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4c, 0x2c, 0xc8, 0xd4,
-	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x4e, 0x2c, 0xc8, 0x54, 0xd2, 0xe4, 0xe2, 0x0e, 0xc8,
-	0xcc, 0x4b, 0xf7, 0x4d, 0x2d, 0x2e, 0x4e, 0x4c, 0x4f, 0x15, 0x92, 0xe2, 0xe2, 0x48, 0x2f, 0x4a,
-	0x4d, 0x2d, 0xc9, 0xcc, 0x4b, 0x97, 0x60, 0x54, 0x60, 0xd4, 0xe0, 0x0c, 0x82, 0xf3, 0x8d, 0x2c,
-	0xb8, 0x58, 0x40, 0x4a, 0x85, 0x0c, 0xb8, 0x38, 0x82, 0x13, 0x2b, 0x3d, 0x52, 0x73, 0x72, 0xf2,
-	0x85, 0x04, 0xf4, 0x40, 0xe6, 0x21, 0x99, 0x20, 0x85, 0x21, 0xa2, 0xc4, 0x90, 0xc4, 0x06, 0xb6,
-	0xd0, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff, 0xf8, 0x4a, 0xe3, 0x1e, 0x7d, 0x00, 0x00, 0x00,
+	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x4e, 0x2c, 0xc8, 0x54, 0x92, 0xe4, 0x62, 0x0f, 0xc8,
+	0xcc, 0x4b, 0xf7, 0x2d, 0x4e, 0x17, 0xe2, 0xe3, 0x62, 0xca, 0x4c, 0x91, 0x60, 0x54, 0x60, 0xd4,
+	0xe0, 0x0c, 0x62, 0xca, 0x4c, 0x31, 0xd2, 0xe1, 0x62, 0x01, 0x49, 0x09, 0xa9, 0x40, 0x69, 0x1e,
+	0x3d, 0x90, 0x5e, 0xa8, 0x6a, 0x29, 0x14, 0x9e, 0x12, 0x43, 0x12, 0x1b, 0xd8, 0x50, 0x63, 0x40,
+	0x00, 0x00, 0x00, 0xff, 0xff, 0xd6, 0x5e, 0x89, 0x36, 0x61, 0x00, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -92,7 +91,7 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type PingClient interface {
-	SayHello(ctx context.Context, in *PingMessage, opts ...grpc.CallOption) (*PingMessage, error)
+	Ping(ctx context.Context, in *PingMsg, opts ...grpc.CallOption) (*PingMsg, error)
 }
 
 type pingClient struct {
@@ -103,9 +102,9 @@ func NewPingClient(cc *grpc.ClientConn) PingClient {
 	return &pingClient{cc}
 }
 
-func (c *pingClient) SayHello(ctx context.Context, in *PingMessage, opts ...grpc.CallOption) (*PingMessage, error) {
-	out := new(PingMessage)
-	err := c.cc.Invoke(ctx, "/api.Ping/SayHello", in, out, opts...)
+func (c *pingClient) Ping(ctx context.Context, in *PingMsg, opts ...grpc.CallOption) (*PingMsg, error) {
+	out := new(PingMsg)
+	err := c.cc.Invoke(ctx, "/api.Ping/Ping", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -114,35 +113,35 @@ func (c *pingClient) SayHello(ctx context.Context, in *PingMessage, opts ...grpc
 
 // PingServer is the server API for Ping service.
 type PingServer interface {
-	SayHello(context.Context, *PingMessage) (*PingMessage, error)
+	Ping(context.Context, *PingMsg) (*PingMsg, error)
 }
 
 // UnimplementedPingServer can be embedded to have forward compatible implementations.
 type UnimplementedPingServer struct {
 }
 
-func (*UnimplementedPingServer) SayHello(ctx context.Context, req *PingMessage) (*PingMessage, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
+func (*UnimplementedPingServer) Ping(ctx context.Context, req *PingMsg) (*PingMsg, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
 
 func RegisterPingServer(s *grpc.Server, srv PingServer) {
 	s.RegisterService(&_Ping_serviceDesc, srv)
 }
 
-func _Ping_SayHello_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PingMessage)
+func _Ping_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PingMsg)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PingServer).SayHello(ctx, in)
+		return srv.(PingServer).Ping(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.Ping/SayHello",
+		FullMethod: "/api.Ping/Ping",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PingServer).SayHello(ctx, req.(*PingMessage))
+		return srv.(PingServer).Ping(ctx, req.(*PingMsg))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -152,8 +151,8 @@ var _Ping_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*PingServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "SayHello",
-			Handler:    _Ping_SayHello_Handler,
+			MethodName: "Ping",
+			Handler:    _Ping_Ping_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

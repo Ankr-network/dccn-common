@@ -5,7 +5,7 @@ import (
 	"net"
 
 	"github.com/Ankr-network/dccn-common/pgrpc"
-	"github.com/Ankr-network/dccn-common/pgrpc/_example/api"
+	"github.com/Ankr-network/dccn-common/pgrpc/api"
 	grpc "google.golang.org/grpc"
 )
 
