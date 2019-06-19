@@ -113,7 +113,7 @@ func (c *Client) Alias(key, alias string) {
 }
 
 // pool maintain idle connections
-const MAX_IDLE = 2
+const MAX_IDLE = 5
 
 type pool struct {
 	key   string
