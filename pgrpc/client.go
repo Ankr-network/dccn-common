@@ -70,10 +70,10 @@ func (c *Client) Dial(key string, opts ...grpc.DialOption) (*grpc.ClientConn, er
 	return cc, nil
 }
 
-func Each(fn func(key string, cc *grpc.ClientConn) error) {
+func Each(fn func(key string, cc *grpc.ClientConn, err error) error) {
 	DefaultClient.Each(fn)
 }
-func (c *Client) Each(fn func(key string, cc *grpc.ClientConn) error) {
+func (c *Client) Each(fn func(key string, cc *grpc.ClientConn, err error) error) {
 	wg := sync.WaitGroup{}
 	defer wg.Wait()
 
@@ -88,13 +88,10 @@ func (c *Client) Each(fn func(key string, cc *grpc.ClientConn) error) {
 			}
 
 			cc, err := pool.Get()
-			// no available connection
-			if err != nil {
-				return
-			}
-
-			if err := fn(key, cc); err != nil {
-				cc.Close()
+			if e := fn(key, cc, err); e != nil {
+				if err == nil {
+					cc.Close()
+				}
 				return
 			}
 			pool.PutCC(cc)
