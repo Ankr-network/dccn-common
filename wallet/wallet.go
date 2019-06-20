@@ -392,6 +392,145 @@ func SetStake(ip, port, priv_key, amount, public_key string) error {
 }
 
 /*
+set_crt=dc_name:pem_base64:nonce:sig
+*/
+func SetMeteringCert(ip, port, op_priv_key, dc_name, cert_pem string) error {
+	var nonce string = "0"
+	cl := getHTTPClient(ip, port)
+	_, err := cl.Status()
+	if err != nil {
+		return err
+	}
+
+	pemB64 := base64.StdEncoding.EncodeToString([]byte(cert_pem))
+
+	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "set_mtr_nonce")))
+        qres := res.Response
+        if !qres.IsOK() {
+                return errors.New("Query nonce failure, connect error.")
+        } else {
+                if string(qres.Value) != "" {
+                        nonce = string(qres.Value)
+                } else {
+			nonce = "0"
+                }
+        }
+
+	nonceInt, err := strconv.ParseInt(string(nonce), 10, 64)
+        if err != nil {
+                return err
+        }
+
+        nonceInt++
+        nonce = fmt.Sprintf("%d", nonceInt)
+
+	sig, err := Sign(fmt.Sprintf("%s%s%s", dc_name, pemB64, nonce), op_priv_key)
+        if err != nil {
+                return err
+        }
+
+	fmt.Println(pemB64)
+	fmt.Println(fmt.Sprintf("%s=%s:%s:%s:%s", string("set_crt"), dc_name, pemB64, nonce, sig))
+	btr, err := cl.BroadcastTxCommit(types.Tx(
+		fmt.Sprintf("%s=%s:%s:%s:%s", string("set_crt"), dc_name, pemB64, nonce, sig)))
+
+        if err != nil {
+                return err
+        } else if btr.CheckTx.Code != 0 {
+                return errors.New(btr.CheckTx.Log)
+        } else if btr.DeliverTx.Code != 0{
+                return errors.New(btr.DeliverTx.Log)
+        }
+
+        client.WaitForHeight(cl, btr.Height+1, nil)
+
+	return nil
+}
+
+/*
+cert:dc_name:nonce:sig
+*/
+func RemoveMeteringCert(ip, port, op_priv_key, dc_name string) error {
+	var nonce string = "0"
+        cl := getHTTPClient(ip, port)
+        _, err := cl.Status()
+        if err != nil {
+                return err
+        }
+
+        res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "rmv_mtr_nonce")))
+        qres := res.Response
+        if !qres.IsOK() {
+                return errors.New("Query nonce failure, connect error.")
+        } else {
+                if string(qres.Value) != "" {
+                        nonce = string(qres.Value)
+                } else {
+                        nonce = "0"
+                }
+        }
+
+        nonceInt, err := strconv.ParseInt(string(nonce), 10, 64)
+        if err != nil {
+                return err
+        }
+
+        nonceInt++
+        nonce = fmt.Sprintf("%d", nonceInt)
+
+        sig, err := Sign(fmt.Sprintf("%s%s", dc_name, nonce), op_priv_key)
+        if err != nil {
+                return err
+        }
+
+        btr, err := cl.BroadcastTxCommit(types.Tx(
+                fmt.Sprintf("%s=%s:%s:%s", string("rmv_crt"), dc_name, nonce, sig)))
+
+        if err != nil {
+                return err
+        } else if btr.CheckTx.Code != 0 {
+                return errors.New(btr.CheckTx.Log)
+        } else if btr.DeliverTx.Code != 0{
+                return errors.New(btr.DeliverTx.Log)
+        }
+
+        client.WaitForHeight(cl, btr.Height+1, nil)
+
+	return nil
+}
+
+/*
+cert:dc_name
+*/
+func GetMeteringCert(ip, port, dc_name string) (pem string, err error) {
+        cl := getHTTPClient(ip, port)
+
+        _, err = cl.Status()
+        if err != nil {
+                return "", err
+        }
+
+        //fmt.Println("LatestBlockHeight:", status.SyncInfo.LatestBlockHeight)
+        // curl  'localhost:26657/abci_query?data="crt:dc_name"'
+
+        res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s:%s", "crt", dc_name)))
+        qres := res.Response
+	var pemB64 string = ""
+        if !qres.IsOK() {
+                return "", errors.New("Query cert failure, connect error.")
+        } else {
+		pemB64 = string(qres.Value)
+        }
+
+	pemByte, err := base64.StdEncoding.DecodeString(pemB64)
+        if err != nil {
+                return "", err
+        }
+
+        return string(pemByte), nil
+}
+
+/*
 ADMIN API:
 set balance based on (ip, port, priv_key, address, amount, public_key)
 priv_key: admin priv_key
@@ -522,7 +661,7 @@ dc: datacenter name
 ns: name space
 value: metering value, marshled json file.
 */
-func SetMetering(ip, port, priv_key_pem, admin_priv_key_pem, dc, ns, value string) error {
+func SetMetering(ip, port, priv_key_pem, /*admin_priv_key_pem,*/ dc, ns, value string) error {
         cl := getHTTPClient(ip, port)
         _, err := cl.Status()
         if err != nil {
@@ -553,15 +692,15 @@ func SetMetering(ip, port, priv_key_pem, admin_priv_key_pem, dc, ns, value strin
                 return err
         }
 
-	sigA, sigB, err := signmanager.EcdsaSign(admin_priv_key_pem, dc + ns + value + nonce)
-        if err != nil {
-                return err
-        }
+	//sigA, sigB, err := signmanager.EcdsaSign(admin_priv_key_pem, dc + ns + value + nonce)
+        //if err != nil {
+        //        return err
+        //}
 
 	//fmt.Printf("%s=%s:%s:%s:%s:%s:%s\n", string("set_mtr"), dc, ns, value, sigX, sigY, randstring)
 	btr, err := cl.BroadcastTxCommit(types.Tx(
-		fmt.Sprintf("%s=%s:%s:%s:%s:%s:%s:%s:%s", string("set_mtr"),
-			dc, ns, sigX, sigY, sigA, sigB, nonce, value)))
+		fmt.Sprintf("%s=%s:%s:%s:%s:%s:%s", string("set_mtr"),
+			dc, ns, sigX, sigY, nonce, value)))
 
 	if err != nil {
                 return err
