@@ -17,13 +17,9 @@ message LogMetaData {
 }
 
 message LogItem {
-	string timestamp = 1;
-	string msg = 2;
-}
-
-message LogEntry {
     LogMetaData meta_data = 1;
-    repeated LogItem log_items = 2;
+	string timestamp = 2;
+	string msg = 3;
 }
 
 message LogAppRequest {
@@ -44,7 +40,7 @@ message LogAppResponse {
 	string msg = 3;
     uint64 total_count = 4;
     uint64 last_search_end = 5;
-	repeated LogEntry log_details = 6;
+	repeated LogItem log_items = 6;
 }
 
 message LogAppCountRequest {
@@ -81,7 +77,7 @@ message LogPodResponse {
     string msg = 3;
     uint64 total_count = 4;
     uint64 last_search_end = 5;
-    LogEntry log_details = 6;
+    repeated LogItem log_items = 6;
 }
 
 message LogPodCountRequest {
