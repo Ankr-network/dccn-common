@@ -10,7 +10,7 @@ import (
 type listener struct {
 	addr net.Addr
 
-	connCh chan net.Conn
+	connCh chan *activeConn
 	stopCh chan struct{}
 }
 
@@ -23,7 +23,7 @@ func Listen(network, address, id string, onAccept func(*net.Conn, error)) (net.L
 
 	var (
 		ln = listener{
-			connCh: make(chan net.Conn, 2),
+			connCh: make(chan *activeConn),
 			stopCh: make(chan struct{}),
 		}
 		err error
@@ -49,10 +49,10 @@ func Listen(network, address, id string, onAccept func(*net.Conn, error)) (net.L
 				c.SetLinger(1)
 			}
 
-			conn, sig := newActiveConn(conn, id)
+			aConn, sig := newActiveConn(conn, id)
 			select {
 			case <-sig:
-				ln.connCh <- conn
+				ln.connCh <- aConn
 			case <-ln.stopCh:
 				return
 			}
@@ -64,7 +64,7 @@ func Listen(network, address, id string, onAccept func(*net.Conn, error)) (net.L
 func (ln *listener) Accept() (net.Conn, error) {
 	select {
 	case conn := <-ln.connCh:
-		return conn, nil
+		return conn, conn.err
 	case <-ln.stopCh:
 		return nil, errors.New("listener has been stoped")
 	}
@@ -87,7 +87,7 @@ type activeConn struct {
 	net.Conn
 }
 
-func newActiveConn(conn net.Conn, id string) (net.Conn, <-chan struct{}) {
+func newActiveConn(conn net.Conn, id string) (*activeConn, <-chan struct{}) {
 	aConn := activeConn{Conn: conn}
 	sig := make(chan struct{})
 
