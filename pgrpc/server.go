@@ -17,7 +17,7 @@ type listener struct {
 func Listen(network, address string, onAccept func(*net.Conn, error)) (net.Listener, error) {
 	var (
 		ln = listener{
-			connCh: make(chan net.Conn),
+			connCh: make(chan net.Conn, 2),
 			stopCh: make(chan struct{}),
 		}
 		err error
