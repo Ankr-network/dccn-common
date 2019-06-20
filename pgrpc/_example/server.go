@@ -10,7 +10,7 @@ import (
 )
 
 func server() {
-	ln, err := pgrpc.Listen("tcp", "127.0.0.1:50051", func(conn *net.Conn, err error) {
+	ln, err := pgrpc.Listen("tcp", "127.0.0.1:50051", "example_server", func(conn *net.Conn, err error) {
 		if err != nil {
 			log.Println(err)
 		}

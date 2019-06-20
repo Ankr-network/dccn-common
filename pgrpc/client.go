@@ -2,6 +2,7 @@ package pgrpc
 
 import (
 	context "context"
+	"io"
 	"net"
 	"sync"
 	"time"
@@ -13,7 +14,6 @@ import (
 
 type Client struct {
 	sync.Map
-	sync.Mutex
 }
 
 var DefaultClient *Client
@@ -38,17 +38,28 @@ func NewClient(network, addr string, onAccept func(*net.Conn) string, opts ...gr
 				continue
 			}
 
-			var key string
-			if onAccept != nil {
-				key = onAccept(&conn)
-			}
-			if key == "" {
-				key, _, _ = net.SplitHostPort(conn.RemoteAddr().String())
-			}
+			go func(conn net.Conn) {
+				var key string
+				if onAccept != nil {
+					key = onAccept(&conn)
+				}
 
-			if val, ok := c.LoadOrStore(key, []*pool{{key: key, conns: []net.Conn{conn}, opts: opts}}); ok {
-				val.([]*pool)[0].PutConn(conn)
-			}
+				if key == "" {
+					buf := make([]byte, 1)
+					if _, err := io.ReadFull(conn, buf); err != nil {
+						return
+					}
+					buf = make([]byte, int(buf[0]))
+					if _, err := io.ReadFull(conn, buf); err != nil {
+						return
+					}
+					key = string(buf)
+				}
+
+				if val, ok := c.LoadOrStore(key, &pool{key: key, conns: []net.Conn{conn}, opts: opts}); ok {
+					val.(*pool).PutConn(conn)
+				}
+			}(conn)
 		}
 	}()
 	return c, nil
@@ -64,18 +75,8 @@ func (c *Client) Dial(key string, opts ...grpc.DialOption) (*grpc.ClientConn, er
 		return nil, errors.Errorf("connection point to %s not found", key)
 	}
 
-	var err error
-	var cc *grpc.ClientConn
-	for idx := range val.([]*pool) {
-		cc, err = val.([]*pool)[idx].Get()
-		if err == nil {
-			return cc, nil
-		}
-	}
-	if err != nil {
-		return nil, errors.Wrap(err, "pgrpc dial")
-	}
-	return nil, errors.Errorf("no connection to %s", key)
+	cc, err := val.(*pool).Get()
+	return cc, errors.Wrap(err, "pgrpc dial")
 }
 
 func Each(fn func(key string, cc *grpc.ClientConn, err error) error) {
@@ -87,59 +88,26 @@ func (c *Client) Each(fn func(key string, cc *grpc.ClientConn, err error) error)
 
 	c.Range(func(key, val interface{}) bool {
 		wg.Add(1)
-		go func(key string, pools []*pool) {
+		go func(key string, pool *pool) {
 			defer wg.Done()
 
-			var err error
-			var cc *grpc.ClientConn
-			var idx = -1
-			for idx = range pools {
-				// avoid send by alias pool in loop
-				if pools[idx].key != key {
-					continue
-				}
-
-				if cc, err = pools[0].Get(); err != nil {
-					continue
-				}
-			}
-			if idx == -1 {
-				err = errors.Errorf("no connection to %s", key)
+			// avoid send by alias pool in loop
+			if pool.key != key {
+				return
 			}
 
+			cc, err := pool.Get()
 			if e := fn(key, cc, err); e != nil {
 				if err == nil {
 					cc.Close()
 				}
 				return
 			}
-			pools[idx].PutCC(cc)
+			pool.PutCC(cc)
 
-		}(key.(string), val.([]*pool))
+		}(key.(string), val.(*pool))
 		return true
 	})
-}
-
-func Alias(key, alias string) {
-	DefaultClient.Alias(key, alias)
-}
-func (c *Client) Alias(key, alias string) {
-	c.Lock()
-	if key == "" {
-		c.Delete(alias)
-		c.Unlock()
-		return
-	}
-
-	if val, ok := c.Load(key); ok {
-		if v, ok := c.Load(alias); ok {
-			c.Store(alias, append(v.([]*pool), val.([]*pool)...))
-
-		} else {
-			c.Store(alias, val)
-		}
-	}
-	c.Unlock()
 }
 
 // pool maintain idle connections

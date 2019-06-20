@@ -14,7 +14,11 @@ type listener struct {
 	stopCh chan struct{}
 }
 
-func Listen(network, address string, onAccept func(*net.Conn, error)) (net.Listener, error) {
+func Listen(network, address, id string, onAccept func(*net.Conn, error)) (net.Listener, error) {
+	if len(id) > 255 {
+		return nil, errors.Errorf("id(%s) is too long", id)
+	}
+
 	var (
 		ln = listener{
 			connCh: make(chan net.Conn, 2),
@@ -43,7 +47,7 @@ func Listen(network, address string, onAccept func(*net.Conn, error)) (net.Liste
 				c.SetLinger(1)
 			}
 
-			conn, sig := newActiveConn(conn)
+			conn, sig := newActiveConn(conn, id)
 			select {
 			case <-sig:
 				ln.connCh <- conn
@@ -81,12 +85,22 @@ type activeConn struct {
 	net.Conn
 }
 
-func newActiveConn(conn net.Conn) (net.Conn, <-chan struct{}) {
+func newActiveConn(conn net.Conn, id string) (net.Conn, <-chan struct{}) {
 	aConn := activeConn{Conn: conn}
 	sig := make(chan struct{})
 
 	go func() {
-		buf := make([]byte, 1)
+		// write id
+		buf := make([]byte, 0, 1+len(id))
+		buf = append(buf, byte(len(id)))
+		buf = append(buf, []byte(id)...)
+		aConn.n, aConn.err = conn.Write(buf)
+		if aConn.err != nil {
+			close(sig)
+			return
+		}
+
+		buf = buf[:1]
 		aConn.n, aConn.err = conn.Read(buf)
 		aConn.b = buf[0]
 		close(sig)

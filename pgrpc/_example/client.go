@@ -58,8 +58,7 @@ func client() {
 		cc.Close()
 	}
 	{ // test alias
-		pgrpc.Alias(oneKey, "test")
-		cc, err := pgrpc.Dial("test")
+		cc, err := pgrpc.Dial(oneKey)
 		if err != nil {
 			log.Fatalln(err)
 		}
