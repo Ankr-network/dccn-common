@@ -21,7 +21,12 @@ func client() {
 
 	var oneKey string
 	{ // test loop all
-		pgrpc.Each(func(key string, conn *grpc.ClientConn) error {
+		pgrpc.Each(func(key string, conn *grpc.ClientConn, err error) error {
+			if err != nil {
+				log.Println(err)
+				return err
+			}
+
 			resp, err := api.NewPingClient(conn).Ping(context.Background(), &api.PingMsg{
 				Id: "Hello " + key,
 			})

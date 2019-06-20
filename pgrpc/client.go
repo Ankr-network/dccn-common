@@ -13,6 +13,7 @@ import (
 
 type Client struct {
 	sync.Map
+	sync.Mutex
 }
 
 var DefaultClient *Client
@@ -45,8 +46,8 @@ func NewClient(network, addr string, onAccept func(*net.Conn) string, opts ...gr
 				key, _, _ = net.SplitHostPort(conn.RemoteAddr().String())
 			}
 
-			if val, ok := c.LoadOrStore(key, &pool{key: key, conns: []net.Conn{conn}, opts: opts}); ok {
-				val.(*pool).PutConn(conn)
+			if val, ok := c.LoadOrStore(key, []*pool{{key: key, conns: []net.Conn{conn}, opts: opts}}); ok {
+				val.([]*pool)[0].PutConn(conn)
 			}
 		}
 	}()
@@ -63,11 +64,15 @@ func (c *Client) Dial(key string, opts ...grpc.DialOption) (*grpc.ClientConn, er
 		return nil, errors.Errorf("connection point to %s not found", key)
 	}
 
-	cc, err := val.(*pool).Get()
-	if err != nil {
-		return nil, err
+	var err error
+	var cc *grpc.ClientConn
+	for idx := range val.([]*pool) {
+		cc, err = val.([]*pool)[idx].Get()
+		if err == nil {
+			return cc, nil
+		}
 	}
-	return cc, nil
+	return nil, err
 }
 
 func Each(fn func(key string, cc *grpc.ClientConn, err error) error) {
@@ -79,24 +84,33 @@ func (c *Client) Each(fn func(key string, cc *grpc.ClientConn, err error) error)
 
 	c.Range(func(key, val interface{}) bool {
 		wg.Add(1)
-		go func(key string, pool *pool) {
+		go func(key string, pools []*pool) {
 			defer wg.Done()
 
 			// avoid send by alias pool in loop
-			if pool.key != key {
-				return
+			var err error
+			var cc *grpc.ClientConn
+			var idx int
+			for idx = range pools {
+				if pools[idx].key != key {
+					continue
+				}
+
+				cc, err = pools[0].Get()
+				if err != nil {
+					continue
+				}
 			}
 
-			cc, err := pool.Get()
 			if e := fn(key, cc, err); e != nil {
 				if err == nil {
 					cc.Close()
 				}
 				return
 			}
-			pool.PutCC(cc)
+			pools[idx].PutCC(cc)
 
-		}(key.(string), val.(*pool))
+		}(key.(string), val.([]*pool))
 		return true
 	})
 }
@@ -105,11 +119,22 @@ func Alias(key, alias string) {
 	DefaultClient.Alias(key, alias)
 }
 func (c *Client) Alias(key, alias string) {
-	if val, ok := c.Load(key); ok {
-		c.Store(alias, val)
-	} else {
+	c.Lock()
+	if key == "" {
 		c.Delete(alias)
+		c.Unlock()
+		return
 	}
+
+	if val, ok := c.Load(key); ok {
+		if v, ok := c.Load(alias); ok {
+			c.Store(alias, append(v.([]*pool), val.([]*pool)...))
+
+		} else {
+			c.Store(alias, val)
+		}
+	}
+	c.Unlock()
 }
 
 // pool maintain idle connections
@@ -166,11 +191,7 @@ FOR:
 
 	if pickIdx != -1 {
 		pick = s.ccs[pickIdx]
-		if pickIdx+1 == len(s.ccs) {
-			s.ccs = s.ccs[:pickIdx]
-		} else {
-			s.ccs = append(s.ccs[:pickIdx], s.ccs[pickIdx+1:]...)
-		}
+		s.ccs = append(s.ccs[:pickIdx], s.ccs[pickIdx+1:]...)
 	}
 
 	if pick != nil {
@@ -201,7 +222,7 @@ FOR:
 	cc, err := grpc.DialContext(context.Background(), conn.RemoteAddr().String(), opts...)
 	if err != nil {
 		conn.Close()
-		return nil, err
+		return nil, errors.Wrap(err, "grpc dial")
 	}
 	return cc, nil
 }
