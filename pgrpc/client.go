@@ -39,6 +39,11 @@ func NewClient(network, addr string, onAccept func(*net.Conn) string, opts ...gr
 			}
 
 			go func(conn net.Conn) {
+				tcpConn := conn.(*net.TCPConn)
+				tcpConn.SetKeepAlive(true)
+				tcpConn.SetKeepAlivePeriod(5 * time.Second)
+				tcpConn.SetLinger(1)
+
 				var ip string
 				if onAccept != nil {
 					ip = onAccept(&conn)
