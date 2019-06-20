@@ -72,7 +72,10 @@ func (c *Client) Dial(key string, opts ...grpc.DialOption) (*grpc.ClientConn, er
 			return cc, nil
 		}
 	}
-	return nil, err
+	if err != nil {
+		return nil, errors.Wrap(err, "pgrpc dial")
+	}
+	return nil, errors.Errorf("no connection to %s", key)
 }
 
 func Each(fn func(key string, cc *grpc.ClientConn, err error) error) {
@@ -87,19 +90,21 @@ func (c *Client) Each(fn func(key string, cc *grpc.ClientConn, err error) error)
 		go func(key string, pools []*pool) {
 			defer wg.Done()
 
-			// avoid send by alias pool in loop
 			var err error
 			var cc *grpc.ClientConn
-			var idx int
+			var idx = -1
 			for idx = range pools {
+				// avoid send by alias pool in loop
 				if pools[idx].key != key {
 					continue
 				}
 
-				cc, err = pools[0].Get()
-				if err != nil {
+				if cc, err = pools[0].Get(); err != nil {
 					continue
 				}
+			}
+			if idx == -1 {
+				err = errors.Errorf("no connection to %s", key)
 			}
 
 			if e := fn(key, cc, err); e != nil {
