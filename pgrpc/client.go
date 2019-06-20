@@ -39,24 +39,25 @@ func NewClient(network, addr string, onAccept func(*net.Conn) string, opts ...gr
 			}
 
 			go func(conn net.Conn) {
-				var key string
+				var ip string
 				if onAccept != nil {
-					key = onAccept(&conn)
+					ip = onAccept(&conn)
+				}
+				if ip == "" {
+					ip, _, _ = net.SplitHostPort(conn.RemoteAddr().String())
 				}
 
-				if key == "" {
-					buf := make([]byte, 1)
-					if _, err := io.ReadFull(conn, buf); err != nil {
-						return
-					}
-					buf = make([]byte, int(buf[0]))
-					if _, err := io.ReadFull(conn, buf); err != nil {
-						return
-					}
-					key = string(buf)
+				buf := make([]byte, 1)
+				if _, err := io.ReadFull(conn, buf); err != nil {
+					return
 				}
+				buf = make([]byte, int(buf[0]))
+				if _, err := io.ReadFull(conn, buf); err != nil {
+					return
+				}
+				id := string(buf)
 
-				if val, ok := c.LoadOrStore(key, &pool{key: key, conns: []net.Conn{conn}, opts: opts}); ok {
+				if val, ok := c.LoadOrStore(id, &pool{ip: ip, conns: []net.Conn{conn}, opts: opts}); ok {
 					val.(*pool).PutConn(conn)
 				}
 			}(conn)
@@ -91,11 +92,6 @@ func (c *Client) Each(fn func(key string, cc *grpc.ClientConn, err error) error)
 		go func(key string, pool *pool) {
 			defer wg.Done()
 
-			// avoid send by alias pool in loop
-			if pool.key != key {
-				return
-			}
-
 			cc, err := pool.Get()
 			if e := fn(key, cc, err); e != nil {
 				if err == nil {
@@ -114,7 +110,7 @@ func (c *Client) Each(fn func(key string, cc *grpc.ClientConn, err error) error)
 const MAX_IDLE = 5
 
 type pool struct {
-	key   string
+	ip    string
 	conns []net.Conn
 	ccs   []*grpc.ClientConn
 	opts  []grpc.DialOption
@@ -182,7 +178,7 @@ FOR:
 		}
 
 		s.mu.Unlock()
-		return nil, errors.New("no available connection to " + s.key)
+		return nil, errors.New("no available connection to " + s.ip)
 	}
 
 	conn := s.conns[0]
@@ -192,7 +188,7 @@ FOR:
 	// dial client conn
 	opts := append(s.opts, grpc.WithContextDialer(
 		func(context.Context, string) (net.Conn, error) { return conn, nil }))
-	cc, err := grpc.DialContext(context.Background(), conn.RemoteAddr().String(), opts...)
+	cc, err := grpc.DialContext(context.Background(), s.ip, opts...)
 	if err != nil {
 		conn.Close()
 		return nil, errors.Wrap(err, "grpc dial")

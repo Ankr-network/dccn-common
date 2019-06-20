@@ -3,16 +3,25 @@ package main
 import (
 	context "context"
 	"log"
-	"strconv"
+	"net"
 	"time"
 
 	"github.com/Ankr-network/dccn-common/pgrpc"
 	"github.com/Ankr-network/dccn-common/pgrpc/api"
+	"github.com/Ankr-network/dccn-common/pgrpc/util"
 	grpc "google.golang.org/grpc"
 )
 
 func client() {
-	if err := pgrpc.InitClient("tcp", ":50051", nil, grpc.WithInsecure()); err != nil {
+	if err := pgrpc.InitClient("tcp", ":50051", func(conn *net.Conn) string {
+		var key string
+		var err error
+		*conn, key, err = util.ParseProxyProto(*conn)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		return key
+	}, grpc.WithInsecure()); err != nil {
 		log.Fatalln(err)
 	}
 
@@ -56,23 +65,5 @@ func client() {
 
 		log.Println(resp.Id)
 		cc.Close()
-	}
-	{ // test alias
-		cc, err := pgrpc.Dial(oneKey)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		defer cc.Close()
-
-		for i := 0; i < 2; i++ {
-			resp, err := api.NewPingClient(cc).Ping(context.Background(), &api.PingMsg{
-				Id: "test-" + strconv.Itoa(i),
-			})
-			if err != nil {
-				log.Fatalln(err)
-			}
-
-			log.Println(resp.Id)
-		}
 	}
 }

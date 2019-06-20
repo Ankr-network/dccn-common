@@ -15,8 +15,10 @@ type listener struct {
 }
 
 func Listen(network, address, id string, onAccept func(*net.Conn, error)) (net.Listener, error) {
-	if len(id) > 255 {
+	if idLen := len(id); len(id) > 255 {
 		return nil, errors.Errorf("id(%s) is too long", id)
+	} else if idLen == 0 {
+		return nil, errors.Errorf("id is empty")
 	}
 
 	var (
