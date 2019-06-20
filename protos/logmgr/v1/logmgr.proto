@@ -18,8 +18,8 @@ message LogMetaData {
 
 message LogItem {
     LogMetaData meta_data = 1;
-	string timestamp = 2;
-	string msg = 3;
+    string timestamp = 2;
+    string msg = 3;
 }
 
 message LogAppRequest {
@@ -35,12 +35,12 @@ message LogAppRequest {
 }
 
 message LogAppResponse {
-	string req_id = 1;
-	int32  code = 2;
-	string msg = 3;
+    string req_id = 1;
+    int32  code = 2;
+    string msg = 3;
     uint64 total_count = 4;
     uint64 last_search_end = 5;
-	repeated LogItem log_items = 6;
+    repeated LogItem log_items = 6;
 }
 
 message LogAppCountRequest {
