@@ -78,7 +78,7 @@ var (
 	ErrCronJobScheduleFormat     = errors.New(ArgumentError + "Cronjob schedule invalid format")
 	ErrPassword                  = errors.New(AuthError + "Invalid password")
 	ErrPasswordShouldNotSame     = errors.New(AuthError + "Password should not same as before")
-	ErrEmailExit                 = errors.New(AuthError + "Email exist")
+	ErrEmailExit                 = errors.New(AuthError + "This email address is already associated with an existing account")
 	ErrTokenNeedRefresh          = errors.New(TokenError + "Token is unavailable, need call refresh token")
 	ErrTokenPassedMax            = errors.New(TokenError + "Tokens number reaches max limit(10)")
 	ErrTokenParseFailed          = errors.New(TokenError + "Tokens parse failed")
