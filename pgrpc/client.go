@@ -54,10 +54,12 @@ func NewClient(network, addr string, ipHook func(*net.Conn) string, opts ...grpc
 
 				buf := make([]byte, 1)
 				if _, err := io.ReadFull(conn, buf); err != nil {
+					conn.Close()
 					return
 				}
 				buf = make([]byte, int(buf[0]))
 				if _, err := io.ReadFull(conn, buf); err != nil {
+					conn.Close()
 					return
 				}
 				id := string(buf)
@@ -146,6 +148,7 @@ func (s *pool) Get() (*grpc.ClientConn, []string, error) {
 	var pick *grpc.ClientConn
 	var pickIdx = -1
 	var retry = true
+	var e error
 
 RETRY:
 	s.mu.Lock()
@@ -154,13 +157,11 @@ FOR:
 	for i := range s.ccs {
 		switch s.ccs[i].GetState() {
 		case connectivity.Connecting:
-			fallthrough
+			continue
 		case connectivity.TransientFailure:
-			pickIdx = i
+			continue
 
 		case connectivity.Ready:
-			fallthrough
-		case connectivity.Idle:
 			pickIdx = i
 			break FOR
 
@@ -184,16 +185,14 @@ FOR:
 
 	// no avaiable ClientConn, try build from net.Conn
 	if len(s.conns) == 0 {
+		s.mu.Unlock()
 		if retry {
 			retry = false
-			time.Sleep(200 * time.Millisecond)
-			s.mu.Unlock()
+			time.Sleep(time.Second)
 			goto RETRY
 		}
 
-		ips := s.ips
-		s.mu.Unlock()
-		return nil, ips, errors.New("no available connection to " + s.id)
+		return nil, nil, errors.Wrap(e, "no available connection to "+s.id)
 	}
 
 	conn := s.conns[0]
@@ -204,23 +203,22 @@ FOR:
 	// dial client conn
 	opts := append(s.opts, grpc.WithContextDialer(
 		func(context.Context, string) (net.Conn, error) { return conn, nil }))
-	cc, err := grpc.DialContext(context.Background(), s.id, opts...)
-	if err != nil {
+	pick, e = grpc.DialContext(context.Background(), s.id, opts...)
+	if e != nil {
 		conn.Close()
-		return nil, nil, errors.Wrap(err, "grpc dial")
+		goto RETRY
 	}
-	return cc, ips, nil
+	return pick, ips, nil
 }
 
 func (s *pool) PutCC(cc *grpc.ClientConn) {
 	var dropped *grpc.ClientConn
 	switch cc.GetState() {
 	case connectivity.Ready:
-		fallthrough
-	case connectivity.Idle:
 		s.mu.Lock()
 		if len(s.ccs) == (MAX_IDLE - MIN_IDLE) {
 			dropped = s.ccs[0]
+			s.ccs = s.ccs[1:]
 		}
 		s.ccs = append(s.ccs, cc)
 		s.mu.Unlock()
