@@ -392,7 +392,7 @@ func SetStake(ip, port, priv_key, amount, public_key string) error {
 }
 
 /*
-set_crt=dc_name:pem_base64:nonce:sig
+format: set_crt=dc_name:pem_base64:nonce:sig
 */
 func SetMeteringCert(ip, port, op_priv_key, dc_name, cert_pem string) error {
 	var nonce string = "0"
@@ -448,7 +448,7 @@ func SetMeteringCert(ip, port, op_priv_key, dc_name, cert_pem string) error {
 }
 
 /*
-cert:dc_name:nonce:sig
+format: cert:dc_name:nonce:sig
 */
 func RemoveMeteringCert(ip, port, op_priv_key, dc_name string) error {
 	var nonce string = "0"
@@ -500,7 +500,7 @@ func RemoveMeteringCert(ip, port, op_priv_key, dc_name string) error {
 }
 
 /*
-cert:dc_name
+format: cert:dc_name
 */
 func GetMeteringCert(ip, port, dc_name string) (pem string, err error) {
         cl := getHTTPClient(ip, port)
@@ -509,9 +509,6 @@ func GetMeteringCert(ip, port, dc_name string) (pem string, err error) {
         if err != nil {
                 return "", err
         }
-
-        //fmt.Println("LatestBlockHeight:", status.SyncInfo.LatestBlockHeight)
-        // curl  'localhost:26657/abci_query?data="crt:dc_name"'
 
         res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s:%s", "crt", dc_name)))
         qres := res.Response
@@ -661,7 +658,7 @@ dc: datacenter name
 ns: name space
 value: metering value, marshled json file.
 */
-func SetMetering(ip, port, priv_key_pem, /*admin_priv_key_pem,*/ dc, ns, value string) error {
+func SetMetering(ip, port, priv_key_pem, dc, ns, value string) error {
         cl := getHTTPClient(ip, port)
         _, err := cl.Status()
         if err != nil {
@@ -691,11 +688,6 @@ func SetMetering(ip, port, priv_key_pem, /*admin_priv_key_pem,*/ dc, ns, value s
         if err != nil {
                 return err
         }
-
-	//sigA, sigB, err := signmanager.EcdsaSign(admin_priv_key_pem, dc + ns + value + nonce)
-        //if err != nil {
-        //        return err
-        //}
 
 	//fmt.Printf("%s=%s:%s:%s:%s:%s:%s\n", string("set_mtr"), dc, ns, value, sigX, sigY, randstring)
 	btr, err := cl.BroadcastTxCommit(types.Tx(
