@@ -395,11 +395,7 @@ func SetStake(ip, port, priv_key, amount, public_key string) error {
 }
 
 /*
-<<<<<<< HEAD
 format: set_crt=dc_name:pem_base64:nonce:sig
-=======
-set_crt=dc_name:pem_base64:nonce:sig
->>>>>>> SWDEV-288 metering verfication in blockchain, cert APIs
 */
 func SetMeteringCert(ip, port, op_priv_key, dc_name, cert_pem string) error {
 	var nonce string = "0"
@@ -455,11 +451,7 @@ func SetMeteringCert(ip, port, op_priv_key, dc_name, cert_pem string) error {
 }
 
 /*
-<<<<<<< HEAD
 format: cert:dc_name:nonce:sig
-=======
-cert:dc_name:nonce:sig
->>>>>>> SWDEV-288 metering verfication in blockchain, cert APIs
 */
 func RemoveMeteringCert(ip, port, op_priv_key, dc_name string) error {
 	var nonce string = "0"
@@ -511,11 +503,7 @@ func RemoveMeteringCert(ip, port, op_priv_key, dc_name string) error {
 }
 
 /*
-<<<<<<< HEAD
 format: cert:dc_name
-=======
-cert:dc_name
->>>>>>> SWDEV-288 metering verfication in blockchain, cert APIs
 */
 func GetMeteringCert(ip, port, dc_name string) (pem string, err error) {
         cl := getHTTPClient(ip, port)
@@ -524,9 +512,6 @@ func GetMeteringCert(ip, port, dc_name string) (pem string, err error) {
         if err != nil {
                 return "", err
         }
-
-        //fmt.Println("LatestBlockHeight:", status.SyncInfo.LatestBlockHeight)
-        // curl  'localhost:26657/abci_query?data="crt:dc_name"'
 
         res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s:%s", "crt", dc_name)))
         qres := res.Response
