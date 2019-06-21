@@ -23,7 +23,7 @@ func Listen(network, address, id string, onAccept func(*net.Conn, error)) (net.L
 
 	var (
 		ln = listener{
-			connCh: make(chan *activeConn, 2),
+			connCh: make(chan *activeConn, MIN_IDLE-1),
 			stopCh: make(chan struct{}),
 		}
 		err error

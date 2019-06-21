@@ -30,7 +30,7 @@ func client() {
 
 	var oneKey string
 	{ // test loop all
-		pgrpc.Each(func(key string, conn *grpc.ClientConn, err error) error {
+		pgrpc.Each(func(key string, ips []string, conn *grpc.ClientConn, err error) error {
 			if err != nil {
 				log.Println(err)
 				return err
@@ -44,7 +44,7 @@ func client() {
 				return err
 			}
 
-			log.Println(resp.Id)
+			log.Println(resp.Id, ips)
 
 			oneKey = key
 			return nil
