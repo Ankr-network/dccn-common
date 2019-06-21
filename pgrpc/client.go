@@ -4,12 +4,12 @@ import (
 	context "context"
 	"io"
 	"net"
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/connectivity"
 )
 
 type Client struct {
@@ -39,10 +39,11 @@ func NewClient(network, addr string, ipHook func(*net.Conn) string, opts ...grpc
 			}
 
 			go func(conn net.Conn) {
-				tcpConn := conn.(*net.TCPConn)
-				tcpConn.SetKeepAlive(true)
-				tcpConn.SetKeepAlivePeriod(5 * time.Second)
-				tcpConn.SetLinger(1)
+				if tcpConn, ok := conn.(*net.TCPConn); ok {
+					tcpConn.SetLinger(1)
+					tcpConn.SetKeepAlive(true)
+					tcpConn.SetKeepAlivePeriod(5 * time.Second)
+				}
 
 				var ip string
 				if ipHook != nil {
@@ -52,19 +53,18 @@ func NewClient(network, addr string, ipHook func(*net.Conn) string, opts ...grpc
 					ip, _, _ = net.SplitHostPort(conn.RemoteAddr().String())
 				}
 
-				buf := make([]byte, 1)
+				buf := make([]byte, MAX_ID_LEN)
+				conn.SetDeadline(time.Now().Add(5 * time.Second))
 				if _, err := io.ReadFull(conn, buf); err != nil {
 					conn.Close()
 					return
 				}
-				buf = make([]byte, int(buf[0]))
-				if _, err := io.ReadFull(conn, buf); err != nil {
-					conn.Close()
-					return
-				}
-				id := string(buf)
 
-				if val, ok := c.LoadOrStore(id, &pool{ips: []string{ip}, conns: []net.Conn{conn}, opts: opts}); ok {
+				conn.SetDeadline(time.Time{})
+				id := strings.TrimSpace(string(buf))
+
+				if val, ok := c.LoadOrStore(id, &pool{id: id,
+					ips: []string{ip}, conns: []net.Conn{conn}, opts: opts}); ok {
 					val.(*pool).PutConn(ip, conn)
 				}
 			}(conn)
@@ -138,109 +138,55 @@ type pool struct {
 }
 
 func (s *pool) Get() (*grpc.ClientConn, []string, error) {
-	var bans []*grpc.ClientConn
-	defer func() {
-		for i := range bans {
-			bans[i].Close()
+	var conn net.Conn
+	var ips []string
+	for i := 0; i < 10; i++ {
+		s.mu.Lock()
+		if len(s.ccs) != 0 {
+			pick := s.ccs[0]
+			s.ccs = s.ccs[1:]
+			ips = s.ips
+			s.mu.Unlock()
+			return pick, ips, nil
 		}
-	}()
 
-	var pick *grpc.ClientConn
-	var pickIdx = -1
-	var retry = true
-	var e error
-
-RETRY:
-	s.mu.Lock()
-	// find avaiable ClientConn
-FOR:
-	for i := range s.ccs {
-		switch s.ccs[i].GetState() {
-		case connectivity.Connecting:
+		// no avaiable ClientConn, try build from net.Conn
+		if len(s.conns) == 0 {
+			s.mu.Unlock()
+			time.Sleep(200 * time.Millisecond)
 			continue
-		case connectivity.TransientFailure:
-			continue
-
-		case connectivity.Ready:
-			pickIdx = i
-			break FOR
-
-		default:
-			bans = append(bans, s.ccs[i])
-			s.ccs = append(s.ccs[:i], s.ccs[i+1:]...)
-			goto FOR
-		}
-	}
-
-	if pickIdx != -1 {
-		pick = s.ccs[pickIdx]
-		s.ccs = append(s.ccs[:pickIdx], s.ccs[pickIdx+1:]...)
-	}
-
-	if pick != nil {
-		ips := s.ips
-		s.mu.Unlock()
-		return pick, ips, nil
-	}
-
-	// no avaiable ClientConn, try build from net.Conn
-	if len(s.conns) == 0 {
-		s.mu.Unlock()
-		if retry {
-			retry = false
-			time.Sleep(time.Second)
-			goto RETRY
 		}
 
-		return nil, nil, errors.Wrap(e, "no available connection to "+s.id)
+		conn = s.conns[0]
+		s.conns = s.conns[1:]
+		ips = s.ips
+		s.mu.Unlock()
+		break
 	}
 
-	conn := s.conns[0]
-	s.conns = s.conns[1:]
-	ips := s.ips
-	s.mu.Unlock()
+	if conn == nil {
+		return nil, nil, errors.New("no available connection to " + s.id)
+	}
 
 	// dial client conn
 	opts := append(s.opts, grpc.WithContextDialer(
 		func(context.Context, string) (net.Conn, error) { return conn, nil }))
-	pick, e = grpc.DialContext(context.Background(), s.id, opts...)
-	if e != nil {
+	cc, err := grpc.DialContext(context.Background(), s.id, opts...)
+	if err != nil {
 		conn.Close()
-		goto RETRY
+		return nil, nil, err
 	}
-	return pick, ips, nil
+	return cc, ips, nil
 }
 
 func (s *pool) PutCC(cc *grpc.ClientConn) {
-	var dropped *grpc.ClientConn
-	switch cc.GetState() {
-	case connectivity.Ready:
-		s.mu.Lock()
-		if len(s.ccs) == (MAX_IDLE - MIN_IDLE) {
-			dropped = s.ccs[0]
-			s.ccs = s.ccs[1:]
-		}
+	s.mu.Lock()
+	if len(s.ccs) == (MAX_IDLE - MIN_IDLE) {
+		cc.Close()
+	} else {
 		s.ccs = append(s.ccs, cc)
-		s.mu.Unlock()
-
-	case connectivity.Connecting:
-		fallthrough
-	case connectivity.TransientFailure:
-		s.mu.Lock()
-		if len(s.ccs) == (MAX_IDLE - MIN_IDLE) {
-			dropped = cc
-		} else {
-			s.ccs = append(s.ccs, cc)
-		}
-		s.mu.Unlock()
-
-	default:
-		dropped = cc
 	}
-
-	if dropped != nil {
-		dropped.Close()
-	}
+	s.mu.Unlock()
 }
 
 func (s *pool) PutConn(ip string, conn net.Conn) {

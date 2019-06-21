@@ -2,6 +2,7 @@ package pgrpc
 
 import (
 	"net"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -15,7 +16,8 @@ type listener struct {
 }
 
 func Listen(network, address, id string, onAccept func(*net.Conn, error)) (net.Listener, error) {
-	if idLen := len(id); len(id) > 255 {
+	id = strings.TrimSpace(id)
+	if idLen := len(id); len(id) > MAX_ID_LEN {
 		return nil, errors.Errorf("id(%s) is too long", id)
 	} else if idLen == 0 {
 		return nil, errors.Errorf("id is empty")
@@ -42,18 +44,19 @@ func Listen(network, address, id string, onAccept func(*net.Conn, error)) (net.L
 			if err != nil {
 				time.Sleep(5 * time.Second)
 				continue
-			} else {
-				c := conn.(*net.TCPConn)
-				c.SetKeepAlive(true)
-				c.SetKeepAlivePeriod(5 * time.Second)
-				c.SetLinger(1)
 			}
 
-			aConn, sig := newActiveConn(conn, id)
+			aConn, err := newActiveConn(conn, id)
+			if err != nil {
+				time.Sleep(time.Second)
+				continue
+			}
+
+			ln.connCh <- aConn
 			select {
-			case <-sig:
-				ln.connCh <- aConn
+			case <-aConn.init:
 			case <-ln.stopCh:
+				aConn.Close()
 				return
 			}
 		}
@@ -65,11 +68,7 @@ func (ln *listener) Accept() (net.Conn, error) {
 	for {
 		select {
 		case conn := <-ln.connCh:
-			if conn.err != nil {
-				conn.Close()
-			} else {
-				return conn, nil
-			}
+			return conn, nil
 		case <-ln.stopCh:
 			return nil, errors.New("listener has been stoped")
 		}
@@ -85,48 +84,47 @@ func (ln *listener) Addr() net.Addr {
 
 // activeConn is a net.Conn that can detect conn first activaty
 type activeConn struct {
-	b    byte
-	n    int
-	err  error
-	init bool
+	init chan struct{}
 
 	net.Conn
 }
 
-func newActiveConn(conn net.Conn, id string) (*activeConn, <-chan struct{}) {
-	aConn := activeConn{Conn: conn}
-	sig := make(chan struct{})
+func newActiveConn(conn net.Conn, id string) (*activeConn, error) {
+	if c, ok := conn.(*net.TCPConn); ok {
+		c.SetLinger(1)
+		c.SetKeepAlive(true)
+		c.SetKeepAlivePeriod(5 * time.Second)
+	}
 
-	go func() {
-		// write id
-		buf := make([]byte, 0, 1+len(id))
-		buf = append(buf, byte(len(id)))
-		buf = append(buf, []byte(id)...)
-		aConn.n, aConn.err = conn.Write(buf)
-		if aConn.err != nil {
-			close(sig)
-			return
-		}
+	aConn := activeConn{Conn: conn, init: make(chan struct{})}
 
-		buf = buf[:1]
-		aConn.n, aConn.err = conn.Read(buf)
-		aConn.b = buf[0]
-		close(sig)
-	}()
+	// write id
+	buf := make([]byte, MAX_ID_LEN)
+	copy(buf[len(id):], idPlaceholder)
+	copy(buf, []byte(id))
 
-	return &aConn, sig
+	aConn.SetDeadline(time.Now().Add(5 * time.Second))
+	if n, err := aConn.Write(buf); err != nil {
+		close(aConn.init)
+		return nil, err
+
+	} else if n != MAX_ID_LEN {
+		aConn.Close()
+		close(aConn.init)
+		return nil, errors.New("write id fail")
+	}
+
+	aConn.SetDeadline(time.Time{})
+	return &aConn, nil
 }
 
 func (a *activeConn) Read(b []byte) (n int, err error) {
-	if !a.init {
-		if len(b) == 0 {
-			return 0, a.err
-		}
-
-		a.init = true
-		b[0] = a.b
-		return a.n, a.err
+	select {
+	case <-a.init:
+		return a.Conn.Read(b)
+	default:
+		n, err = a.Conn.Read(b)
+		close(a.init)
+		return
 	}
-
-	return a.Conn.Read(b)
 }

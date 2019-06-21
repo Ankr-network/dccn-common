@@ -26,7 +26,7 @@ func client() {
 	}
 
 	// wait server connect
-	time.Sleep(1 << 30)
+	time.Sleep(1 << 31)
 
 	var oneKey string
 	{ // test loop all
@@ -40,7 +40,7 @@ func client() {
 				Id: "Hello " + key,
 			})
 			if err != nil {
-				log.Fatalln(err)
+				log.Fatalf("%+v", err)
 				return err
 			}
 
@@ -51,19 +51,21 @@ func client() {
 		})
 	}
 
-	{ // test dial
-		cc, err := pgrpc.Dial(oneKey)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		resp, err := api.NewPingClient(cc).Ping(context.Background(), &api.PingMsg{
-			Id: "dial",
-		})
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		log.Println(resp.Id)
-		cc.Close()
+	if oneKey == "" {
+		return
 	}
+	// test dial
+	cc, err := pgrpc.Dial(oneKey)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	resp, err := api.NewPingClient(cc).Ping(context.Background(), &api.PingMsg{
+		Id: "dial",
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println(resp.Id)
+	cc.Close()
 }
