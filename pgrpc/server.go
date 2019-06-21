@@ -62,11 +62,17 @@ func Listen(network, address, id string, onAccept func(*net.Conn, error)) (net.L
 }
 
 func (ln *listener) Accept() (net.Conn, error) {
-	select {
-	case conn := <-ln.connCh:
-		return conn, conn.err
-	case <-ln.stopCh:
-		return nil, errors.New("listener has been stoped")
+	for {
+		select {
+		case conn := <-ln.connCh:
+			if conn.err != nil {
+				conn.Close()
+			} else {
+				return conn, nil
+			}
+		case <-ln.stopCh:
+			return nil, errors.New("listener has been stoped")
+		}
 	}
 }
 func (ln *listener) Close() error {
