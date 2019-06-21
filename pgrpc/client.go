@@ -100,30 +100,25 @@ func (c *Client) Each(fn func(key string, ips []string, cc *grpc.ClientConn, err
 			defer wg.Done()
 
 			cc, ips, err := pool.Get()
-			if e := fn(key, ips, cc, err); e != nil {
-				if err == nil {
-					cc.Close()
-				}
-				return
-			}
-			pool.PutCC(cc)
+			err = fn(key, ips, cc, err)
+			pool.PutCC(cc, err)
 
 		}(key.(string), val.(*pool))
 		return true
 	})
 }
 
-func PutCC(cc *grpc.ClientConn) {
-	DefaultClient.PutCC(cc)
+func PutCC(cc *grpc.ClientConn, err error) {
+	DefaultClient.PutCC(cc, err)
 }
-func (c *Client) PutCC(cc *grpc.ClientConn) {
+func (c *Client) PutCC(cc *grpc.ClientConn, err error) {
 	val, ok := c.Load(cc.Target())
 	if !ok {
 		return
 	}
 
 	pool := val.(*pool)
-	pool.PutCC(cc)
+	pool.PutCC(cc, err)
 }
 
 // pool maintain idle connections
@@ -179,7 +174,12 @@ func (s *pool) Get() (*grpc.ClientConn, []string, error) {
 	return cc, ips, nil
 }
 
-func (s *pool) PutCC(cc *grpc.ClientConn) {
+func (s *pool) PutCC(cc *grpc.ClientConn, err error) {
+	if err != nil {
+		cc.Close()
+		return
+	}
+
 	s.mu.Lock()
 	if len(s.ccs) == (MAX_IDLE - MIN_IDLE) {
 		cc.Close()
