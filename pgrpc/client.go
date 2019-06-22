@@ -1,10 +1,10 @@
 package pgrpc
 
 import (
+	"bytes"
 	context "context"
 	"io"
 	"net"
-	"strings"
 	"sync"
 	"time"
 
@@ -60,7 +60,7 @@ func NewClient(network, addr string, ipHook func(*net.Conn) string,
 				}
 
 				conn.SetDeadline(time.Time{})
-				id := strings.TrimSpace(string(buf))
+				id := string(bytes.TrimRight(buf, string(0)))
 
 				if val, ok := c.LoadOrStore(id, &pool{id: id,
 					ips: []string{ip}, conns: []net.Conn{conn}, opts: opts}); ok {

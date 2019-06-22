@@ -2,7 +2,6 @@ package pgrpc
 
 import (
 	"net"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -16,7 +15,6 @@ type listener struct {
 }
 
 func Listen(network, address, id string, onAccept func(*net.Conn, error)) (net.Listener, error) {
-	id = strings.TrimSpace(id)
 	if idLen := len(id); len(id) > MAX_ID_LEN {
 		return nil, errors.Errorf("id(%s) is too long", id)
 	} else if idLen == 0 {
@@ -100,14 +98,16 @@ func newActiveConn(conn net.Conn, id string) (*activeConn, error) {
 
 	// write id
 	buf := make([]byte, MAX_ID_LEN)
-	copy(buf[len(id):], idPlaceholder)
 	copy(buf, []byte(id))
 
 	aConn.SetDeadline(time.Now().Add(5 * time.Second))
-	if n, err := aConn.Write(buf); err != nil || n != MAX_ID_LEN {
-		close(aConn.init)
-		aConn.Close()
-		return nil, errors.Errorf("write id fail: %s", err)
+	var err error
+	for n, nn := 0, 0; nn < MAX_ID_LEN; nn += n {
+		if n, err = aConn.Write(buf[nn:]); err != nil {
+			close(aConn.init)
+			aConn.Close()
+			return nil, errors.Errorf("write id fail: %s", err)
+		}
 	}
 
 	aConn.SetDeadline(time.Time{})
