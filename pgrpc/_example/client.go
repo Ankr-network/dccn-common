@@ -26,7 +26,7 @@ func client() {
 	}
 
 	// wait server connect
-	time.Sleep(1 << 31)
+	time.Sleep(1 << 30)
 
 	var oneKey string
 	{ // test loop all

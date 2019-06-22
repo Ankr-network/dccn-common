@@ -104,14 +104,10 @@ func newActiveConn(conn net.Conn, id string) (*activeConn, error) {
 	copy(buf, []byte(id))
 
 	aConn.SetDeadline(time.Now().Add(5 * time.Second))
-	if n, err := aConn.Write(buf); err != nil {
+	if n, err := aConn.Write(buf); err != nil || n != MAX_ID_LEN {
 		close(aConn.init)
-		return nil, err
-
-	} else if n != MAX_ID_LEN {
 		aConn.Close()
-		close(aConn.init)
-		return nil, errors.New("write id fail")
+		return nil, errors.Errorf("write id fail: %s", err)
 	}
 
 	aConn.SetDeadline(time.Time{})

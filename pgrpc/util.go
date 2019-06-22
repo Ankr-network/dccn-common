@@ -1,8 +1,8 @@
 package pgrpc
 
 const MIN_IDLE = 1
-const MAX_IDLE = 10
-const MAX_ID_LEN = 255
+const MAX_IDLE = 5
+const MAX_ID_LEN = 64
 
 var idPlaceholder []byte
 

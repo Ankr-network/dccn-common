@@ -39,12 +39,6 @@ func NewClient(network, addr string, ipHook func(*net.Conn) string, opts ...grpc
 			}
 
 			go func(conn net.Conn) {
-				if tcpConn, ok := conn.(*net.TCPConn); ok {
-					tcpConn.SetLinger(1)
-					tcpConn.SetKeepAlive(true)
-					tcpConn.SetKeepAlivePeriod(5 * time.Second)
-				}
-
 				var ip string
 				if ipHook != nil {
 					ip = ipHook(&conn)
