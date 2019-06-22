@@ -1,5 +1,5 @@
 syntax = "proto3";
-package api;
+package util;
 
 service Ping {
   rpc Ping(PingMsg) returns (PingMsg) {}

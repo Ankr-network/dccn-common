@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/Ankr-network/dccn-common/pgrpc"
-	"github.com/Ankr-network/dccn-common/pgrpc/api"
 	"github.com/Ankr-network/dccn-common/pgrpc/util"
 	grpc "google.golang.org/grpc"
 )
@@ -21,7 +20,7 @@ func client() {
 			log.Fatalln(err)
 		}
 		return key
-	}, grpc.WithInsecure()); err != nil {
+	}, util.PingHook, grpc.WithInsecure()); err != nil {
 		log.Fatalln(err)
 	}
 
@@ -36,7 +35,7 @@ func client() {
 				return err
 			}
 
-			resp, err := api.NewPingClient(conn).Ping(context.Background(), &api.PingMsg{
+			resp, err := util.NewPingClient(conn).Ping(context.Background(), &util.PingMsg{
 				Id: "Hello " + key,
 			})
 			if err != nil {
@@ -59,7 +58,7 @@ func client() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	resp, err := api.NewPingClient(cc).Ping(context.Background(), &api.PingMsg{
+	resp, err := util.NewPingClient(cc).Ping(context.Background(), &util.PingMsg{
 		Id: "dial",
 	})
 	if err != nil {

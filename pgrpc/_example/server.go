@@ -5,7 +5,7 @@ import (
 	"net"
 
 	"github.com/Ankr-network/dccn-common/pgrpc"
-	"github.com/Ankr-network/dccn-common/pgrpc/api"
+	"github.com/Ankr-network/dccn-common/pgrpc/util"
 	grpc "google.golang.org/grpc"
 )
 
@@ -20,7 +20,7 @@ func server() {
 	}
 
 	server := grpc.NewServer()
-	api.RegisterPingServer(server, &api.Server{})
+	util.RegisterPingServer(server, &util.Server{})
 	if err := server.Serve(ln); err != nil {
 		log.Fatalln(err)
 	}
