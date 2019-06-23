@@ -404,7 +404,7 @@ func SetMeteringCert(ip, port, op_priv_key, dc_name, cert_pem string) error {
 
 	pemB64 := base64.StdEncoding.EncodeToString([]byte(cert_pem))
 
-	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "set_mtr_nonce")))
+	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "set_crt_nonce")))
         qres := res.Response
         if !qres.IsOK() {
                 return errors.New("Query nonce failure, connect error.")
@@ -458,7 +458,7 @@ func RemoveMeteringCert(ip, port, op_priv_key, dc_name string) error {
                 return err
         }
 
-        res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "rmv_mtr_nonce")))
+        res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "rmv_crt_nonce")))
         qres := res.Response
         if !qres.IsOK() {
                 return errors.New("Query nonce failure, connect error.")
