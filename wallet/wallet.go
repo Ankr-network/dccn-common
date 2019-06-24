@@ -685,8 +685,8 @@ func SetMetering(ip, port, priv_key_pem, dc, ns, value string) error {
                 return errors.New("Query nonce failure, connect error.")
         } else {
                 balanceNonceSlices := strings.Split(string(qres.Value), ":")
-                if len(balanceNonceSlices) == 6 {
-                        nonce = balanceNonceSlices[5]
+                if len(balanceNonceSlices) == 4 {
+                        nonce = balanceNonceSlices[3]
                 }
         }
 
