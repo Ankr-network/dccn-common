@@ -597,6 +597,61 @@ func SetBalance(ip, port, address, amount, admin_priv_key string) error {
 	return nil
 }
 
+func SetOpKey(ip, port, keyname, value, admin_priv_key string) error {
+	var nonce string = "0"
+	cl := getHTTPClient(ip, port)
+
+	_, err := cl.Status()
+	if err != nil {
+		return err
+	}
+
+	admin_pub_key, err := GetPublicKeyByPrivateKey(admin_priv_key)
+	if err != nil {
+		return err
+	}
+
+	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "admin_nonce")))
+	qres := res.Response
+	if !qres.IsOK() {
+		return errors.New("Query nonce failure, connect error.")
+	} else {
+		if string(qres.Value) != "" {
+			nonce = string(qres.Value)
+			fmt.Println(nonce)
+		}
+	}
+
+	nonceInt, err := strconv.ParseInt(string(nonce), 10, 64)
+	if err != nil {
+		return err
+	}
+
+	nonceInt++
+	nonce = fmt.Sprintf("%d", nonceInt)
+
+	sig, err := Sign(fmt.Sprintf("%s%s%s", keyname, value, nonce), admin_priv_key)
+	if err != nil {
+		return err
+	}
+
+	//fmt.Printf("%s=%s:%s:%s:%s:%s\n", string("set_bal"), address, amount, nonce, public_key, sig)
+	btr, err := cl.BroadcastTxCommit(types.Tx(
+		fmt.Sprintf("%s=%s:%s:%s:%s:%s", string("set_op"), keyname, value, nonce, admin_pub_key, sig)))
+
+        if err != nil {
+                return err
+        } else if btr.CheckTx.Code != 0 {
+                return errors.New(btr.CheckTx.Log)
+        } else if btr.DeliverTx.Code != 0{
+                return errors.New(btr.DeliverTx.Log)
+        }
+
+	client.WaitForHeight(cl, btr.Height+1, nil)
+
+	return nil
+}
+
 /**
 based on the address, return the send history of such address. 
 For example, such address has sent out tokens 5 times, and the trx details will be returned.
