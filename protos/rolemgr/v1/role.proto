@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+import "common/common.proto";
+package rolemgr;
+
+service Role {
+
+    rpc CreateTeam(CreateTeamRequest) returns (CreateTeamResponse) {}
+    rpc GetUserRole(GetUserRoleRequest) returns (GetUserRoleResponse) {}
+    rpc InviteUser(InviteUserRequest) returns (common.proto.Empty) {}
+    rpc TeamUsers(TeamUsersRequest) returns (TeamUsersResponse) {}
+    rpc UpdateUserRole(UpdateUserRoleRequest) returns (common.proto.Empty) {}
+}
+
+
+
+message PrivilegeElement{
+    string Type = 1;  //read  or write
+    string path = 2;      // * all path,  fees/month/total_income   multi level
+}
+
+message Privilege {
+    repeated PrivilegeElement list = 1;
+}
+
+
+message CreateTeamRequest{
+      string uid = 1;
+      string name = 2;
+}
+
+message CreateTeamResponse{
+      string team_id = 1;
+}
+
+message GetUserRoleRequest{
+      string uid = 1;
+}
+
+message GetUserRoleResponse{
+      string team_id = 1;
+      string role = 2;
+      Privilege privilege = 3;
+}
+
+message InviteUserRequest {
+    string mame = 1;
+    string email = 2;
+    string team_id = 3;
+}
+
+message TeamUsersRequest {
+    string team_id = 1;
+}
+
+message TeamUserRecord {
+    string uid = 1;
+    string name = 2;
+    string email = 3;
+    string role = 4;
+    Privilege privilege = 5;
+}
+
+
+message TeamUsersResponse {
+      string name = 1;
+      string team_id = 2;
+      repeated TeamUserRecord users = 3;
+}
+
+message UpdateUserRoleRequest {
+        string uid = 1;
+        string role = 2;
+        Privilege privilege = 3;
+}
+
