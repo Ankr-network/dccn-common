@@ -1,25 +1,26 @@
 package wallet
 
 import (
+    _ "crypto/rand"
     "crypto/sha256"
     "encoding/base64"
     "encoding/hex"
     "encoding/json"
     "errors"
     "fmt"
-    "strconv"
-    "strings"
-    "net/http"
     "io/ioutil"
     "math/big"
-    _ "crypto/rand"
+    "net/http"
+    "strconv"
+    "strings"
 
     _ "github.com/tendermint/tendermint/crypto"
     "github.com/tendermint/tendermint/crypto/ed25519"
     cmn "github.com/tendermint/tendermint/libs/common"
     "github.com/tendermint/tendermint/rpc/client"
-    "github.com/tendermint/tendermint/types"
     ctypes "github.com/tendermint/tendermint/rpc/core/types"
+    "github.com/tendermint/tendermint/types"
+    "github.com/binance-chain/go-sdk/types/tx"
 
     signmanager "github.com/Ankr-network/dccn-common/cert/sign"
 )
@@ -39,6 +40,7 @@ const DEFAULT_ETHEREUM_URL = "https://api.tokenbalance.com/token/"
   7LZDm35dSiHkIvKTn6TaLwtoopMYr4VvW2gi0rTNocg=
   0D9FE6A785C830D2BE66FE40E0E7FE3D9838456C
 */
+
 func GenerateKeys() (priv_key_base64, pub_key_base64, address string) {
     mykey := ed25519.GenPrivKey()
 
@@ -192,7 +194,7 @@ func SetValidator(ip, port, pubkey, power, admin_priv_key string) (err_ret error
         return err
     } else if btr.CheckTx.Code != 0 {
         return errors.New(btr.CheckTx.Log)
-    } else if btr.DeliverTx.Code != 0{
+    } else if btr.DeliverTx.Code != 0 {
         return errors.New(btr.DeliverTx.Log)
     }
 
@@ -253,31 +255,32 @@ priv_key: address1's priv_key
 public_key: address1's public key
 note: priv_key is used for signature, and it will not be sent or saved.
 */
-func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key string) (hash string, err error) {
+func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key string) (result *tx.TxCommitResult, err error) {
+    result=&tx.TxCommitResult{}
     var nonce string
     cl := getHTTPClient(ip, port)
 
     _, err = cl.Status()
     if err != nil {
-        return hash, err
+        return result, err
     }
 
     res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s:%s", "bal", from_address)))
     qres := res.Response
     if !qres.IsOK() {
-        return hash, errors.New("Query nonce failure, connect error.")
+        return result, errors.New("Query nonce failure, connect error.")
     } else {
         balanceNonceSlices := strings.Split(string(qres.Value), ":")
         if len(balanceNonceSlices) == 2 {
             nonce = balanceNonceSlices[1]
         } else {
-            return hash, errors.New("Query nonce failure, balance format incorrect.")
+            return result, errors.New("Query nonce failure, balance format incorrect.")
         }
     }
 
     nonceInt, err := strconv.ParseInt(string(nonce), 10, 64)
     if err != nil {
-        return hash, err
+        return result, err
     }
 
     nonceInt++
@@ -285,24 +288,26 @@ func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key 
 
     sig, err := Sign(fmt.Sprintf("%s%s%s%s", from_address, to_address, amount, nonce), priv_key)
     if err != nil {
-        return hash, err
+        return result, err
     }
 
     //fmt.Printf("%s=%s:%s:%s:%s:%s:%s\n", string("trx_send"), from_address, to_address, amount, nonce, public_key, sig)
     btr, err := cl.BroadcastTxCommit(types.Tx(
         fmt.Sprintf("%s=%s:%s:%s:%s:%s:%s", string("trx_send"), from_address, to_address, amount, nonce, public_key, sig)))
-    hash = btr.Hash.String()
+    result.Hash = btr.Hash.String()
+    result.Ok = true
+    result.Code = 0
     if err != nil {
-        return hash, err
+        return result, err
     } else if btr.CheckTx.Code != 0 {
-        return hash, errors.New(btr.CheckTx.Log)
+        return result, errors.New(btr.CheckTx.Log)
     } else if btr.DeliverTx.Code != 0 {
-        return hash, errors.New(btr.DeliverTx.Log)
+        return result, errors.New(btr.DeliverTx.Log)
     }
 
     client.WaitForHeight(cl, btr.Height+1, nil)
 
-    return hash, nil
+    return result, nil
 }
 
 /*
@@ -438,7 +443,7 @@ func SetMeteringCert(ip, port, op_priv_key, dc_name, cert_pem string) error {
         return err
     } else if btr.CheckTx.Code != 0 {
         return errors.New(btr.CheckTx.Log)
-    } else if btr.DeliverTx.Code != 0{
+    } else if btr.DeliverTx.Code != 0 {
         return errors.New(btr.DeliverTx.Log)
     }
 
@@ -490,7 +495,7 @@ func RemoveMeteringCert(ip, port, op_priv_key, dc_name string) error {
         return err
     } else if btr.CheckTx.Code != 0 {
         return errors.New(btr.CheckTx.Log)
-    } else if btr.DeliverTx.Code != 0{
+    } else if btr.DeliverTx.Code != 0 {
         return errors.New(btr.DeliverTx.Log)
     }
 
@@ -585,7 +590,7 @@ func SetBalance(ip, port, address, amount, admin_priv_key string) error {
         return err
     } else if btr.CheckTx.Code != 0 {
         return errors.New(btr.CheckTx.Log)
-    } else if btr.DeliverTx.Code != 0{
+    } else if btr.DeliverTx.Code != 0 {
         return errors.New(btr.DeliverTx.Log)
     }
 
@@ -640,7 +645,7 @@ func SetOpKey(ip, port, keyname, value, admin_priv_key string) error {
         return err
     } else if btr.CheckTx.Code != 0 {
         return errors.New(btr.CheckTx.Log)
-    } else if btr.DeliverTx.Code != 0{
+    } else if btr.DeliverTx.Code != 0 {
         return errors.New(btr.DeliverTx.Log)
     }
 
@@ -672,7 +677,7 @@ func GetHistorySend(ip, port, address string, prove bool, page, perPage int) (*c
     cl := getHTTPClient(ip, port)
 
     //curl "localhost:26657/tx_search?query=\"app.fromaddress='B508ED0D54597D516A680E7951F18CAD24C7EC9F'\"&prove=true"
-    query := "app.fromaddress="+"'"+address+"'"
+    query := "app.fromaddress=" + "'" + address + "'"
     btr, err := cl.TxSearch(query, prove, page, perPage)
     if err != nil {
         return nil, err
@@ -704,7 +709,7 @@ func GetHistoryReceive(ip, port, address string, prove bool, page, perPage int) 
     cl := getHTTPClient(ip, port)
 
     //curl "localhost:26657/tx_search?query=\"app.toaddress='B508ED0D54597D516A680E7951F18CAD24C7EC9F'\"&prove=true"
-    query := "app.toaddress="+"'"+address+"'"
+    query := "app.toaddress=" + "'" + address + "'"
     btr, err := cl.TxSearch(query, prove, page, perPage)
     if err != nil {
         return nil, err
@@ -745,7 +750,7 @@ func SetMetering(ip, port, priv_key_pem, dc, ns, value string) error {
     nonceInt++
     nonce = fmt.Sprintf("%d", nonceInt)
 
-    sigX, sigY, err := signmanager.EcdsaSign(priv_key_pem, dc + ns + value + nonce)
+    sigX, sigY, err := signmanager.EcdsaSign(priv_key_pem, dc+ns+value+nonce)
     if err != nil {
         return err
     }
@@ -759,14 +764,12 @@ func SetMetering(ip, port, priv_key_pem, dc, ns, value string) error {
         return err
     } else if btr.CheckTx.Code != 0 {
         return errors.New(btr.CheckTx.Log)
-    } else if btr.DeliverTx.Code != 0{
+    } else if btr.DeliverTx.Code != 0 {
         return errors.New(btr.DeliverTx.Log)
     }
 
     return nil
 }
-
-
 
 /**
 based on the datacentername and namespace, return metering history.
@@ -838,19 +841,19 @@ func GetERC20BalanceBlock(ethereum_url, address string) (balance, block string, 
             block = fmt.Sprintf("%d", (int)(value.(float64)))
         case "token":
             if value != AnkrERC20Contract {
-                return "", "",  errors.New("contract error.")
+                return "", "", errors.New("contract error.")
             }
         case "wallet":
             if value != address {
-                return "", "",  errors.New("address error.")
+                return "", "", errors.New("address error.")
             }
         case "name":
             if value != "Ankr Network" {
-                return "", "",  errors.New("name error.")
+                return "", "", errors.New("name error.")
             }
         case "symbol":
             if value != "ANKR" {
-                return "", "",  errors.New("symbol error.")
+                return "", "", errors.New("symbol error.")
             }
         case "eth_balance":
         case "balance":
@@ -898,9 +901,9 @@ func deserilizePubKey(pub_key_b64 string) (ed25519.PubKeyEd25519, error) {
     }
 
     pk := []byte(pDec)
-    var pubObject ed25519.PubKeyEd25519 = ed25519.PubKeyEd25519{pk[0], pk[1], pk[2], pk[3],pk[4], pk[5],pk[6],
-        pk[7],pk[8], pk[9], pk[10], pk[11], pk[12], pk[13], pk[14], pk[15], pk[16], pk[17], pk[18], pk[19],
-        pk[20], pk[21],pk[22], pk[23],pk[24], pk[25],pk[26], pk[27],pk[28], pk[29],pk[30], pk[PubKeyEd25519Size - 1]}
+    var pubObject ed25519.PubKeyEd25519 = ed25519.PubKeyEd25519{pk[0], pk[1], pk[2], pk[3], pk[4], pk[5], pk[6],
+        pk[7], pk[8], pk[9], pk[10], pk[11], pk[12], pk[13], pk[14], pk[15], pk[16], pk[17], pk[18], pk[19],
+        pk[20], pk[21], pk[22], pk[23], pk[24], pk[25], pk[26], pk[27], pk[28], pk[29], pk[30], pk[PubKeyEd25519Size-1]}
 
     return pubObject, nil
 }
