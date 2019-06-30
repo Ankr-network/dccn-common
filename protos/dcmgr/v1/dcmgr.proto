@@ -21,6 +21,7 @@ service DC {
 // The dclist service definition.
 service DCAPI {
       rpc DataCenterList (common.proto.Empty) returns (DataCenterListResponse) {}
+      rpc DataCenterListWithCertification (common.proto.Empty) returns (DataCenterListWithCertificationResponse) {}
       rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){}
       rpc RegisterDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
       rpc ResetDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
@@ -58,8 +59,23 @@ message RegisterDataCenterResponse {
   string configmap = 6;
 }
 
+
+
+message ClusterRecord {
+  string cluster_id = 1;
+  string cluster_name = 2;
+  string uid = 3;
+  string client_csr_cert = 4;
+}
+
 message DataCenterListResponse {
-  repeated common.proto.DataCenterStatus dcList= 1; // repeated groups of DataCenterInfo list
+  repeated common.proto.DataCenterStatus dcList= 1;
+}
+
+message DataCenterListWithCertificationResponse {
+  string certification = 1;
+  string host = 2;
+  repeated ClusterRecord list = 3;
 }
 
 message NetworkInfoResponse {

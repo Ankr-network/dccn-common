@@ -3,16 +3,24 @@ package main
 import (
 	context "context"
 	"log"
-	"strconv"
+	"net"
 	"time"
 
 	"github.com/Ankr-network/dccn-common/pgrpc"
-	"github.com/Ankr-network/dccn-common/pgrpc/_example/api"
+	"github.com/Ankr-network/dccn-common/pgrpc/util"
 	grpc "google.golang.org/grpc"
 )
 
 func client() {
-	if err := pgrpc.InitClient("tcp", ":50051", nil, grpc.WithInsecure()); err != nil {
+	if err := pgrpc.InitClient("tcp", ":50051", func(conn *net.Conn) string {
+		var key string
+		var err error
+		*conn, key, err = util.ParseProxyProto(*conn)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		return key
+	}, util.PingHook, grpc.WithInsecure()); err != nil {
 		log.Fatalln(err)
 	}
 
@@ -21,54 +29,42 @@ func client() {
 
 	var oneKey string
 	{ // test loop all
-		pgrpc.Each(func(key string, conn *grpc.ClientConn) error {
-			resp, err := api.NewPingClient(conn).SayHello(context.Background(), &api.PingMessage{
-				Greeting: "Hello " + key,
-			})
+		pgrpc.Each(func(key string, ips []string, conn *grpc.ClientConn, err error) error {
 			if err != nil {
-				log.Fatalln(err)
+				log.Println(err)
 				return err
 			}
 
-			log.Println(resp.Greeting)
+			resp, err := util.NewPingClient(conn).Ping(context.Background(), &util.PingMsg{
+				Id: "Hello " + key,
+			})
+			if err != nil {
+				log.Fatalf("%+v", err)
+				return err
+			}
+
+			log.Println(resp.Id, ips)
 
 			oneKey = key
 			return nil
 		})
 	}
 
-	{ // test dial
-		cc, err := pgrpc.Dial(oneKey)
-		if err != nil {
-			log.Fatalln(err)
-		}
-		resp, err := api.NewPingClient(cc).SayHello(context.Background(), &api.PingMessage{
-			Greeting: "dial",
-		})
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		log.Println(resp.Greeting)
-		cc.Close()
+	if oneKey == "" {
+		return
 	}
-	{ // test alias
-		pgrpc.Alias(oneKey, "test")
-		cc, err := pgrpc.Dial("test")
-		if err != nil {
-			log.Fatalln(err)
-		}
-		defer cc.Close()
-
-		for i := 0; i < 2; i++ {
-			resp, err := api.NewPingClient(cc).SayHello(context.Background(), &api.PingMessage{
-				Greeting: "test-" + strconv.Itoa(i),
-			})
-			if err != nil {
-				log.Fatalln(err)
-			}
-
-			log.Println(resp.Greeting)
-		}
+	// test dial
+	cc, err := pgrpc.Dial(oneKey)
+	if err != nil {
+		log.Fatalln(err)
 	}
+	resp, err := util.NewPingClient(cc).Ping(context.Background(), &util.PingMsg{
+		Id: "dial",
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println(resp.Id)
+	cc.Close()
 }

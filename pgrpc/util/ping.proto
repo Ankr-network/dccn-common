@@ -1,0 +1,8 @@
+syntax = "proto3";
+package util;
+
+service Ping {
+  rpc Ping(PingMsg) returns (PingMsg) {}
+}
+
+message PingMsg { string id = 1; }

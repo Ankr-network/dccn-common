@@ -13,7 +13,7 @@ common:
 
 micro: common
 	@echo "Generating micro proto"
-	@for type in email usermgr appmgr dcmgr; do \
+	@for type in email usermgr appmgr dcmgr rolemgr; do \
 		cp $$type/v1/*.proto $$type/v1/micro/; \
 		protoc -I. -Icommon \
 			--micro_out=Mcommon/common.proto=github.com/Ankr-network/dccn-common/protos/common:. \
@@ -24,7 +24,7 @@ micro: common
 
 grpc: common
 	@echo "Generating gPRC proto"
-	@for type in email usermgr appmgr dcmgr; do \
+	@for type in email usermgr appmgr dcmgr rolemgr; do \
 		cp $$type/v1/*.proto $$type/v1/grpc/; \
 		protoc -I. -Icommon \
 			--go_out=plugins=grpc,Mcommon/common.proto=github.com/Ankr-network/dccn-common/protos/common:. \
