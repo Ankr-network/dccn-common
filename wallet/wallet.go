@@ -294,9 +294,6 @@ func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key 
     //fmt.Printf("%s=%s:%s:%s:%s:%s:%s\n", string("trx_send"), from_address, to_address, amount, nonce, public_key, sig)
     btr, err := cl.BroadcastTxCommit(types.Tx(
         fmt.Sprintf("%s=%s:%s:%s:%s:%s:%s", string("trx_send"), from_address, to_address, amount, nonce, public_key, sig)))
-    result.Hash = btr.Hash.String()
-    result.Ok = true
-    result.Code = 0
     if err != nil {
         return result, err
     } else if btr.CheckTx.Code != 0 {
@@ -304,7 +301,9 @@ func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key 
     } else if btr.DeliverTx.Code != 0 {
         return result, errors.New(btr.DeliverTx.Log)
     }
-
+    result.Hash = btr.Hash.String()
+    result.Ok = true
+    result.Code = 0
     client.WaitForHeight(cl, btr.Height+1, nil)
 
     return result, nil
