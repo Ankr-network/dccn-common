@@ -8,6 +8,7 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/streadway/amqp"
+	"github.com/Ankr-network/dccn-common/protos"
 )
 
 // RabbitMQHost contains the endpoint of RabbitMQ broker
@@ -31,13 +32,13 @@ func getRabbitMQHost() string {
 }
 
 // Send function send message to RabbitMQ queue
-func Send(topic string, e interface{}) {
+func Send(topic string, e interface{}) error {
 
 	conn, err := amqp.Dial(getRabbitMQHost())
 	failOnError(err, "Failed to connect to RabbitMQ")
 
 	if conn == nil {
-		return
+		return ankr_default.ErrRabbitMQConnection
 	}
 
 	defer conn.Close()
@@ -45,7 +46,7 @@ func Send(topic string, e interface{}) {
 	ch, err := conn.Channel()
 	failOnError(err, "Failed to open a channel")
 	if ch == nil {
-		return
+		return ankr_default.ErrRabbitMQChannel
 	}
 	defer ch.Close()
 
@@ -78,6 +79,12 @@ func Send(topic string, e interface{}) {
 	logstr := fmt.Sprintf(" [x] Sent Msg to Topic : %s ", topic)
 	WriteLog(logstr)
 	failOnError(err, "Failed to publish a message")
+
+	if err != nil {
+		return ankr_default.ErrRabbitMQPublishFailed
+	}else{
+		return nil
+	}
 }
 
 // Receive function receives messages from RabbitMQ queue,
