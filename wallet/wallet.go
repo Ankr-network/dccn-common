@@ -20,7 +20,7 @@ import (
     "github.com/tendermint/tendermint/rpc/client"
     ctypes "github.com/tendermint/tendermint/rpc/core/types"
     "github.com/tendermint/tendermint/types"
-    "github.com/binance-chain/go-sdk/types/tx"
+    "github.com/binance-chain/go-sdk/client/transaction"
 
     signmanager "github.com/Ankr-network/dccn-common/cert/sign"
 )
@@ -255,8 +255,8 @@ priv_key: address1's priv_key
 public_key: address1's public key
 note: priv_key is used for signature, and it will not be sent or saved.
 */
-func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key string) (result *tx.TxCommitResult, err error) {
-    result=&tx.TxCommitResult{}
+func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key string) (result *transaction.SendTokenResult, err error) {
+    result =&transaction.SendTokenResult{}
     var nonce string
     cl := getHTTPClient(ip, port)
 
