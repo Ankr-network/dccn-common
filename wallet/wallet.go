@@ -255,12 +255,17 @@ priv_key: address1's priv_key
 public_key: address1's public key
 note: priv_key is used for signature, and it will not be sent or saved.
 */
-func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key string) (result *transaction.SendTokenResult, err error) {
+func SendCoins(ip, port, priv_key, from_address, to_address, amount string) (result *transaction.SendTokenResult, err error) {
     result =&transaction.SendTokenResult{}
     var nonce string
     cl := getHTTPClient(ip, port)
 
     _, err = cl.Status()
+    if err != nil {
+        return result, err
+    }
+
+    public_key, err := GetPublicKeyByPrivateKey(priv_key)
     if err != nil {
         return result, err
     }
