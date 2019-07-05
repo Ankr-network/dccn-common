@@ -667,7 +667,7 @@ var (
 
 	pattern_UserMgr_ChangeEmail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"change_email"}, ""))
 
-	pattern_UserMgr_ConfirmEmail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"forgot_password"}, ""))
+	pattern_UserMgr_ConfirmEmail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"confirm_email"}, ""))
 
 	pattern_UserMgr_CreateAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"create_address"}, ""))
 

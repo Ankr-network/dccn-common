@@ -16,7 +16,7 @@ const (
 )
 
 type EthService struct {
-	ethClient *ethclient.Client
+	EthClient *ethclient.Client
 }
 
 func NewEthService() (*EthService, error){
@@ -29,7 +29,7 @@ func NewEthService() (*EthService, error){
 }
 
 func (s *EthService) TokenTransfer(assertName, fromKey, fromPassword, toAddress string, amount *big.Float) error {
-	token, err := newToken(assertName, s.ethClient)
+	token, err := newToken(assertName, s.EthClient)
 	if err != nil {
 		return err
 	}
