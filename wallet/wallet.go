@@ -14,15 +14,13 @@ import (
     "strconv"
     "strings"
 
+    signmanager "github.com/Ankr-network/dccn-common/cert/sign"
     _ "github.com/tendermint/tendermint/crypto"
     "github.com/tendermint/tendermint/crypto/ed25519"
     cmn "github.com/tendermint/tendermint/libs/common"
     "github.com/tendermint/tendermint/rpc/client"
     ctypes "github.com/tendermint/tendermint/rpc/core/types"
     "github.com/tendermint/tendermint/types"
-    "github.com/binance-chain/go-sdk/client/transaction"
-
-    signmanager "github.com/Ankr-network/dccn-common/cert/sign"
 )
 
 const PubKeyEd25519Size = 32
@@ -255,32 +253,31 @@ priv_key: address1's priv_key
 public_key: address1's public key
 note: priv_key is used for signature, and it will not be sent or saved.
 */
-func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key string) (result *transaction.SendTokenResult, err error) {
-    result =&transaction.SendTokenResult{}
+func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key string) (hash string, err error) {
     var nonce string
     cl := getHTTPClient(ip, port)
 
     _, err = cl.Status()
     if err != nil {
-        return result, err
+        return hash, err
     }
 
     res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s:%s", "bal", from_address)))
     qres := res.Response
     if !qres.IsOK() {
-        return result, errors.New("Query nonce failure, connect error.")
+        return hash, errors.New("Query nonce failure, connect error.")
     } else {
         balanceNonceSlices := strings.Split(string(qres.Value), ":")
         if len(balanceNonceSlices) == 2 {
             nonce = balanceNonceSlices[1]
         } else {
-            return result, errors.New("Query nonce failure, balance format incorrect.")
+            return hash, errors.New("Query nonce failure, balance format incorrect.")
         }
     }
 
     nonceInt, err := strconv.ParseInt(string(nonce), 10, 64)
     if err != nil {
-        return result, err
+        return hash, err
     }
 
     nonceInt++
@@ -288,25 +285,22 @@ func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key 
 
     sig, err := Sign(fmt.Sprintf("%s%s%s%s", from_address, to_address, amount, nonce), priv_key)
     if err != nil {
-        return result, err
+        return hash, err
     }
 
     //fmt.Printf("%s=%s:%s:%s:%s:%s:%s\n", string("trx_send"), from_address, to_address, amount, nonce, public_key, sig)
     btr, err := cl.BroadcastTxCommit(types.Tx(
         fmt.Sprintf("%s=%s:%s:%s:%s:%s:%s", string("trx_send"), from_address, to_address, amount, nonce, public_key, sig)))
     if err != nil {
-        return result, err
+        return hash, err
     } else if btr.CheckTx.Code != 0 {
-        return result, errors.New(btr.CheckTx.Log)
+        return hash, errors.New(btr.CheckTx.Log)
     } else if btr.DeliverTx.Code != 0 {
-        return result, errors.New(btr.DeliverTx.Log)
+        return hash, errors.New(btr.DeliverTx.Log)
     }
-    result.Hash = btr.Hash.String()
-    result.Ok = true
-    result.Code = 0
+    hash = btr.Hash.String()
     client.WaitForHeight(cl, btr.Height+1, nil)
-
-    return result, nil
+    return hash, nil
 }
 
 /*

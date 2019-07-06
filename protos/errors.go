@@ -22,6 +22,7 @@ const (
 	PasswordCharError  = "PasswordCharError:"
 	LogMgrError        = "LogMgrError:"
 	ClusterError       = "DcMgrError:"
+	AnkrMicroError     = "AnkrMicroError:"
 )
 
 var (
@@ -103,4 +104,7 @@ var (
 	ErrElasticsearchQuery        = errors.New(LogMgrError + "Elasticsearch query syntax wrong")
 	ErrUserStillPending          = errors.New(ClusterError + "User is still pending for a becoming cluster provider, can not register now")
 	ErrUserRegisteredCluster     = errors.New(ClusterError + "User has already registered one cluster, can not register again")
+	ErrRabbitMQConnection        = errors.New(AnkrMicroError + "RabbitMQ connection error")
+	ErrRabbitMQChannel           = errors.New(AnkrMicroError + "RabbitMQ channel error")
+	ErrRabbitMQPublishFailed     = errors.New(AnkrMicroError + "RabbitMQ failed to publish a message")
 )
