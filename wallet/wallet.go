@@ -14,13 +14,13 @@ import (
     "strconv"
     "strings"
 
-    signmanager "github.com/Ankr-network/dccn-common/cert/sign"
     _ "github.com/tendermint/tendermint/crypto"
     "github.com/tendermint/tendermint/crypto/ed25519"
     cmn "github.com/tendermint/tendermint/libs/common"
     "github.com/tendermint/tendermint/rpc/client"
     ctypes "github.com/tendermint/tendermint/rpc/core/types"
     "github.com/tendermint/tendermint/types"
+    signmanager "github.com/Ankr-network/dccn-common/cert/sign"
 )
 
 const PubKeyEd25519Size = 32
@@ -245,6 +245,35 @@ func GetBalance(ip, port, address string) (balance string, err_ret error) {
 }
 
 /*
+example:
+all, err := wallet.GetAllDatacenterIds("chain-dev.dccn.ankr.com", "26657")
+*/
+func GetAllDatacenterIds(ip, port string) (allIDs string, err_ret error) {
+
+    cl := getHTTPClient(ip, port)
+
+    _, err := cl.Status()
+    if err != nil {
+        return "", err
+    }
+
+    res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "all_crts")))
+    qres := res.Response
+    if !qres.IsOK() {
+        return "", errors.New("Query data center failure, connect error.")
+    } else {
+        if len(string(qres.Value)) == 0 {
+            return "", errors.New("Query data center failure, does not exist.")
+        }
+
+        allIDs = string(qres.Value)
+    }
+
+    return allIDs, nil
+}
+
+
+/*
 Example: send 10 tokens from address1 to address2.
 from_address: address1
 to_address: address2
@@ -253,11 +282,16 @@ priv_key: address1's priv_key
 public_key: address1's public key
 note: priv_key is used for signature, and it will not be sent or saved.
 */
-func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key string) (hash string, err error) {
+func SendCoins(ip, port, priv_key, from_address, to_address, amount string) (hash string, err error) {
     var nonce string
     cl := getHTTPClient(ip, port)
 
     _, err = cl.Status()
+    if err != nil {
+        return hash, err
+    }
+
+    public_key, err := GetPublicKeyByPrivateKey(priv_key)
     if err != nil {
         return hash, err
     }
@@ -300,6 +334,7 @@ func SendCoins(ip, port, priv_key, from_address, to_address, amount, public_key 
     }
     hash = btr.Hash.String()
     client.WaitForHeight(cl, btr.Height+1, nil)
+
     return hash, nil
 }
 
