@@ -247,6 +247,35 @@ func GetBalance(ip, port, address string) (balance string, err_ret error) {
 }
 
 /*
+example:
+all, err := wallet.GetAllDatacenterIds("chain-dev.dccn.ankr.com", "26657")
+*/
+func GetAllDatacenterIds(ip, port string) (allIDs string, err_ret error) {
+
+    cl := getHTTPClient(ip, port)
+
+    _, err := cl.Status()
+    if err != nil {
+        return "", err
+    }
+
+    res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "all_crts")))
+    qres := res.Response
+    if !qres.IsOK() {
+        return "", errors.New("Query data center failure, connect error.")
+    } else {
+        if len(string(qres.Value)) == 0 {
+            return "", errors.New("Query data center failure, does not exist.")
+        }
+
+	allIDs = string(qres.Value)
+    }
+
+    return allIDs, nil
+}
+
+
+/*
 Example: send 10 tokens from address1 to address2.
 from_address: address1
 to_address: address2
