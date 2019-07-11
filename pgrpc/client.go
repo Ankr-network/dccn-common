@@ -182,7 +182,9 @@ func (s *pool) Get(pingHook func(*grpc.ClientConn) error) (*grpc.ClientConn, []s
 
 func (s *pool) PutCC(cc *grpc.ClientConn, err error) {
 	if err != nil {
-		cc.Close()
+		if cc != nil {
+			cc.Close()
+		}
 		return
 	}
 
