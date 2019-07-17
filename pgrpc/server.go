@@ -118,8 +118,13 @@ func (a *activeConn) Read(b []byte) (n int, err error) {
 	select {
 	case <-a.init:
 		return a.Conn.Read(b)
+
 	default:
-		n, err = a.Conn.Read(b)
+		// wait 30s and redial, avoiding aws load balancer 1m close policy
+		a.Conn.SetDeadline(time.Now().Add(30 * time.Second))
+		if n, err = a.Conn.Read(b); err == nil {
+			a.Conn.SetDeadline(time.Time{})
+		}
 		close(a.init)
 		return
 	}
