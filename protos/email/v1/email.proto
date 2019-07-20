@@ -13,6 +13,7 @@ enum EmailType {
 	FORGET_PASSWORD = 1;
 	CHANGE_PASSWORD = 2;
     CONFIRM_EMAIL = 3;
+    REACH_LIMIT = 4;
 }
 
 message ConfirmRegistration {
