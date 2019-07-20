@@ -14,6 +14,20 @@ enum EmailType {
 	CHANGE_PASSWORD = 2;
     CONFIRM_EMAIL = 3;
     REACH_LIMIT = 4;
+    USER_REACH_LIMIT = 5;
+}
+
+message ReachLimit {
+    string amount = 1;
+    string txhash = 2;
+    string toaddress = 3;
+}
+
+message UserReachLimit {
+    string name = 1;
+    string amount = 2;
+    string txhash = 3;
+    string toaddress = 4;
 }
 
 message ConfirmRegistration {
