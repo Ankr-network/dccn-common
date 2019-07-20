@@ -63,5 +63,7 @@ message MailEvent {
         ForgetPassword forget_password = 5;
         ChangePassword change_password = 6;
         ChangeEmail change_email = 7;
+        ReachLimit reach_limit = 8;
+        UserReachLimit user_reach_limit = 9;
 	}
 }
