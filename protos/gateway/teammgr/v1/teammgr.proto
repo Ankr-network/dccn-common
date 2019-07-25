@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+import "common/common.proto";
+package teammgr;
+
+service TeamMgr {
+  rpc CreateTeam(CreateTeamRequest) returns (TeamID) {}
+  rpc DeleteTeam(TeamID) returns (common.proto.Empty) {}
+  rpc UpdateTeam(Team) returns (common.proto.Empty) {}
+  rpc ListUserTeams(UserID) returns (ListUserTeamsResponse) {}
+  rpc InviteTeamMember(InviteTeamMemberRequest) returns (common.proto.Empty) {}
+  rpc ConfirmTeamMember(ConfirmTeamMemberRequest) returns (common.proto.Empty) {}
+  rpc DeleteTeamMember(DeleteTeamMemberRequest) returns (common.proto.Empty) {}
+  rpc UpdateTeamMemberRole(UpdateTeamMemberRoleRequest)returns (common.proto.Empty) {}
+  rpc ListTeamMembers(TeamID) returns (ListTeamMembersResponse) {}
+  rpc CreateRole(CreateRoleRequest) returns (RoleID) {}
+  rpc DeleteRole(RoleID) returns (common.proto.Empty) {}
+  rpc UpdateRole(Role) returns (common.proto.Empty) {}
+  rpc GetRole(RoleID) returns (Role) {}
+  rpc SetUserCurrentTeam(SetUserCurrentTeamRequest) returns (common.proto.Empty) {}
+  rpc GetUserTeamID(UserID) returns (TeamID) {}
+  rpc CheckUserAccess(CheckUserAccessRequest) returns (CheckUserAccessResponse) {}
+}
+
+message CreateTeamRequest {
+  string name = 1;
+}
+
+message Team {
+  string id = 1;
+  string name = 2;
+}
+
+message TeamID {
+  string team_id = 1;
+}
+
+message UserTeamInfo {
+  string team_id = 1;
+  string team_name = 2;
+  string role_name = 3;
+  string role_id = 4;
+  bool current = 5;
+}
+message ListUserTeamsResponse {
+  repeated UserTeamInfo teams = 1;
+}
+
+message InviteTeamMemberRequest {
+  string email = 1;
+  string team_id = 2;
+}
+
+message ConfirmTeamMemberRequest {
+  string team_id = 1;
+  string code = 2;
+}
+
+enum TeamMemberStatus {
+  INVITED = 0;
+  CONFIRMED = 1;
+}
+
+message TeamMember {
+  string uid = 1;
+  string email = 2;
+  string user_name = 3;
+  string role_name = 4;
+  string role_id = 5;
+  TeamMemberStatus status = 6;
+}
+message ListTeamMembersResponse {
+  repeated TeamMember members = 1;
+}
+
+message DeleteTeamMemberRequest {
+  string uid = 1;
+  string team_id = 2;
+}
+
+message CreateRoleRequest {
+  string team_id = 1;
+  string role_name = 2;
+  repeated string  privileges = 3;
+}
+
+message RoleID {
+  string role_id = 1;
+}
+
+message Role {
+  string id = 1;
+  string name = 2;
+  repeated string privileges = 3;
+}
+
+message GetUserRoleResponse {
+  string uid = 1;
+  string team_id = 2;
+  Role role = 3;
+}
+
+message UpdateTeamMemberRoleRequest {
+  string uid = 1;
+  string team_id = 2;
+  string role_id = 3;
+}
+
+message UserID {
+  string uid = 1;
+}
+
+message SetUserCurrentTeamRequest {
+  string uid = 1;
+  string team_id = 2;
+}
+
+message CheckUserAccessRequest {
+  string resource = 1;
+  string action = 2;
+}
+
+message CheckUserAccessResponse {
+  bool accessible = 1;
+}
