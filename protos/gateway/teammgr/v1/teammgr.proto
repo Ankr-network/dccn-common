@@ -22,7 +22,7 @@ service TeamMgr {
             body: "*"
     };
   }
-  rpc ListUserTeams(UserID) returns (ListUserTeamsResponse) {
+  rpc ListUserTeams(common.proto.Empty) returns (ListUserTeamsResponse) {
     option (google.api.http) = {
 	             get:"/team/list"
 	        };
@@ -66,7 +66,7 @@ service TeamMgr {
 	             get:"/team/set"
 	        };
   }
-  rpc GetUserTeamID(UserID) returns (TeamID) {
+  rpc GetUserTeamID(common.proto.Empty) returns (TeamID) {
   }
   rpc CheckUserAccess(CheckUserAccessRequest) returns (CheckUserAccessResponse) {}
 }
@@ -155,9 +155,6 @@ message UpdateTeamMemberRoleRequest {
   string role_id = 3;
 }
 
-message UserID {
-  string uid = 1;
-}
 
 message SetUserCurrentTeamRequest {
   string uid = 1;
