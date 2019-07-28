@@ -2,6 +2,7 @@ package pgrpc
 
 import (
 	"net"
+	"sync"
 	"time"
 
 	"github.com/pkg/errors"
@@ -83,6 +84,7 @@ func (ln *listener) Addr() net.Addr {
 // activeConn is a net.Conn that can detect conn first activaty
 type activeConn struct {
 	init chan struct{}
+	once sync.Once
 
 	net.Conn
 }
@@ -125,7 +127,19 @@ func (a *activeConn) Read(b []byte) (n int, err error) {
 		if n, err = a.Conn.Read(b); err == nil {
 			a.Conn.SetDeadline(time.Time{})
 		}
-		close(a.init)
+
+		// detect handleshark
+		if n != 0 && (b[0] == 22 /* h2 tls */ || b[0] == 50 /* h2c [P]RISM */) {
+			a.once.Do(func() {
+				close(a.init)
+			})
+		}
 		return
 	}
+}
+func (a *activeConn) Close() error {
+	a.once.Do(func() {
+		close(a.init)
+	})
+	return a.Conn.Close()
 }
