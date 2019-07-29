@@ -41,12 +41,14 @@ func Listen(network, address, id string, onAccept func(*net.Conn, error)) (net.L
 				onAccept(&conn, err)
 			}
 			if err != nil {
+				Log.Println(err)
 				time.Sleep(5 * time.Second)
 				continue
 			}
 
 			aConn, err := newActiveConn(conn, id)
 			if err != nil {
+				Log.Println(err)
 				time.Sleep(time.Second)
 				continue
 			}
@@ -106,7 +108,7 @@ func newActiveConn(conn net.Conn, id string) (*activeConn, error) {
 	var err error
 	for n, nn := 0, 0; nn < MAX_ID_LEN; nn += n {
 		if n, err = aConn.Write(buf[nn:]); err != nil {
-			close(aConn.init)
+			Log.Println(err)
 			aConn.Close()
 			return nil, errors.Errorf("write id fail: %s", err)
 		}
@@ -124,7 +126,9 @@ func (a *activeConn) Read(b []byte) (n int, err error) {
 	default:
 		// wait 30s and redial, avoiding aws load balancer 1m close policy
 		a.Conn.SetDeadline(time.Now().Add(30 * time.Second))
-		if n, err = a.Conn.Read(b); err == nil {
+		if n, err = a.Conn.Read(b); err != nil {
+			Log.Println(err)
+		} else {
 			a.Conn.SetDeadline(time.Time{})
 		}
 
