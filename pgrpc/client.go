@@ -40,6 +40,7 @@ func NewClient(network, addr string, ipHook func(*net.Conn) string,
 		for {
 			conn, err := ln.Accept()
 			if err != nil {
+				Log.Println(err)
 				continue
 			}
 
@@ -55,6 +56,7 @@ func NewClient(network, addr string, ipHook func(*net.Conn) string,
 				buf := make([]byte, MAX_ID_LEN)
 				conn.SetDeadline(time.Now().Add(5 * time.Second))
 				if _, err := io.ReadFull(conn, buf); err != nil {
+					Log.Println(err)
 					conn.Close()
 					return
 				}
@@ -168,6 +170,7 @@ func (s *pool) Get(pingHook func(*grpc.ClientConn) error) (*grpc.ClientConn, []s
 		opts := append(s.opts, grpc.WithContextDialer(
 			func(context.Context, string) (net.Conn, error) { return conn, nil }))
 		if cc, err := grpc.DialContext(context.Background(), s.id, opts...); err != nil {
+			Log.Println(err)
 			conn.Close()
 			continue
 		} else if pingHook == nil || pingHook(cc) == nil {
