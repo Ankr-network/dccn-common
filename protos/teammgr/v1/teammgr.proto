@@ -18,6 +18,7 @@ service TeamMgr {
   rpc DeleteRole(RoleID) returns (common.proto.Empty) {}
   rpc UpdateRole(Role) returns (common.proto.Empty) {}
   rpc GetRole(RoleID) returns (Role) {}
+  rpc ListTeamRoles(TeamID) returns (ListTeamRoleResponse) {}
   rpc SetUserCurrentTeam(SetUserCurrentTeamRequest) returns (common.proto.Empty) {}
   rpc GetUserTeamID(UserID) returns (TeamID) {}
   rpc CheckUserAccess(CheckUserAccessRequest) returns (CheckUserAccessResponse) {}
@@ -109,6 +110,10 @@ message UpdateTeamMemberRoleRequest {
 
 message UserID {
   string uid = 1;
+}
+
+message ListTeamRoleResponse {
+  repeated Role roles = 1;
 }
 
 message SetUserCurrentTeamRequest {

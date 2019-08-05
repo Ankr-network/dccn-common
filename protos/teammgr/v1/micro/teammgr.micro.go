@@ -49,6 +49,7 @@ type TeamMgrService interface {
 	DeleteRole(ctx context.Context, in *RoleID, opts ...client.CallOption) (*common.Empty, error)
 	UpdateRole(ctx context.Context, in *Role, opts ...client.CallOption) (*common.Empty, error)
 	GetRole(ctx context.Context, in *RoleID, opts ...client.CallOption) (*Role, error)
+	ListTeamRoles(ctx context.Context, in *TeamID, opts ...client.CallOption) (*ListTeamRoleResponse, error)
 	SetUserCurrentTeam(ctx context.Context, in *SetUserCurrentTeamRequest, opts ...client.CallOption) (*common.Empty, error)
 	GetUserTeamID(ctx context.Context, in *UserID, opts ...client.CallOption) (*TeamID, error)
 	CheckUserAccess(ctx context.Context, in *CheckUserAccessRequest, opts ...client.CallOption) (*CheckUserAccessResponse, error)
@@ -212,6 +213,16 @@ func (c *teamMgrService) GetRole(ctx context.Context, in *RoleID, opts ...client
 	return out, nil
 }
 
+func (c *teamMgrService) ListTeamRoles(ctx context.Context, in *TeamID, opts ...client.CallOption) (*ListTeamRoleResponse, error) {
+	req := c.c.NewRequest(c.name, "TeamMgr.ListTeamRoles", in)
+	out := new(ListTeamRoleResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *teamMgrService) SetUserCurrentTeam(ctx context.Context, in *SetUserCurrentTeamRequest, opts ...client.CallOption) (*common.Empty, error) {
 	req := c.c.NewRequest(c.name, "TeamMgr.SetUserCurrentTeam", in)
 	out := new(common.Empty)
@@ -259,6 +270,7 @@ type TeamMgrHandler interface {
 	DeleteRole(context.Context, *RoleID, *common.Empty) error
 	UpdateRole(context.Context, *Role, *common.Empty) error
 	GetRole(context.Context, *RoleID, *Role) error
+	ListTeamRoles(context.Context, *TeamID, *ListTeamRoleResponse) error
 	SetUserCurrentTeam(context.Context, *SetUserCurrentTeamRequest, *common.Empty) error
 	GetUserTeamID(context.Context, *UserID, *TeamID) error
 	CheckUserAccess(context.Context, *CheckUserAccessRequest, *CheckUserAccessResponse) error
@@ -280,6 +292,7 @@ func RegisterTeamMgrHandler(s server.Server, hdlr TeamMgrHandler, opts ...server
 		DeleteRole(ctx context.Context, in *RoleID, out *common.Empty) error
 		UpdateRole(ctx context.Context, in *Role, out *common.Empty) error
 		GetRole(ctx context.Context, in *RoleID, out *Role) error
+		ListTeamRoles(ctx context.Context, in *TeamID, out *ListTeamRoleResponse) error
 		SetUserCurrentTeam(ctx context.Context, in *SetUserCurrentTeamRequest, out *common.Empty) error
 		GetUserTeamID(ctx context.Context, in *UserID, out *TeamID) error
 		CheckUserAccess(ctx context.Context, in *CheckUserAccessRequest, out *CheckUserAccessResponse) error
@@ -349,6 +362,10 @@ func (h *teamMgrHandler) UpdateRole(ctx context.Context, in *Role, out *common.E
 
 func (h *teamMgrHandler) GetRole(ctx context.Context, in *RoleID, out *Role) error {
 	return h.TeamMgrHandler.GetRole(ctx, in, out)
+}
+
+func (h *teamMgrHandler) ListTeamRoles(ctx context.Context, in *TeamID, out *ListTeamRoleResponse) error {
+	return h.TeamMgrHandler.ListTeamRoles(ctx, in, out)
 }
 
 func (h *teamMgrHandler) SetUserCurrentTeam(ctx context.Context, in *SetUserCurrentTeamRequest, out *common.Empty) error {

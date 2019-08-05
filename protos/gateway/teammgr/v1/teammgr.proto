@@ -59,8 +59,8 @@ service TeamMgr {
   rpc CreateRole(CreateRoleRequest) returns (RoleID) {}
   rpc DeleteRole(RoleID) returns (common.proto.Empty) {}
   rpc UpdateRole(Role) returns (common.proto.Empty) {}
-  rpc GetRole(RoleID) returns (Role) {
-  }
+  rpc GetRole(RoleID) returns (Role) {}
+  rpc ListTeamRoles(TeamID) returns (ListTeamRoleResponse) {}
   rpc SetUserCurrentTeam(SetUserCurrentTeamRequest) returns (common.proto.Empty) {
     option (google.api.http) = {
 	             get:"/team/set"
@@ -155,6 +155,9 @@ message UpdateTeamMemberRoleRequest {
   string role_id = 3;
 }
 
+message ListTeamRoleResponse {
+  repeated Role roles = 1;
+}
 
 message SetUserCurrentTeamRequest {
   string uid = 1;
