@@ -36,6 +36,7 @@ var _ server.Option
 
 type TeamMgrService interface {
 	CreateTeam(ctx context.Context, in *CreateTeamRequest, opts ...client.CallOption) (*TeamID, error)
+	CreateDefaultTeam(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*TeamID, error)
 	DeleteTeam(ctx context.Context, in *TeamID, opts ...client.CallOption) (*common.Empty, error)
 	UpdateTeam(ctx context.Context, in *Team, opts ...client.CallOption) (*common.Empty, error)
 	ListUserTeams(ctx context.Context, in *UserID, opts ...client.CallOption) (*ListUserTeamsResponse, error)
@@ -73,6 +74,16 @@ func NewTeamMgrService(name string, c client.Client) TeamMgrService {
 
 func (c *teamMgrService) CreateTeam(ctx context.Context, in *CreateTeamRequest, opts ...client.CallOption) (*TeamID, error) {
 	req := c.c.NewRequest(c.name, "TeamMgr.CreateTeam", in)
+	out := new(TeamID)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *teamMgrService) CreateDefaultTeam(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*TeamID, error) {
+	req := c.c.NewRequest(c.name, "TeamMgr.CreateDefaultTeam", in)
 	out := new(TeamID)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -235,6 +246,7 @@ func (c *teamMgrService) CheckUserAccess(ctx context.Context, in *CheckUserAcces
 
 type TeamMgrHandler interface {
 	CreateTeam(context.Context, *CreateTeamRequest, *TeamID) error
+	CreateDefaultTeam(context.Context, *common.Empty, *TeamID) error
 	DeleteTeam(context.Context, *TeamID, *common.Empty) error
 	UpdateTeam(context.Context, *Team, *common.Empty) error
 	ListUserTeams(context.Context, *UserID, *ListUserTeamsResponse) error
@@ -255,6 +267,7 @@ type TeamMgrHandler interface {
 func RegisterTeamMgrHandler(s server.Server, hdlr TeamMgrHandler, opts ...server.HandlerOption) error {
 	type teamMgr interface {
 		CreateTeam(ctx context.Context, in *CreateTeamRequest, out *TeamID) error
+		CreateDefaultTeam(ctx context.Context, in *common.Empty, out *TeamID) error
 		DeleteTeam(ctx context.Context, in *TeamID, out *common.Empty) error
 		UpdateTeam(ctx context.Context, in *Team, out *common.Empty) error
 		ListUserTeams(ctx context.Context, in *UserID, out *ListUserTeamsResponse) error
@@ -284,6 +297,10 @@ type teamMgrHandler struct {
 
 func (h *teamMgrHandler) CreateTeam(ctx context.Context, in *CreateTeamRequest, out *TeamID) error {
 	return h.TeamMgrHandler.CreateTeam(ctx, in, out)
+}
+
+func (h *teamMgrHandler) CreateDefaultTeam(ctx context.Context, in *common.Empty, out *TeamID) error {
+	return h.TeamMgrHandler.CreateDefaultTeam(ctx, in, out)
 }
 
 func (h *teamMgrHandler) DeleteTeam(ctx context.Context, in *TeamID, out *common.Empty) error {

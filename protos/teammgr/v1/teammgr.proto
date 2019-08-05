@@ -5,6 +5,7 @@ package teammgr;
 
 service TeamMgr {
   rpc CreateTeam(CreateTeamRequest) returns (TeamID) {}
+  rpc CreateDefaultTeam(common.proto.Empty) returns (TeamID) {}
   rpc DeleteTeam(TeamID) returns (common.proto.Empty) {}
   rpc UpdateTeam(Team) returns (common.proto.Empty) {}
   rpc ListUserTeams(UserID) returns (ListUserTeamsResponse) {}
