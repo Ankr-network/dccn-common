@@ -250,7 +250,10 @@ func request_UserMgr_SearchDeposit_0(ctx context.Context, marshaler runtime.Mars
 	var protoReq SearchDepositRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_UserMgr_SearchDeposit_0); err != nil {
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_UserMgr_SearchDeposit_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -647,37 +650,37 @@ func RegisterUserMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 }
 
 var (
-	pattern_UserMgr_Register_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"signup"}, ""))
+	pattern_UserMgr_Register_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"signup"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_Login_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"login"}, ""))
+	pattern_UserMgr_Login_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"login"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_Logout_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"logout"}, ""))
+	pattern_UserMgr_Logout_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"logout"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_RefreshSession_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"refresh"}, ""))
+	pattern_UserMgr_RefreshSession_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"refresh"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_ConfirmRegistration_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"confirm_registration"}, ""))
+	pattern_UserMgr_ConfirmRegistration_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"confirm_registration"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_ForgotPassword_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"forgot_password"}, ""))
+	pattern_UserMgr_ForgotPassword_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"forgot_password"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_ConfirmPassword_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"confirm_password"}, ""))
+	pattern_UserMgr_ConfirmPassword_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"confirm_password"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_ChangePassword_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"change_password"}, ""))
+	pattern_UserMgr_ChangePassword_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"change_password"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_UpdateAttributes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"update_attribute"}, ""))
+	pattern_UserMgr_UpdateAttributes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"update_attribute"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_ChangeEmail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"change_email"}, ""))
+	pattern_UserMgr_ChangeEmail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"change_email"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_ConfirmEmail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"confirm_email"}, ""))
+	pattern_UserMgr_ConfirmEmail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"confirm_email"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_CreateAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"create_address"}, ""))
+	pattern_UserMgr_CreateAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"create_address"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_DepositHistory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"deposit", "history"}, ""))
+	pattern_UserMgr_DepositHistory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"deposit", "history"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_SearchDeposit_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"deposit", "search"}, ""))
+	pattern_UserMgr_SearchDeposit_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"deposit", "search"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_UserDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"user", "detail"}, ""))
+	pattern_UserMgr_UserDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"user", "detail"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_UserMgr_ApplyBecomeClusterProvider_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"user", "applyprovider"}, ""))
+	pattern_UserMgr_ApplyBecomeClusterProvider_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"user", "applyprovider"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

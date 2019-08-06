@@ -106,6 +106,23 @@ func request_TeamMgr_InviteTeamMember_0(ctx context.Context, marshaler runtime.M
 
 }
 
+func request_TeamMgr_ReInviteTeamMember_0(ctx context.Context, marshaler runtime.Marshaler, client TeamMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ReInviteTeamMemberRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.ReInviteTeamMember(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
 func request_TeamMgr_ConfirmTeamMember_0(ctx context.Context, marshaler runtime.Marshaler, client TeamMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq ConfirmTeamMemberRequest
 	var metadata runtime.ServerMetadata
@@ -140,8 +157,8 @@ func request_TeamMgr_DeleteTeamMember_0(ctx context.Context, marshaler runtime.M
 
 }
 
-func request_TeamMgr_UpdateTeamMemberRole_0(ctx context.Context, marshaler runtime.Marshaler, client TeamMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UpdateTeamMemberRoleRequest
+func request_TeamMgr_UpdateTeamMemberRoles_0(ctx context.Context, marshaler runtime.Marshaler, client TeamMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdateTeamMemberRolesRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -152,7 +169,7 @@ func request_TeamMgr_UpdateTeamMemberRole_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.UpdateTeamMemberRole(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.UpdateTeamMemberRoles(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -165,7 +182,10 @@ func request_TeamMgr_ListTeamMembers_0(ctx context.Context, marshaler runtime.Ma
 	var protoReq TeamID
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_TeamMgr_ListTeamMembers_0); err != nil {
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TeamMgr_ListTeamMembers_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -182,7 +202,10 @@ func request_TeamMgr_SetUserCurrentTeam_0(ctx context.Context, marshaler runtime
 	var protoReq SetUserCurrentTeamRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_TeamMgr_SetUserCurrentTeam_0); err != nil {
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_TeamMgr_SetUserCurrentTeam_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -329,6 +352,26 @@ func RegisterTeamMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 
 	})
 
+	mux.Handle("POST", pattern_TeamMgr_ReInviteTeamMember_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_TeamMgr_ReInviteTeamMember_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_TeamMgr_ReInviteTeamMember_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("POST", pattern_TeamMgr_ConfirmTeamMember_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -369,7 +412,7 @@ func RegisterTeamMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 
 	})
 
-	mux.Handle("POST", pattern_TeamMgr_UpdateTeamMemberRole_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_TeamMgr_UpdateTeamMemberRoles_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -378,14 +421,14 @@ func RegisterTeamMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_TeamMgr_UpdateTeamMemberRole_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_TeamMgr_UpdateTeamMemberRoles_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_TeamMgr_UpdateTeamMemberRole_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_TeamMgr_UpdateTeamMemberRoles_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -433,25 +476,27 @@ func RegisterTeamMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 }
 
 var (
-	pattern_TeamMgr_CreateTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "create"}, ""))
+	pattern_TeamMgr_CreateTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "create"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_TeamMgr_DeleteTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "delete"}, ""))
+	pattern_TeamMgr_DeleteTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "delete"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_TeamMgr_UpdateTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "update"}, ""))
+	pattern_TeamMgr_UpdateTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "update"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_TeamMgr_ListUserTeams_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "list"}, ""))
+	pattern_TeamMgr_ListUserTeams_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "list"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_TeamMgr_InviteTeamMember_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"teammember", "invite"}, ""))
+	pattern_TeamMgr_InviteTeamMember_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"teammember", "invite"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_TeamMgr_ConfirmTeamMember_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"teammember", "confirm"}, ""))
+	pattern_TeamMgr_ReInviteTeamMember_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"teammember", "reinvite"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_TeamMgr_DeleteTeamMember_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"teammember", "delete"}, ""))
+	pattern_TeamMgr_ConfirmTeamMember_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"teammember", "confirm"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_TeamMgr_UpdateTeamMemberRole_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"teammember", "update"}, ""))
+	pattern_TeamMgr_DeleteTeamMember_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"teammember", "delete"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_TeamMgr_ListTeamMembers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"teammember", "list"}, ""))
+	pattern_TeamMgr_UpdateTeamMemberRoles_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"teammember", "update"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_TeamMgr_SetUserCurrentTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "set"}, ""))
+	pattern_TeamMgr_ListTeamMembers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"teammember", "list"}, "", runtime.AssumeColonVerbOpt(true)))
+
+	pattern_TeamMgr_SetUserCurrentTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "set"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
@@ -465,11 +510,13 @@ var (
 
 	forward_TeamMgr_InviteTeamMember_0 = runtime.ForwardResponseMessage
 
+	forward_TeamMgr_ReInviteTeamMember_0 = runtime.ForwardResponseMessage
+
 	forward_TeamMgr_ConfirmTeamMember_0 = runtime.ForwardResponseMessage
 
 	forward_TeamMgr_DeleteTeamMember_0 = runtime.ForwardResponseMessage
 
-	forward_TeamMgr_UpdateTeamMemberRole_0 = runtime.ForwardResponseMessage
+	forward_TeamMgr_UpdateTeamMemberRoles_0 = runtime.ForwardResponseMessage
 
 	forward_TeamMgr_ListTeamMembers_0 = runtime.ForwardResponseMessage
 

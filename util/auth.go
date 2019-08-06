@@ -21,8 +21,6 @@ type Token struct {
 
 var TEAM_SERVICE = "team:50051"
 
-
-
 func GetUserID(ctx context.Context) string {
 	meta, ok := metadata.FromIncomingContext(ctx)
 	log.Printf("meta %+v \n", meta)
@@ -61,7 +59,7 @@ func GetUserID(ctx context.Context) string {
 	return dat.Jti
 }
 
-func GetUserIDAndTeamID(ctx context.Context)(string, string) {
+func GetUserIDAndTeamID(ctx context.Context) (string, string) {
 	meta, ok := metadata.FromIncomingContext(ctx)
 	log.Printf("meta %+v \n", meta)
 	// Note this is now uppercase (not entirely sure why this is...)
@@ -118,7 +116,7 @@ func getTeamID(uid string) string {
 	//t := common_proto.APP_TypeDeployment{TypeDeployment: &common_proto.TaskTypeDeployment{Image:"nginx:1.12"}}
 	//task.TypeData = &t
 
-	if rsp, err := teamClient.GetUserTeamID(context.Background(), &team.UserID{Uid: uid}); err != nil {
+	if rsp, err := teamClient.GetTeamIDByUserID(context.Background(), &team.UserID{Uid: uid}); err != nil {
 		//log.Println("detail create %+v " + rsp)
 		log.Printf("GetUserTeamID  failed, error : %s \n", err)
 		return ""
