@@ -63,7 +63,7 @@ service TeamMgr {
   }
   rpc SetUserCurrentTeam(SetUserCurrentTeamRequest) returns (common.proto.Empty) {
     option (google.api.http) = {
-	             get:"/team/set"
+	             post:"/team/set"
 	        };
   }
   rpc GetUserTeamID(common.proto.Empty) returns (TeamID) {
