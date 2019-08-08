@@ -189,7 +189,7 @@ message UpdateAttributesRequest {
 
 message ConfirmEmailRequest {
   string ConfirmationCode = 1;
-  string OldEmail = 2;
+  string Email = 2;
 }
 
 
