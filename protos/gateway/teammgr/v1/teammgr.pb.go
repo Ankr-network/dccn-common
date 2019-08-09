@@ -29,18 +29,21 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 type TeamMemberStatus int32
 
 const (
-	TeamMemberStatus_INVITED   TeamMemberStatus = 0
-	TeamMemberStatus_CONFIRMED TeamMemberStatus = 1
+	TeamMemberStatus_INVITED      TeamMemberStatus = 0
+	TeamMemberStatus_CONFIRMED    TeamMemberStatus = 1
+	TeamMemberStatus_SYSTEM_ADDED TeamMemberStatus = 2
 )
 
 var TeamMemberStatus_name = map[int32]string{
 	0: "INVITED",
 	1: "CONFIRMED",
+	2: "SYSTEM_ADDED",
 }
 
 var TeamMemberStatus_value = map[string]int32{
-	"INVITED":   0,
-	"CONFIRMED": 1,
+	"INVITED":      0,
+	"CONFIRMED":    1,
+	"SYSTEM_ADDED": 2,
 }
 
 func (x TeamMemberStatus) String() string {
@@ -177,14 +180,13 @@ func (m *TeamID) GetTeamId() string {
 }
 
 type UserTeamInfo struct {
-	TeamId               string   `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	TeamName             string   `protobuf:"bytes,2,opt,name=team_name,json=teamName,proto3" json:"team_name,omitempty"`
-	RoleName             string   `protobuf:"bytes,3,opt,name=role_name,json=roleName,proto3" json:"role_name,omitempty"`
-	RoleId               string   `protobuf:"bytes,4,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	Current              bool     `protobuf:"varint,5,opt,name=current,proto3" json:"current,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	TeamId               string      `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
+	TeamName             string      `protobuf:"bytes,2,opt,name=team_name,json=teamName,proto3" json:"team_name,omitempty"`
+	Roles                []*RoleInfo `protobuf:"bytes,3,rep,name=roles,proto3" json:"roles,omitempty"`
+	Current              bool        `protobuf:"varint,4,opt,name=current,proto3" json:"current,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
 }
 
 func (m *UserTeamInfo) Reset()         { *m = UserTeamInfo{} }
@@ -226,18 +228,11 @@ func (m *UserTeamInfo) GetTeamName() string {
 	return ""
 }
 
-func (m *UserTeamInfo) GetRoleName() string {
+func (m *UserTeamInfo) GetRoles() []*RoleInfo {
 	if m != nil {
-		return m.RoleName
+		return m.Roles
 	}
-	return ""
-}
-
-func (m *UserTeamInfo) GetRoleId() string {
-	if m != nil {
-		return m.RoleId
-	}
-	return ""
+	return nil
 }
 
 func (m *UserTeamInfo) GetCurrent() bool {
@@ -249,6 +244,7 @@ func (m *UserTeamInfo) GetCurrent() bool {
 
 type ListUserTeamsResponse struct {
 	Teams                []*UserTeamInfo `protobuf:"bytes,1,rep,name=teams,proto3" json:"teams,omitempty"`
+	Default              *UserTeamInfo   `protobuf:"bytes,2,opt,name=default,proto3" json:"default,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
 	XXX_unrecognized     []byte          `json:"-"`
 	XXX_sizecache        int32           `json:"-"`
@@ -286,9 +282,17 @@ func (m *ListUserTeamsResponse) GetTeams() []*UserTeamInfo {
 	return nil
 }
 
+func (m *ListUserTeamsResponse) GetDefault() *UserTeamInfo {
+	if m != nil {
+		return m.Default
+	}
+	return nil
+}
+
 type InviteTeamMemberRequest struct {
-	Email                string   `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
-	TeamId               string   `protobuf:"bytes,2,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
+	TeamId               string   `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
+	Emails               []string `protobuf:"bytes,2,rep,name=emails,proto3" json:"emails,omitempty"`
+	RoleIds              []string `protobuf:"bytes,3,rep,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -319,16 +323,70 @@ func (m *InviteTeamMemberRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_InviteTeamMemberRequest proto.InternalMessageInfo
 
-func (m *InviteTeamMemberRequest) GetEmail() string {
+func (m *InviteTeamMemberRequest) GetTeamId() string {
 	if m != nil {
-		return m.Email
+		return m.TeamId
 	}
 	return ""
 }
 
-func (m *InviteTeamMemberRequest) GetTeamId() string {
+func (m *InviteTeamMemberRequest) GetEmails() []string {
+	if m != nil {
+		return m.Emails
+	}
+	return nil
+}
+
+func (m *InviteTeamMemberRequest) GetRoleIds() []string {
+	if m != nil {
+		return m.RoleIds
+	}
+	return nil
+}
+
+type ReInviteTeamMemberRequest struct {
+	TeamId               string   `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
+	Email                string   `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ReInviteTeamMemberRequest) Reset()         { *m = ReInviteTeamMemberRequest{} }
+func (m *ReInviteTeamMemberRequest) String() string { return proto.CompactTextString(m) }
+func (*ReInviteTeamMemberRequest) ProtoMessage()    {}
+func (*ReInviteTeamMemberRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_74c4b0d2adf8260a, []int{6}
+}
+
+func (m *ReInviteTeamMemberRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ReInviteTeamMemberRequest.Unmarshal(m, b)
+}
+func (m *ReInviteTeamMemberRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ReInviteTeamMemberRequest.Marshal(b, m, deterministic)
+}
+func (m *ReInviteTeamMemberRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ReInviteTeamMemberRequest.Merge(m, src)
+}
+func (m *ReInviteTeamMemberRequest) XXX_Size() int {
+	return xxx_messageInfo_ReInviteTeamMemberRequest.Size(m)
+}
+func (m *ReInviteTeamMemberRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ReInviteTeamMemberRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ReInviteTeamMemberRequest proto.InternalMessageInfo
+
+func (m *ReInviteTeamMemberRequest) GetTeamId() string {
 	if m != nil {
 		return m.TeamId
+	}
+	return ""
+}
+
+func (m *ReInviteTeamMemberRequest) GetEmail() string {
+	if m != nil {
+		return m.Email
 	}
 	return ""
 }
@@ -345,7 +403,7 @@ func (m *ConfirmTeamMemberRequest) Reset()         { *m = ConfirmTeamMemberReque
 func (m *ConfirmTeamMemberRequest) String() string { return proto.CompactTextString(m) }
 func (*ConfirmTeamMemberRequest) ProtoMessage()    {}
 func (*ConfirmTeamMemberRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{6}
+	return fileDescriptor_74c4b0d2adf8260a, []int{7}
 }
 
 func (m *ConfirmTeamMemberRequest) XXX_Unmarshal(b []byte) error {
@@ -384,9 +442,8 @@ type TeamMember struct {
 	Uid                  string           `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
 	Email                string           `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
 	UserName             string           `protobuf:"bytes,3,opt,name=user_name,json=userName,proto3" json:"user_name,omitempty"`
-	RoleName             string           `protobuf:"bytes,4,opt,name=role_name,json=roleName,proto3" json:"role_name,omitempty"`
-	RoleId               string           `protobuf:"bytes,5,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	Status               TeamMemberStatus `protobuf:"varint,6,opt,name=status,proto3,enum=gwteammgr.TeamMemberStatus" json:"status,omitempty"`
+	Roles                []*RoleInfo      `protobuf:"bytes,4,rep,name=roles,proto3" json:"roles,omitempty"`
+	Status               TeamMemberStatus `protobuf:"varint,5,opt,name=status,proto3,enum=gwteammgr.TeamMemberStatus" json:"status,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
 	XXX_unrecognized     []byte           `json:"-"`
 	XXX_sizecache        int32            `json:"-"`
@@ -396,7 +453,7 @@ func (m *TeamMember) Reset()         { *m = TeamMember{} }
 func (m *TeamMember) String() string { return proto.CompactTextString(m) }
 func (*TeamMember) ProtoMessage()    {}
 func (*TeamMember) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{7}
+	return fileDescriptor_74c4b0d2adf8260a, []int{8}
 }
 
 func (m *TeamMember) XXX_Unmarshal(b []byte) error {
@@ -438,18 +495,11 @@ func (m *TeamMember) GetUserName() string {
 	return ""
 }
 
-func (m *TeamMember) GetRoleName() string {
+func (m *TeamMember) GetRoles() []*RoleInfo {
 	if m != nil {
-		return m.RoleName
+		return m.Roles
 	}
-	return ""
-}
-
-func (m *TeamMember) GetRoleId() string {
-	if m != nil {
-		return m.RoleId
-	}
-	return ""
+	return nil
 }
 
 func (m *TeamMember) GetStatus() TeamMemberStatus {
@@ -470,7 +520,7 @@ func (m *ListTeamMembersResponse) Reset()         { *m = ListTeamMembersResponse
 func (m *ListTeamMembersResponse) String() string { return proto.CompactTextString(m) }
 func (*ListTeamMembersResponse) ProtoMessage()    {}
 func (*ListTeamMembersResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{8}
+	return fileDescriptor_74c4b0d2adf8260a, []int{9}
 }
 
 func (m *ListTeamMembersResponse) XXX_Unmarshal(b []byte) error {
@@ -510,7 +560,7 @@ func (m *DeleteTeamMemberRequest) Reset()         { *m = DeleteTeamMemberRequest
 func (m *DeleteTeamMemberRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteTeamMemberRequest) ProtoMessage()    {}
 func (*DeleteTeamMemberRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{9}
+	return fileDescriptor_74c4b0d2adf8260a, []int{10}
 }
 
 func (m *DeleteTeamMemberRequest) XXX_Unmarshal(b []byte) error {
@@ -558,7 +608,7 @@ func (m *CreateRoleRequest) Reset()         { *m = CreateRoleRequest{} }
 func (m *CreateRoleRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateRoleRequest) ProtoMessage()    {}
 func (*CreateRoleRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{10}
+	return fileDescriptor_74c4b0d2adf8260a, []int{11}
 }
 
 func (m *CreateRoleRequest) XXX_Unmarshal(b []byte) error {
@@ -611,7 +661,7 @@ func (m *RoleID) Reset()         { *m = RoleID{} }
 func (m *RoleID) String() string { return proto.CompactTextString(m) }
 func (*RoleID) ProtoMessage()    {}
 func (*RoleID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{11}
+	return fileDescriptor_74c4b0d2adf8260a, []int{12}
 }
 
 func (m *RoleID) XXX_Unmarshal(b []byte) error {
@@ -639,6 +689,53 @@ func (m *RoleID) GetRoleId() string {
 	return ""
 }
 
+type RoleInfo struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *RoleInfo) Reset()         { *m = RoleInfo{} }
+func (m *RoleInfo) String() string { return proto.CompactTextString(m) }
+func (*RoleInfo) ProtoMessage()    {}
+func (*RoleInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_74c4b0d2adf8260a, []int{13}
+}
+
+func (m *RoleInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_RoleInfo.Unmarshal(m, b)
+}
+func (m *RoleInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_RoleInfo.Marshal(b, m, deterministic)
+}
+func (m *RoleInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RoleInfo.Merge(m, src)
+}
+func (m *RoleInfo) XXX_Size() int {
+	return xxx_messageInfo_RoleInfo.Size(m)
+}
+func (m *RoleInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_RoleInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RoleInfo proto.InternalMessageInfo
+
+func (m *RoleInfo) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *RoleInfo) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
 type Role struct {
 	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
@@ -652,7 +749,7 @@ func (m *Role) Reset()         { *m = Role{} }
 func (m *Role) String() string { return proto.CompactTextString(m) }
 func (*Role) ProtoMessage()    {}
 func (*Role) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{12}
+	return fileDescriptor_74c4b0d2adf8260a, []int{14}
 }
 
 func (m *Role) XXX_Unmarshal(b []byte) error {
@@ -694,153 +791,98 @@ func (m *Role) GetPrivileges() []string {
 	return nil
 }
 
-type GetUserRoleResponse struct {
+type UpdateTeamMemberRolesRequest struct {
 	Uid                  string   `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
 	TeamId               string   `protobuf:"bytes,2,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	Role                 *Role    `protobuf:"bytes,3,opt,name=role,proto3" json:"role,omitempty"`
+	RoleIds              []string `protobuf:"bytes,3,rep,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GetUserRoleResponse) Reset()         { *m = GetUserRoleResponse{} }
-func (m *GetUserRoleResponse) String() string { return proto.CompactTextString(m) }
-func (*GetUserRoleResponse) ProtoMessage()    {}
-func (*GetUserRoleResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{13}
+func (m *UpdateTeamMemberRolesRequest) Reset()         { *m = UpdateTeamMemberRolesRequest{} }
+func (m *UpdateTeamMemberRolesRequest) String() string { return proto.CompactTextString(m) }
+func (*UpdateTeamMemberRolesRequest) ProtoMessage()    {}
+func (*UpdateTeamMemberRolesRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_74c4b0d2adf8260a, []int{15}
 }
 
-func (m *GetUserRoleResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GetUserRoleResponse.Unmarshal(m, b)
+func (m *UpdateTeamMemberRolesRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_UpdateTeamMemberRolesRequest.Unmarshal(m, b)
 }
-func (m *GetUserRoleResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GetUserRoleResponse.Marshal(b, m, deterministic)
+func (m *UpdateTeamMemberRolesRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_UpdateTeamMemberRolesRequest.Marshal(b, m, deterministic)
 }
-func (m *GetUserRoleResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GetUserRoleResponse.Merge(m, src)
+func (m *UpdateTeamMemberRolesRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UpdateTeamMemberRolesRequest.Merge(m, src)
 }
-func (m *GetUserRoleResponse) XXX_Size() int {
-	return xxx_messageInfo_GetUserRoleResponse.Size(m)
+func (m *UpdateTeamMemberRolesRequest) XXX_Size() int {
+	return xxx_messageInfo_UpdateTeamMemberRolesRequest.Size(m)
 }
-func (m *GetUserRoleResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_GetUserRoleResponse.DiscardUnknown(m)
+func (m *UpdateTeamMemberRolesRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_UpdateTeamMemberRolesRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GetUserRoleResponse proto.InternalMessageInfo
+var xxx_messageInfo_UpdateTeamMemberRolesRequest proto.InternalMessageInfo
 
-func (m *GetUserRoleResponse) GetUid() string {
+func (m *UpdateTeamMemberRolesRequest) GetUid() string {
 	if m != nil {
 		return m.Uid
 	}
 	return ""
 }
 
-func (m *GetUserRoleResponse) GetTeamId() string {
+func (m *UpdateTeamMemberRolesRequest) GetTeamId() string {
 	if m != nil {
 		return m.TeamId
 	}
 	return ""
 }
 
-func (m *GetUserRoleResponse) GetRole() *Role {
+func (m *UpdateTeamMemberRolesRequest) GetRoleIds() []string {
 	if m != nil {
-		return m.Role
+		return m.RoleIds
 	}
 	return nil
 }
 
-type UpdateTeamMemberRoleRequest struct {
-	Uid                  string   `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	TeamId               string   `protobuf:"bytes,2,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	RoleId               string   `protobuf:"bytes,3,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+type ListTeamRoleResponse struct {
+	Roles                []*Role  `protobuf:"bytes,1,rep,name=roles,proto3" json:"roles,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *UpdateTeamMemberRoleRequest) Reset()         { *m = UpdateTeamMemberRoleRequest{} }
-func (m *UpdateTeamMemberRoleRequest) String() string { return proto.CompactTextString(m) }
-func (*UpdateTeamMemberRoleRequest) ProtoMessage()    {}
-func (*UpdateTeamMemberRoleRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{14}
+func (m *ListTeamRoleResponse) Reset()         { *m = ListTeamRoleResponse{} }
+func (m *ListTeamRoleResponse) String() string { return proto.CompactTextString(m) }
+func (*ListTeamRoleResponse) ProtoMessage()    {}
+func (*ListTeamRoleResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_74c4b0d2adf8260a, []int{16}
 }
 
-func (m *UpdateTeamMemberRoleRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UpdateTeamMemberRoleRequest.Unmarshal(m, b)
+func (m *ListTeamRoleResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListTeamRoleResponse.Unmarshal(m, b)
 }
-func (m *UpdateTeamMemberRoleRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UpdateTeamMemberRoleRequest.Marshal(b, m, deterministic)
+func (m *ListTeamRoleResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListTeamRoleResponse.Marshal(b, m, deterministic)
 }
-func (m *UpdateTeamMemberRoleRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UpdateTeamMemberRoleRequest.Merge(m, src)
+func (m *ListTeamRoleResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListTeamRoleResponse.Merge(m, src)
 }
-func (m *UpdateTeamMemberRoleRequest) XXX_Size() int {
-	return xxx_messageInfo_UpdateTeamMemberRoleRequest.Size(m)
+func (m *ListTeamRoleResponse) XXX_Size() int {
+	return xxx_messageInfo_ListTeamRoleResponse.Size(m)
 }
-func (m *UpdateTeamMemberRoleRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_UpdateTeamMemberRoleRequest.DiscardUnknown(m)
+func (m *ListTeamRoleResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListTeamRoleResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UpdateTeamMemberRoleRequest proto.InternalMessageInfo
+var xxx_messageInfo_ListTeamRoleResponse proto.InternalMessageInfo
 
-func (m *UpdateTeamMemberRoleRequest) GetUid() string {
+func (m *ListTeamRoleResponse) GetRoles() []*Role {
 	if m != nil {
-		return m.Uid
+		return m.Roles
 	}
-	return ""
-}
-
-func (m *UpdateTeamMemberRoleRequest) GetTeamId() string {
-	if m != nil {
-		return m.TeamId
-	}
-	return ""
-}
-
-func (m *UpdateTeamMemberRoleRequest) GetRoleId() string {
-	if m != nil {
-		return m.RoleId
-	}
-	return ""
-}
-
-type UserID struct {
-	Uid                  string   `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *UserID) Reset()         { *m = UserID{} }
-func (m *UserID) String() string { return proto.CompactTextString(m) }
-func (*UserID) ProtoMessage()    {}
-func (*UserID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{15}
-}
-
-func (m *UserID) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_UserID.Unmarshal(m, b)
-}
-func (m *UserID) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_UserID.Marshal(b, m, deterministic)
-}
-func (m *UserID) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UserID.Merge(m, src)
-}
-func (m *UserID) XXX_Size() int {
-	return xxx_messageInfo_UserID.Size(m)
-}
-func (m *UserID) XXX_DiscardUnknown() {
-	xxx_messageInfo_UserID.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_UserID proto.InternalMessageInfo
-
-func (m *UserID) GetUid() string {
-	if m != nil {
-		return m.Uid
-	}
-	return ""
+	return nil
 }
 
 type SetUserCurrentTeamRequest struct {
@@ -855,7 +897,7 @@ func (m *SetUserCurrentTeamRequest) Reset()         { *m = SetUserCurrentTeamReq
 func (m *SetUserCurrentTeamRequest) String() string { return proto.CompactTextString(m) }
 func (*SetUserCurrentTeamRequest) ProtoMessage()    {}
 func (*SetUserCurrentTeamRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{16}
+	return fileDescriptor_74c4b0d2adf8260a, []int{17}
 }
 
 func (m *SetUserCurrentTeamRequest) XXX_Unmarshal(b []byte) error {
@@ -902,7 +944,7 @@ func (m *CheckUserAccessRequest) Reset()         { *m = CheckUserAccessRequest{}
 func (m *CheckUserAccessRequest) String() string { return proto.CompactTextString(m) }
 func (*CheckUserAccessRequest) ProtoMessage()    {}
 func (*CheckUserAccessRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{17}
+	return fileDescriptor_74c4b0d2adf8260a, []int{18}
 }
 
 func (m *CheckUserAccessRequest) XXX_Unmarshal(b []byte) error {
@@ -948,7 +990,7 @@ func (m *CheckUserAccessResponse) Reset()         { *m = CheckUserAccessResponse
 func (m *CheckUserAccessResponse) String() string { return proto.CompactTextString(m) }
 func (*CheckUserAccessResponse) ProtoMessage()    {}
 func (*CheckUserAccessResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_74c4b0d2adf8260a, []int{18}
+	return fileDescriptor_74c4b0d2adf8260a, []int{19}
 }
 
 func (m *CheckUserAccessResponse) XXX_Unmarshal(b []byte) error {
@@ -984,16 +1026,17 @@ func init() {
 	proto.RegisterType((*UserTeamInfo)(nil), "gwteammgr.UserTeamInfo")
 	proto.RegisterType((*ListUserTeamsResponse)(nil), "gwteammgr.ListUserTeamsResponse")
 	proto.RegisterType((*InviteTeamMemberRequest)(nil), "gwteammgr.InviteTeamMemberRequest")
+	proto.RegisterType((*ReInviteTeamMemberRequest)(nil), "gwteammgr.ReInviteTeamMemberRequest")
 	proto.RegisterType((*ConfirmTeamMemberRequest)(nil), "gwteammgr.ConfirmTeamMemberRequest")
 	proto.RegisterType((*TeamMember)(nil), "gwteammgr.TeamMember")
 	proto.RegisterType((*ListTeamMembersResponse)(nil), "gwteammgr.ListTeamMembersResponse")
 	proto.RegisterType((*DeleteTeamMemberRequest)(nil), "gwteammgr.DeleteTeamMemberRequest")
 	proto.RegisterType((*CreateRoleRequest)(nil), "gwteammgr.CreateRoleRequest")
 	proto.RegisterType((*RoleID)(nil), "gwteammgr.RoleID")
+	proto.RegisterType((*RoleInfo)(nil), "gwteammgr.RoleInfo")
 	proto.RegisterType((*Role)(nil), "gwteammgr.Role")
-	proto.RegisterType((*GetUserRoleResponse)(nil), "gwteammgr.GetUserRoleResponse")
-	proto.RegisterType((*UpdateTeamMemberRoleRequest)(nil), "gwteammgr.UpdateTeamMemberRoleRequest")
-	proto.RegisterType((*UserID)(nil), "gwteammgr.UserID")
+	proto.RegisterType((*UpdateTeamMemberRolesRequest)(nil), "gwteammgr.UpdateTeamMemberRolesRequest")
+	proto.RegisterType((*ListTeamRoleResponse)(nil), "gwteammgr.ListTeamRoleResponse")
 	proto.RegisterType((*SetUserCurrentTeamRequest)(nil), "gwteammgr.SetUserCurrentTeamRequest")
 	proto.RegisterType((*CheckUserAccessRequest)(nil), "gwteammgr.CheckUserAccessRequest")
 	proto.RegisterType((*CheckUserAccessResponse)(nil), "gwteammgr.CheckUserAccessResponse")
@@ -1002,69 +1045,75 @@ func init() {
 func init() { proto.RegisterFile("teammgr/v1/teammgr.proto", fileDescriptor_74c4b0d2adf8260a) }
 
 var fileDescriptor_74c4b0d2adf8260a = []byte{
-	// 987 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0xef, 0x6e, 0xe3, 0x44,
-	0x10, 0x8f, 0x93, 0x34, 0x69, 0xa6, 0xed, 0x35, 0x99, 0xde, 0x9d, 0x4d, 0x7a, 0x54, 0xb9, 0x3d,
-	0x04, 0x51, 0x25, 0x62, 0xd1, 0x43, 0x20, 0xf8, 0x82, 0x50, 0xd2, 0x16, 0x1f, 0xd7, 0x22, 0xf9,
-	0xfe, 0x08, 0xf1, 0x05, 0x39, 0xce, 0x5e, 0xf0, 0x11, 0xdb, 0xc1, 0xeb, 0x14, 0xf1, 0x95, 0x57,
-	0x80, 0xc7, 0xe1, 0x1d, 0xf8, 0xc0, 0x2b, 0xf0, 0x20, 0xa7, 0xdd, 0xb5, 0xe3, 0xf5, 0x3f, 0x5d,
-	0xfb, 0x29, 0xde, 0xd9, 0x99, 0xdf, 0xcc, 0xfc, 0x66, 0x67, 0x26, 0x60, 0xc4, 0xd4, 0xf1, 0xfd,
-	0x65, 0x64, 0xde, 0x7c, 0x66, 0x26, 0x9f, 0x93, 0x75, 0x14, 0xc6, 0x21, 0xf6, 0x96, 0xbf, 0x27,
-	0x82, 0xe1, 0xa3, 0x65, 0x18, 0x2e, 0x57, 0xd4, 0x74, 0xd6, 0x9e, 0xe9, 0x04, 0x41, 0x18, 0x3b,
-	0xb1, 0x17, 0x06, 0x4c, 0x2a, 0x0e, 0x8f, 0xdc, 0xd0, 0xf7, 0xc3, 0xc0, 0x94, 0x3f, 0x52, 0x48,
-	0x3e, 0x81, 0xc1, 0x34, 0xa2, 0x4e, 0x4c, 0x5f, 0x52, 0xc7, 0xb7, 0xe9, 0x6f, 0x1b, 0xca, 0x62,
-	0x44, 0x68, 0x07, 0x8e, 0x4f, 0x0d, 0x6d, 0xa4, 0x8d, 0x7b, 0xb6, 0xf8, 0x26, 0xa7, 0xd0, 0xe6,
-	0x2a, 0x78, 0x0f, 0x9a, 0xde, 0x22, 0xb9, 0x69, 0x7a, 0x8b, 0xad, 0x6e, 0x53, 0xd1, 0x7d, 0x0c,
-	0x1d, 0xae, 0x6b, 0xcd, 0x50, 0x87, 0x2e, 0x0f, 0xee, 0xe7, 0xad, 0x49, 0x87, 0x1f, 0xad, 0x05,
-	0xf9, 0x5b, 0x83, 0xfd, 0x57, 0x8c, 0x46, 0x42, 0x2f, 0x78, 0x13, 0xd6, 0x6a, 0xe2, 0x31, 0xf4,
-	0xc4, 0x85, 0xe2, 0x65, 0x97, 0x0b, 0xae, 0x1d, 0x9f, 0xf2, 0xcb, 0x28, 0x5c, 0x51, 0x79, 0xd9,
-	0x92, 0x97, 0x5c, 0x20, 0x2e, 0x75, 0xe8, 0x8a, 0x4b, 0x6f, 0x61, 0xb4, 0x25, 0x24, 0x3f, 0x5a,
-	0x0b, 0x34, 0xa0, 0xeb, 0x6e, 0xa2, 0x88, 0x06, 0xb1, 0xb1, 0x33, 0xd2, 0xc6, 0xbb, 0x76, 0x7a,
-	0x24, 0x17, 0xf0, 0xe0, 0xb9, 0xc7, 0xe2, 0x34, 0x32, 0x66, 0x53, 0xb6, 0x0e, 0x03, 0x46, 0xf1,
-	0x53, 0xd8, 0xe1, 0x4e, 0x99, 0xa1, 0x8d, 0x5a, 0xe3, 0xbd, 0x33, 0x7d, 0xb2, 0x65, 0x7d, 0xa2,
-	0xa6, 0x61, 0x4b, 0x2d, 0xf2, 0x1d, 0xe8, 0x56, 0x70, 0xe3, 0x49, 0x5a, 0xaf, 0xa8, 0x3f, 0xa7,
-	0x51, 0x4a, 0xee, 0x7d, 0xd8, 0xa1, 0xbe, 0xe3, 0xad, 0x92, 0x34, 0xe5, 0x41, 0x4d, 0xbf, 0x99,
-	0x23, 0xea, 0x12, 0x8c, 0x69, 0x18, 0xbc, 0xf1, 0x22, 0xbf, 0x0c, 0x55, 0xcb, 0x19, 0x42, 0xdb,
-	0x0d, 0x17, 0xdb, 0xa2, 0xf0, 0x6f, 0xf2, 0x8f, 0x06, 0x90, 0x41, 0x60, 0x1f, 0x5a, 0x9b, 0xad,
-	0x1d, 0xff, 0xcc, 0x02, 0x6b, 0xaa, 0x81, 0x1d, 0x43, 0x6f, 0xc3, 0x68, 0x94, 0x63, 0x98, 0x0b,
-	0xca, 0xf4, 0xb7, 0xeb, 0xe9, 0xdf, 0xc9, 0xd1, 0xff, 0x14, 0x3a, 0x2c, 0x76, 0xe2, 0x0d, 0x33,
-	0x3a, 0x23, 0x6d, 0x7c, 0xef, 0xec, 0x58, 0x21, 0x33, 0x8b, 0xf0, 0x85, 0x50, 0xb1, 0x13, 0x55,
-	0xf2, 0x0c, 0x74, 0x5e, 0x99, 0xec, 0x3e, 0xab, 0x8d, 0x09, 0x5d, 0x5f, 0x8a, 0x92, 0xea, 0x3c,
-	0xa8, 0x04, 0xb4, 0x53, 0x2d, 0x32, 0x03, 0x7d, 0x46, 0x57, 0xb4, 0xaa, 0x3a, 0x65, 0x5a, 0x6a,
-	0x2b, 0xe3, 0xa5, 0xad, 0x63, 0x87, 0x2b, 0xfa, 0xde, 0x92, 0xe4, 0xa8, 0x6a, 0x16, 0xa8, 0x3a,
-	0x01, 0x58, 0x47, 0xde, 0x8d, 0xb7, 0xa2, 0x4b, 0xca, 0x8c, 0xd6, 0xa8, 0x35, 0xee, 0xd9, 0x8a,
-	0x84, 0x37, 0x14, 0x77, 0x22, 0x1b, 0x2a, 0x25, 0x55, 0x53, 0x49, 0x25, 0xcf, 0xa0, 0xcd, 0x55,
-	0x6e, 0xd3, 0x9f, 0xef, 0x75, 0x47, 0xe1, 0xe8, 0x92, 0x8a, 0x26, 0x90, 0xa9, 0x25, 0x3c, 0xdf,
-	0x9e, 0x1b, 0x7c, 0x02, 0x6d, 0x1e, 0x97, 0x78, 0x30, 0x7b, 0x67, 0x87, 0x4a, 0x3d, 0x04, 0xa2,
-	0xb8, 0x24, 0x0e, 0x1c, 0xbf, 0x5a, 0x2f, 0x9c, 0x5c, 0x19, 0x14, 0x2a, 0xef, 0xe0, 0x4e, 0x61,
-	0xa5, 0x95, 0x63, 0x65, 0x08, 0x1d, 0x9e, 0x86, 0x35, 0x2b, 0xa3, 0x91, 0x0b, 0xf8, 0xe0, 0x85,
-	0xcc, 0x72, 0x2a, 0xbb, 0x5f, 0x1d, 0x81, 0x77, 0x78, 0x07, 0xcf, 0xe1, 0xe1, 0xf4, 0x17, 0xea,
-	0xfe, 0xca, 0x91, 0xbe, 0x75, 0x5d, 0xca, 0x58, 0x0a, 0x32, 0x84, 0xdd, 0x88, 0xb2, 0x70, 0x13,
-	0xb9, 0xe9, 0x2c, 0xdd, 0x9e, 0xf1, 0x21, 0x74, 0x1c, 0x97, 0x8f, 0xe7, 0x14, 0x4d, 0x9e, 0xc8,
-	0x57, 0xa0, 0x97, 0xd0, 0x12, 0xfe, 0x4f, 0x00, 0x1c, 0x21, 0xf1, 0xe6, 0x2b, 0x09, 0xb8, 0x6b,
-	0x2b, 0x92, 0xd3, 0x09, 0xf4, 0x8b, 0xed, 0x83, 0x7b, 0xd0, 0xb5, 0xae, 0x5f, 0x5b, 0x2f, 0xcf,
-	0x67, 0xfd, 0x06, 0x1e, 0x40, 0x6f, 0xfa, 0xc3, 0xf5, 0x85, 0x65, 0x5f, 0x9d, 0xcf, 0xfa, 0xda,
-	0xd9, 0xbf, 0x00, 0x5d, 0x61, 0xb0, 0x8c, 0xf0, 0x35, 0x40, 0xb6, 0x07, 0xf0, 0x91, 0x52, 0xb0,
-	0xd2, 0x7a, 0x18, 0x0e, 0x0a, 0xed, 0x65, 0xcd, 0x88, 0xfe, 0xe7, 0x7f, 0xff, 0xff, 0xd5, 0x1c,
-	0x90, 0x7d, 0xb1, 0x9c, 0x4c, 0x57, 0xd8, 0x7c, 0xad, 0x9d, 0xe2, 0x15, 0x40, 0xd6, 0x6a, 0x58,
-	0xb6, 0x1c, 0x1e, 0x4d, 0xd4, 0x7d, 0x34, 0x39, 0xf7, 0xd7, 0xf1, 0x1f, 0x45, 0xb8, 0x85, 0x40,
-	0xe0, 0x70, 0xdf, 0x03, 0x64, 0x4f, 0x06, 0x0f, 0x0b, 0x70, 0xb7, 0x02, 0xdb, 0x08, 0x7b, 0x0e,
-	0xf6, 0x23, 0x1c, 0xe4, 0x86, 0x7d, 0x2e, 0x3c, 0xf9, 0x6c, 0x86, 0x23, 0x45, 0x54, 0xb9, 0x19,
-	0x08, 0x0a, 0xf8, 0x7d, 0x04, 0x09, 0xbf, 0xf2, 0x58, 0x8c, 0x6f, 0xa1, 0x5f, 0x1c, 0xff, 0x48,
-	0x14, 0xa4, 0x9a, 0xdd, 0x50, 0x1d, 0xff, 0x87, 0xc2, 0x81, 0x4e, 0x50, 0x2e, 0x7e, 0x61, 0x60,
-	0x7a, 0x02, 0x81, 0x67, 0xe1, 0xc3, 0xa0, 0xb4, 0x20, 0xf0, 0x89, 0x5a, 0xc0, 0x9a, 0xf5, 0x51,
-	0xed, 0xed, 0x44, 0x78, 0x33, 0xc8, 0x91, 0xea, 0xcd, 0x95, 0x10, 0xdc, 0xdd, 0x5b, 0xe8, 0x17,
-	0x67, 0x67, 0x2e, 0xb5, 0x9a, 0xc1, 0x7a, 0x87, 0xd4, 0xb2, 0x6a, 0x47, 0x70, 0xbf, 0x6a, 0x40,
-	0xe0, 0xc7, 0x6a, 0x9d, 0xea, 0x27, 0xc8, 0x1d, 0x7c, 0x66, 0x8f, 0x62, 0x0e, 0x87, 0x85, 0x3d,
-	0x53, 0xf5, 0x6a, 0x49, 0xe1, 0x59, 0x54, 0xac, 0x25, 0x62, 0x08, 0x47, 0x88, 0x7d, 0xd5, 0x91,
-	0x78, 0x1e, 0xdf, 0xa4, 0xcd, 0x26, 0xb2, 0x29, 0x37, 0x9b, 0x9a, 0xc3, 0xa0, 0x30, 0x3b, 0xad,
-	0x19, 0x69, 0xe0, 0x17, 0x69, 0x57, 0x09, 0x80, 0xb2, 0x4a, 0x75, 0xe6, 0x0d, 0xfc, 0x3c, 0x6d,
-	0x1f, 0x61, 0x57, 0x1c, 0xcb, 0x75, 0x56, 0x26, 0x74, 0x2f, 0x69, 0x5c, 0xe7, 0xaa, 0x88, 0x42,
-	0x1a, 0x38, 0x07, 0x2c, 0x4f, 0x56, 0xfc, 0x48, 0x51, 0xac, 0x1d, 0xbc, 0xd5, 0x31, 0x0c, 0x04,
-	0x95, 0x7b, 0xd8, 0x93, 0x3d, 0xc6, 0x68, 0x8c, 0x5f, 0xc2, 0x41, 0xb2, 0xa3, 0x92, 0xbf, 0x9a,
-	0x15, 0xcd, 0x5b, 0x31, 0xa8, 0x1a, 0xf8, 0x13, 0x1c, 0x16, 0x06, 0x2c, 0x3e, 0x56, 0x2b, 0x50,
-	0x39, 0xca, 0x73, 0x05, 0xaf, 0x99, 0xcf, 0xa4, 0x31, 0xef, 0x88, 0xa0, 0x9f, 0xbe, 0x0b, 0x00,
-	0x00, 0xff, 0xff, 0xad, 0x6b, 0x71, 0x2d, 0xae, 0x0b, 0x00, 0x00,
+	// 1075 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0xdd, 0x4e, 0xe3, 0x46,
+	0x14, 0x4e, 0x42, 0xc8, 0xcf, 0xd9, 0x00, 0xe1, 0x00, 0x1b, 0x13, 0x28, 0x9b, 0x9d, 0xb6, 0x5a,
+	0x8a, 0xd4, 0x44, 0xcb, 0x56, 0x95, 0xb6, 0x52, 0xd5, 0xae, 0xe2, 0x2c, 0x0a, 0x5d, 0xa8, 0x64,
+	0xd8, 0x95, 0xba, 0x37, 0xc8, 0xd8, 0x43, 0xea, 0x6d, 0x6c, 0xa7, 0x1e, 0x87, 0x6a, 0x6f, 0x7b,
+	0xd7, 0xcb, 0xaa, 0x4f, 0xd2, 0x67, 0xe9, 0x2b, 0xf4, 0x41, 0x56, 0x33, 0x63, 0xc7, 0x13, 0xc7,
+	0x06, 0x72, 0x85, 0x67, 0x72, 0xe6, 0xfb, 0x66, 0xce, 0xf9, 0xce, 0xf9, 0x00, 0x2d, 0xa4, 0xa6,
+	0xeb, 0x8e, 0x82, 0xde, 0xed, 0xf3, 0x5e, 0xf4, 0xd9, 0x9d, 0x04, 0x7e, 0xe8, 0x63, 0x7d, 0xf4,
+	0x47, 0xb4, 0xd1, 0xde, 0x1f, 0xf9, 0xfe, 0x68, 0x4c, 0x7b, 0xe6, 0xc4, 0xe9, 0x99, 0x9e, 0xe7,
+	0x87, 0x66, 0xe8, 0xf8, 0x1e, 0x93, 0x81, 0xed, 0x2d, 0xcb, 0x77, 0x5d, 0xdf, 0xeb, 0xc9, 0x3f,
+	0x72, 0x93, 0x3c, 0x83, 0xcd, 0x7e, 0x40, 0xcd, 0x90, 0x5e, 0x52, 0xd3, 0x35, 0xe8, 0xef, 0x53,
+	0xca, 0x42, 0x44, 0x28, 0x7b, 0xa6, 0x4b, 0xb5, 0x62, 0xa7, 0x78, 0x58, 0x37, 0xc4, 0x37, 0x39,
+	0x82, 0x32, 0x0f, 0xc1, 0x75, 0x28, 0x39, 0x76, 0xf4, 0x4b, 0xc9, 0xb1, 0x67, 0xb1, 0x25, 0x25,
+	0xf6, 0x29, 0x54, 0x78, 0xec, 0x50, 0xc7, 0x16, 0x54, 0xf9, 0xe5, 0xae, 0x66, 0x47, 0x2a, 0x7c,
+	0x39, 0xb4, 0xc9, 0x5f, 0x45, 0x68, 0xbc, 0x65, 0x34, 0x10, 0x71, 0xde, 0x8d, 0x9f, 0x1b, 0x89,
+	0x7b, 0x50, 0x17, 0x3f, 0x28, 0x2c, 0x35, 0xbe, 0x71, 0x6e, 0xba, 0x14, 0xbf, 0x82, 0xd5, 0xc0,
+	0x1f, 0x53, 0xa6, 0xad, 0x74, 0x56, 0x0e, 0x1f, 0x1d, 0x6f, 0x75, 0x67, 0xc9, 0xe8, 0x1a, 0xfe,
+	0x98, 0x72, 0x64, 0x43, 0x46, 0xa0, 0x06, 0x55, 0x6b, 0x1a, 0x04, 0xd4, 0x0b, 0xb5, 0x72, 0xa7,
+	0x78, 0x58, 0x33, 0xe2, 0x25, 0xf9, 0x08, 0x3b, 0x6f, 0x1c, 0x16, 0xc6, 0xd7, 0x61, 0x06, 0x65,
+	0x13, 0xdf, 0x63, 0x14, 0xbf, 0x86, 0x55, 0x8e, 0xc6, 0xb4, 0xa2, 0x40, 0x6f, 0x29, 0xe8, 0xea,
+	0xdd, 0x0d, 0x19, 0x85, 0xcf, 0xa1, 0x6a, 0xd3, 0x1b, 0x73, 0x3a, 0x0e, 0xc5, 0x3d, 0xef, 0x38,
+	0x10, 0xc7, 0x11, 0x0a, 0xad, 0xa1, 0x77, 0xeb, 0xc8, 0xf4, 0x9f, 0x51, 0xf7, 0x9a, 0x06, 0x71,
+	0x11, 0x72, 0x13, 0xf2, 0x18, 0x2a, 0xd4, 0x35, 0x9d, 0x31, 0xd3, 0x4a, 0x9d, 0x15, 0xbe, 0x2f,
+	0x57, 0xb8, 0x0b, 0x35, 0xfe, 0xd2, 0x2b, 0xc7, 0x96, 0xe9, 0xa8, 0x1b, 0x55, 0xbe, 0x1e, 0xda,
+	0x8c, 0x9c, 0xc2, 0xae, 0x41, 0x97, 0x26, 0xda, 0x86, 0x55, 0x01, 0x1d, 0x65, 0x5d, 0x2e, 0xc8,
+	0x09, 0x68, 0x7d, 0xdf, 0xbb, 0x71, 0x02, 0x77, 0x09, 0x28, 0x84, 0xb2, 0xe5, 0xdb, 0x33, 0x95,
+	0xf0, 0x6f, 0xf2, 0x6f, 0x11, 0x20, 0x81, 0xc0, 0x26, 0xac, 0x4c, 0x67, 0xe7, 0xf8, 0x67, 0x36,
+	0x3f, 0xd7, 0xc3, 0x94, 0xd1, 0x40, 0xea, 0x61, 0x45, 0xea, 0x81, 0x6f, 0xcc, 0xeb, 0xa1, 0x7c,
+	0xaf, 0x1e, 0x5e, 0x40, 0x85, 0x85, 0x66, 0x38, 0x65, 0xda, 0x6a, 0xa7, 0x78, 0xb8, 0x7e, 0xbc,
+	0xa7, 0xc4, 0x26, 0xd7, 0xba, 0x10, 0x21, 0x46, 0x14, 0x4a, 0x4e, 0xa1, 0xc5, 0xa5, 0x92, 0xfc,
+	0x9e, 0x88, 0xa5, 0x07, 0x55, 0x57, 0x6e, 0x45, 0x72, 0xd9, 0xc9, 0x04, 0x34, 0xe2, 0x28, 0xa2,
+	0x43, 0x4b, 0xa7, 0x63, 0x9a, 0x55, 0x92, 0xc5, 0x5c, 0x28, 0x99, 0x2d, 0xcd, 0x35, 0x92, 0x13,
+	0x37, 0x30, 0x7f, 0xdf, 0xbd, 0x75, 0xd8, 0x83, 0xba, 0xd0, 0x88, 0xda, 0x4c, 0x7c, 0x43, 0x24,
+	0xef, 0x00, 0x60, 0x12, 0x38, 0xb7, 0xce, 0x98, 0x8e, 0x68, 0x2c, 0x21, 0x65, 0x87, 0xb7, 0xb5,
+	0x48, 0xa2, 0x68, 0xeb, 0x48, 0x6a, 0x31, 0xbe, 0x54, 0x1a, 0xe9, 0x42, 0x2d, 0xce, 0xf3, 0x83,
+	0x26, 0xc5, 0x29, 0x94, 0x79, 0xfc, 0x43, 0x62, 0xef, 0xbd, 0x9e, 0x0d, 0xfb, 0x6f, 0x27, 0xb6,
+	0x39, 0x97, 0x4f, 0x5e, 0xe9, 0xe5, 0x93, 0x7a, 0x57, 0x2b, 0x7d, 0x0f, 0xdb, 0xb1, 0x02, 0x64,
+	0xc6, 0xa3, 0xf2, 0x7f, 0x19, 0x2b, 0x4f, 0x16, 0x7f, 0x23, 0xa5, 0xbc, 0x48, 0x75, 0xe4, 0x35,
+	0xec, 0x5e, 0x50, 0x31, 0x6a, 0xfa, 0x72, 0xfa, 0xa8, 0x73, 0x77, 0x89, 0xb2, 0xbf, 0x81, 0xc7,
+	0xfd, 0x5f, 0xa9, 0xf5, 0x1b, 0x47, 0x7a, 0x65, 0x59, 0x94, 0xcd, 0x9e, 0xd9, 0x86, 0x5a, 0x40,
+	0x99, 0x3f, 0x0d, 0xac, 0x78, 0x80, 0xcf, 0xd6, 0x7c, 0x74, 0x98, 0x16, 0xf7, 0x84, 0x18, 0x4d,
+	0xae, 0xc8, 0x4b, 0x68, 0x2d, 0xa0, 0x45, 0xef, 0x3a, 0x00, 0x30, 0xc5, 0x8e, 0x73, 0x3d, 0x96,
+	0x80, 0x35, 0x43, 0xd9, 0x39, 0xfa, 0x11, 0x9a, 0xe9, 0x6e, 0xc1, 0x47, 0x50, 0x1d, 0x9e, 0xbf,
+	0x1b, 0x5e, 0x0e, 0xf4, 0x66, 0x01, 0xd7, 0xa0, 0xde, 0xff, 0xf9, 0xfc, 0xf5, 0xd0, 0x38, 0x1b,
+	0xe8, 0xcd, 0x22, 0x36, 0xa1, 0x71, 0xf1, 0xcb, 0xc5, 0xe5, 0xe0, 0xec, 0xea, 0x95, 0xae, 0x0f,
+	0xf4, 0x66, 0xe9, 0xf8, 0xef, 0x06, 0x54, 0x05, 0xc4, 0x28, 0xc0, 0x77, 0x00, 0x89, 0x1d, 0xe1,
+	0xbe, 0x92, 0xc4, 0x05, 0x97, 0x6a, 0x6f, 0xa6, 0xfa, 0x6b, 0xa8, 0x93, 0xd6, 0x9f, 0xff, 0xfd,
+	0xff, 0x4f, 0x69, 0x93, 0x34, 0x84, 0x47, 0xf6, 0x2c, 0x71, 0xe6, 0xbb, 0xe2, 0x11, 0x9e, 0x01,
+	0x24, 0xbd, 0x86, 0x8b, 0x27, 0xdb, 0x5b, 0x5d, 0xd5, 0x16, 0xbb, 0x03, 0x77, 0x12, 0x7e, 0x4c,
+	0xc3, 0xd9, 0x02, 0x81, 0xc3, 0xfd, 0x04, 0x90, 0x48, 0x0d, 0x37, 0x52, 0x70, 0x0f, 0x02, 0x9b,
+	0x8a, 0xf3, 0x1c, 0xec, 0x3d, 0xac, 0xcd, 0xd9, 0x0f, 0x66, 0x1d, 0x6f, 0x77, 0x14, 0x92, 0x4c,
+	0xb7, 0x22, 0x28, 0x08, 0x1a, 0x08, 0x92, 0x60, 0xec, 0xb0, 0x10, 0x3f, 0x40, 0x33, 0x3d, 0xf6,
+	0x91, 0x28, 0x48, 0x39, 0x9e, 0x90, 0xfd, 0x82, 0xcf, 0x04, 0x41, 0x8b, 0xa0, 0xfc, 0x0f, 0x44,
+	0x1c, 0xe8, 0x39, 0x02, 0x81, 0xbf, 0x63, 0x02, 0xb8, 0x68, 0x32, 0xf8, 0x85, 0xda, 0x08, 0x74,
+	0x29, 0xbe, 0x27, 0x82, 0x6f, 0x97, 0x6c, 0xab, 0x7c, 0x01, 0x4d, 0x18, 0x5d, 0xd8, 0x5c, 0xb0,
+	0x22, 0xfc, 0x5c, 0x15, 0x4d, 0x8e, 0x51, 0x65, 0xf3, 0x1d, 0x08, 0x3e, 0x8d, 0x6c, 0xa9, 0x7c,
+	0x96, 0x84, 0xe0, 0x74, 0x1f, 0xa0, 0x99, 0x1e, 0xd8, 0x73, 0xc9, 0xcc, 0x99, 0xe6, 0x4b, 0x24,
+	0x33, 0x51, 0x58, 0x08, 0x3b, 0x99, 0xc3, 0x0c, 0x9f, 0xa9, 0xff, 0x53, 0xdc, 0x31, 0xee, 0x96,
+	0x60, 0x4d, 0xa4, 0x78, 0x0d, 0x1b, 0x29, 0x7b, 0xcb, 0xea, 0x15, 0x92, 0x92, 0x62, 0x86, 0x1b,
+	0x12, 0x4d, 0x10, 0x21, 0x36, 0x55, 0x22, 0x21, 0xc9, 0x1f, 0xe2, 0x16, 0x17, 0x83, 0x7f, 0xb1,
+	0xc5, 0x15, 0x1f, 0x9b, 0x6b, 0x71, 0x69, 0x3d, 0xa4, 0x80, 0xdf, 0xc6, 0xbd, 0x2c, 0x00, 0x16,
+	0x43, 0xb2, 0x5f, 0x5e, 0xc0, 0x6f, 0xe2, 0xa6, 0x15, 0xe7, 0xd2, 0x03, 0x3a, 0xef, 0x54, 0x0f,
+	0xaa, 0x27, 0x34, 0xcc, 0xa3, 0x4a, 0xa3, 0x90, 0x02, 0x0e, 0x64, 0x3b, 0xc7, 0x06, 0x91, 0x99,
+	0xc1, 0x27, 0x19, 0x19, 0x54, 0xdd, 0x84, 0x14, 0x90, 0x02, 0x2e, 0x1a, 0xc5, 0x5c, 0x37, 0xe5,
+	0xfa, 0x48, 0xf6, 0x53, 0xb6, 0x45, 0x45, 0xd6, 0x49, 0x5d, 0x8e, 0x07, 0x46, 0x43, 0x5e, 0xf1,
+	0x97, 0xb0, 0x76, 0x42, 0x67, 0xc3, 0x64, 0xa8, 0x67, 0x0f, 0x9f, 0x8c, 0x51, 0x5b, 0xc0, 0xf7,
+	0xb0, 0x91, 0x32, 0x0d, 0x7c, 0xaa, 0x56, 0x33, 0xd3, 0x9e, 0xe6, 0xc4, 0x93, 0xe3, 0x39, 0xa4,
+	0x70, 0x5d, 0x11, 0xec, 0x2f, 0x3e, 0x05, 0x00, 0x00, 0xff, 0xff, 0x59, 0x85, 0x4e, 0xa8, 0xf7,
+	0x0c, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1082,18 +1131,20 @@ type TeamMgrClient interface {
 	CreateTeam(ctx context.Context, in *CreateTeamRequest, opts ...grpc.CallOption) (*TeamID, error)
 	DeleteTeam(ctx context.Context, in *TeamID, opts ...grpc.CallOption) (*common.Empty, error)
 	UpdateTeam(ctx context.Context, in *Team, opts ...grpc.CallOption) (*common.Empty, error)
-	ListUserTeams(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*ListUserTeamsResponse, error)
+	ListUserTeams(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*ListUserTeamsResponse, error)
 	InviteTeamMember(ctx context.Context, in *InviteTeamMemberRequest, opts ...grpc.CallOption) (*common.Empty, error)
+	ReInviteTeamMember(ctx context.Context, in *ReInviteTeamMemberRequest, opts ...grpc.CallOption) (*common.Empty, error)
 	ConfirmTeamMember(ctx context.Context, in *ConfirmTeamMemberRequest, opts ...grpc.CallOption) (*common.Empty, error)
 	DeleteTeamMember(ctx context.Context, in *DeleteTeamMemberRequest, opts ...grpc.CallOption) (*common.Empty, error)
-	UpdateTeamMemberRole(ctx context.Context, in *UpdateTeamMemberRoleRequest, opts ...grpc.CallOption) (*common.Empty, error)
+	UpdateTeamMemberRoles(ctx context.Context, in *UpdateTeamMemberRolesRequest, opts ...grpc.CallOption) (*common.Empty, error)
 	ListTeamMembers(ctx context.Context, in *TeamID, opts ...grpc.CallOption) (*ListTeamMembersResponse, error)
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...grpc.CallOption) (*RoleID, error)
 	DeleteRole(ctx context.Context, in *RoleID, opts ...grpc.CallOption) (*common.Empty, error)
 	UpdateRole(ctx context.Context, in *Role, opts ...grpc.CallOption) (*common.Empty, error)
 	GetRole(ctx context.Context, in *RoleID, opts ...grpc.CallOption) (*Role, error)
+	ListTeamRoles(ctx context.Context, in *TeamID, opts ...grpc.CallOption) (*ListTeamRoleResponse, error)
 	SetUserCurrentTeam(ctx context.Context, in *SetUserCurrentTeamRequest, opts ...grpc.CallOption) (*common.Empty, error)
-	GetUserTeamID(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*TeamID, error)
+	GetUserTeamID(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*TeamID, error)
 	CheckUserAccess(ctx context.Context, in *CheckUserAccessRequest, opts ...grpc.CallOption) (*CheckUserAccessResponse, error)
 }
 
@@ -1132,7 +1183,7 @@ func (c *teamMgrClient) UpdateTeam(ctx context.Context, in *Team, opts ...grpc.C
 	return out, nil
 }
 
-func (c *teamMgrClient) ListUserTeams(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*ListUserTeamsResponse, error) {
+func (c *teamMgrClient) ListUserTeams(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*ListUserTeamsResponse, error) {
 	out := new(ListUserTeamsResponse)
 	err := c.cc.Invoke(ctx, "/gwteammgr.TeamMgr/ListUserTeams", in, out, opts...)
 	if err != nil {
@@ -1144,6 +1195,15 @@ func (c *teamMgrClient) ListUserTeams(ctx context.Context, in *UserID, opts ...g
 func (c *teamMgrClient) InviteTeamMember(ctx context.Context, in *InviteTeamMemberRequest, opts ...grpc.CallOption) (*common.Empty, error) {
 	out := new(common.Empty)
 	err := c.cc.Invoke(ctx, "/gwteammgr.TeamMgr/InviteTeamMember", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *teamMgrClient) ReInviteTeamMember(ctx context.Context, in *ReInviteTeamMemberRequest, opts ...grpc.CallOption) (*common.Empty, error) {
+	out := new(common.Empty)
+	err := c.cc.Invoke(ctx, "/gwteammgr.TeamMgr/ReInviteTeamMember", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1168,9 +1228,9 @@ func (c *teamMgrClient) DeleteTeamMember(ctx context.Context, in *DeleteTeamMemb
 	return out, nil
 }
 
-func (c *teamMgrClient) UpdateTeamMemberRole(ctx context.Context, in *UpdateTeamMemberRoleRequest, opts ...grpc.CallOption) (*common.Empty, error) {
+func (c *teamMgrClient) UpdateTeamMemberRoles(ctx context.Context, in *UpdateTeamMemberRolesRequest, opts ...grpc.CallOption) (*common.Empty, error) {
 	out := new(common.Empty)
-	err := c.cc.Invoke(ctx, "/gwteammgr.TeamMgr/UpdateTeamMemberRole", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gwteammgr.TeamMgr/UpdateTeamMemberRoles", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1222,6 +1282,15 @@ func (c *teamMgrClient) GetRole(ctx context.Context, in *RoleID, opts ...grpc.Ca
 	return out, nil
 }
 
+func (c *teamMgrClient) ListTeamRoles(ctx context.Context, in *TeamID, opts ...grpc.CallOption) (*ListTeamRoleResponse, error) {
+	out := new(ListTeamRoleResponse)
+	err := c.cc.Invoke(ctx, "/gwteammgr.TeamMgr/ListTeamRoles", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *teamMgrClient) SetUserCurrentTeam(ctx context.Context, in *SetUserCurrentTeamRequest, opts ...grpc.CallOption) (*common.Empty, error) {
 	out := new(common.Empty)
 	err := c.cc.Invoke(ctx, "/gwteammgr.TeamMgr/SetUserCurrentTeam", in, out, opts...)
@@ -1231,7 +1300,7 @@ func (c *teamMgrClient) SetUserCurrentTeam(ctx context.Context, in *SetUserCurre
 	return out, nil
 }
 
-func (c *teamMgrClient) GetUserTeamID(ctx context.Context, in *UserID, opts ...grpc.CallOption) (*TeamID, error) {
+func (c *teamMgrClient) GetUserTeamID(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*TeamID, error) {
 	out := new(TeamID)
 	err := c.cc.Invoke(ctx, "/gwteammgr.TeamMgr/GetUserTeamID", in, out, opts...)
 	if err != nil {
@@ -1254,18 +1323,20 @@ type TeamMgrServer interface {
 	CreateTeam(context.Context, *CreateTeamRequest) (*TeamID, error)
 	DeleteTeam(context.Context, *TeamID) (*common.Empty, error)
 	UpdateTeam(context.Context, *Team) (*common.Empty, error)
-	ListUserTeams(context.Context, *UserID) (*ListUserTeamsResponse, error)
+	ListUserTeams(context.Context, *common.Empty) (*ListUserTeamsResponse, error)
 	InviteTeamMember(context.Context, *InviteTeamMemberRequest) (*common.Empty, error)
+	ReInviteTeamMember(context.Context, *ReInviteTeamMemberRequest) (*common.Empty, error)
 	ConfirmTeamMember(context.Context, *ConfirmTeamMemberRequest) (*common.Empty, error)
 	DeleteTeamMember(context.Context, *DeleteTeamMemberRequest) (*common.Empty, error)
-	UpdateTeamMemberRole(context.Context, *UpdateTeamMemberRoleRequest) (*common.Empty, error)
+	UpdateTeamMemberRoles(context.Context, *UpdateTeamMemberRolesRequest) (*common.Empty, error)
 	ListTeamMembers(context.Context, *TeamID) (*ListTeamMembersResponse, error)
 	CreateRole(context.Context, *CreateRoleRequest) (*RoleID, error)
 	DeleteRole(context.Context, *RoleID) (*common.Empty, error)
 	UpdateRole(context.Context, *Role) (*common.Empty, error)
 	GetRole(context.Context, *RoleID) (*Role, error)
+	ListTeamRoles(context.Context, *TeamID) (*ListTeamRoleResponse, error)
 	SetUserCurrentTeam(context.Context, *SetUserCurrentTeamRequest) (*common.Empty, error)
-	GetUserTeamID(context.Context, *UserID) (*TeamID, error)
+	GetUserTeamID(context.Context, *common.Empty) (*TeamID, error)
 	CheckUserAccess(context.Context, *CheckUserAccessRequest) (*CheckUserAccessResponse, error)
 }
 
@@ -1282,11 +1353,14 @@ func (*UnimplementedTeamMgrServer) DeleteTeam(ctx context.Context, req *TeamID) 
 func (*UnimplementedTeamMgrServer) UpdateTeam(ctx context.Context, req *Team) (*common.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateTeam not implemented")
 }
-func (*UnimplementedTeamMgrServer) ListUserTeams(ctx context.Context, req *UserID) (*ListUserTeamsResponse, error) {
+func (*UnimplementedTeamMgrServer) ListUserTeams(ctx context.Context, req *common.Empty) (*ListUserTeamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserTeams not implemented")
 }
 func (*UnimplementedTeamMgrServer) InviteTeamMember(ctx context.Context, req *InviteTeamMemberRequest) (*common.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InviteTeamMember not implemented")
+}
+func (*UnimplementedTeamMgrServer) ReInviteTeamMember(ctx context.Context, req *ReInviteTeamMemberRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReInviteTeamMember not implemented")
 }
 func (*UnimplementedTeamMgrServer) ConfirmTeamMember(ctx context.Context, req *ConfirmTeamMemberRequest) (*common.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfirmTeamMember not implemented")
@@ -1294,8 +1368,8 @@ func (*UnimplementedTeamMgrServer) ConfirmTeamMember(ctx context.Context, req *C
 func (*UnimplementedTeamMgrServer) DeleteTeamMember(ctx context.Context, req *DeleteTeamMemberRequest) (*common.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteTeamMember not implemented")
 }
-func (*UnimplementedTeamMgrServer) UpdateTeamMemberRole(ctx context.Context, req *UpdateTeamMemberRoleRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateTeamMemberRole not implemented")
+func (*UnimplementedTeamMgrServer) UpdateTeamMemberRoles(ctx context.Context, req *UpdateTeamMemberRolesRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTeamMemberRoles not implemented")
 }
 func (*UnimplementedTeamMgrServer) ListTeamMembers(ctx context.Context, req *TeamID) (*ListTeamMembersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTeamMembers not implemented")
@@ -1312,10 +1386,13 @@ func (*UnimplementedTeamMgrServer) UpdateRole(ctx context.Context, req *Role) (*
 func (*UnimplementedTeamMgrServer) GetRole(ctx context.Context, req *RoleID) (*Role, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRole not implemented")
 }
+func (*UnimplementedTeamMgrServer) ListTeamRoles(ctx context.Context, req *TeamID) (*ListTeamRoleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTeamRoles not implemented")
+}
 func (*UnimplementedTeamMgrServer) SetUserCurrentTeam(ctx context.Context, req *SetUserCurrentTeamRequest) (*common.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserCurrentTeam not implemented")
 }
-func (*UnimplementedTeamMgrServer) GetUserTeamID(ctx context.Context, req *UserID) (*TeamID, error) {
+func (*UnimplementedTeamMgrServer) GetUserTeamID(ctx context.Context, req *common.Empty) (*TeamID, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserTeamID not implemented")
 }
 func (*UnimplementedTeamMgrServer) CheckUserAccess(ctx context.Context, req *CheckUserAccessRequest) (*CheckUserAccessResponse, error) {
@@ -1381,7 +1458,7 @@ func _TeamMgr_UpdateTeam_Handler(srv interface{}, ctx context.Context, dec func(
 }
 
 func _TeamMgr_ListUserTeams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserID)
+	in := new(common.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1393,7 +1470,7 @@ func _TeamMgr_ListUserTeams_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/gwteammgr.TeamMgr/ListUserTeams",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeamMgrServer).ListUserTeams(ctx, req.(*UserID))
+		return srv.(TeamMgrServer).ListUserTeams(ctx, req.(*common.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1412,6 +1489,24 @@ func _TeamMgr_InviteTeamMember_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TeamMgrServer).InviteTeamMember(ctx, req.(*InviteTeamMemberRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TeamMgr_ReInviteTeamMember_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReInviteTeamMemberRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TeamMgrServer).ReInviteTeamMember(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gwteammgr.TeamMgr/ReInviteTeamMember",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TeamMgrServer).ReInviteTeamMember(ctx, req.(*ReInviteTeamMemberRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1452,20 +1547,20 @@ func _TeamMgr_DeleteTeamMember_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TeamMgr_UpdateTeamMemberRole_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateTeamMemberRoleRequest)
+func _TeamMgr_UpdateTeamMemberRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTeamMemberRolesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TeamMgrServer).UpdateTeamMemberRole(ctx, in)
+		return srv.(TeamMgrServer).UpdateTeamMemberRoles(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gwteammgr.TeamMgr/UpdateTeamMemberRole",
+		FullMethod: "/gwteammgr.TeamMgr/UpdateTeamMemberRoles",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeamMgrServer).UpdateTeamMemberRole(ctx, req.(*UpdateTeamMemberRoleRequest))
+		return srv.(TeamMgrServer).UpdateTeamMemberRoles(ctx, req.(*UpdateTeamMemberRolesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1560,6 +1655,24 @@ func _TeamMgr_GetRole_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TeamMgr_ListTeamRoles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TeamID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TeamMgrServer).ListTeamRoles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gwteammgr.TeamMgr/ListTeamRoles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TeamMgrServer).ListTeamRoles(ctx, req.(*TeamID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _TeamMgr_SetUserCurrentTeam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetUserCurrentTeamRequest)
 	if err := dec(in); err != nil {
@@ -1579,7 +1692,7 @@ func _TeamMgr_SetUserCurrentTeam_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _TeamMgr_GetUserTeamID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UserID)
+	in := new(common.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1591,7 +1704,7 @@ func _TeamMgr_GetUserTeamID_Handler(srv interface{}, ctx context.Context, dec fu
 		FullMethod: "/gwteammgr.TeamMgr/GetUserTeamID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TeamMgrServer).GetUserTeamID(ctx, req.(*UserID))
+		return srv.(TeamMgrServer).GetUserTeamID(ctx, req.(*common.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1639,6 +1752,10 @@ var _TeamMgr_serviceDesc = grpc.ServiceDesc{
 			Handler:    _TeamMgr_InviteTeamMember_Handler,
 		},
 		{
+			MethodName: "ReInviteTeamMember",
+			Handler:    _TeamMgr_ReInviteTeamMember_Handler,
+		},
+		{
 			MethodName: "ConfirmTeamMember",
 			Handler:    _TeamMgr_ConfirmTeamMember_Handler,
 		},
@@ -1647,8 +1764,8 @@ var _TeamMgr_serviceDesc = grpc.ServiceDesc{
 			Handler:    _TeamMgr_DeleteTeamMember_Handler,
 		},
 		{
-			MethodName: "UpdateTeamMemberRole",
-			Handler:    _TeamMgr_UpdateTeamMemberRole_Handler,
+			MethodName: "UpdateTeamMemberRoles",
+			Handler:    _TeamMgr_UpdateTeamMemberRoles_Handler,
 		},
 		{
 			MethodName: "ListTeamMembers",
@@ -1669,6 +1786,10 @@ var _TeamMgr_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRole",
 			Handler:    _TeamMgr_GetRole_Handler,
+		},
+		{
+			MethodName: "ListTeamRoles",
+			Handler:    _TeamMgr_ListTeamRoles_Handler,
 		},
 		{
 			MethodName: "SetUserCurrentTeam",

@@ -35,22 +35,28 @@ var _ server.Option
 // Client API for TeamMgr service
 
 type TeamMgrService interface {
+	// public
 	CreateTeam(ctx context.Context, in *CreateTeamRequest, opts ...client.CallOption) (*TeamID, error)
 	DeleteTeam(ctx context.Context, in *TeamID, opts ...client.CallOption) (*common.Empty, error)
 	UpdateTeam(ctx context.Context, in *Team, opts ...client.CallOption) (*common.Empty, error)
-	ListUserTeams(ctx context.Context, in *UserID, opts ...client.CallOption) (*ListUserTeamsResponse, error)
+	ListUserTeams(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*ListUserTeamsResponse, error)
 	InviteTeamMember(ctx context.Context, in *InviteTeamMemberRequest, opts ...client.CallOption) (*common.Empty, error)
+	ReInviteTeamMember(ctx context.Context, in *ReInviteTeamMemberRequest, opts ...client.CallOption) (*common.Empty, error)
 	ConfirmTeamMember(ctx context.Context, in *ConfirmTeamMemberRequest, opts ...client.CallOption) (*common.Empty, error)
 	DeleteTeamMember(ctx context.Context, in *DeleteTeamMemberRequest, opts ...client.CallOption) (*common.Empty, error)
-	UpdateTeamMemberRole(ctx context.Context, in *UpdateTeamMemberRoleRequest, opts ...client.CallOption) (*common.Empty, error)
+	UpdateTeamMemberRoles(ctx context.Context, in *UpdateTeamMemberRolesRequest, opts ...client.CallOption) (*common.Empty, error)
 	ListTeamMembers(ctx context.Context, in *TeamID, opts ...client.CallOption) (*ListTeamMembersResponse, error)
 	CreateRole(ctx context.Context, in *CreateRoleRequest, opts ...client.CallOption) (*RoleID, error)
 	DeleteRole(ctx context.Context, in *RoleID, opts ...client.CallOption) (*common.Empty, error)
 	UpdateRole(ctx context.Context, in *Role, opts ...client.CallOption) (*common.Empty, error)
 	GetRole(ctx context.Context, in *RoleID, opts ...client.CallOption) (*Role, error)
+	ListTeamRoles(ctx context.Context, in *TeamID, opts ...client.CallOption) (*ListTeamRoleResponse, error)
 	SetUserCurrentTeam(ctx context.Context, in *SetUserCurrentTeamRequest, opts ...client.CallOption) (*common.Empty, error)
-	GetUserTeamID(ctx context.Context, in *UserID, opts ...client.CallOption) (*TeamID, error)
+	GetUserTeamID(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*TeamID, error)
 	CheckUserAccess(ctx context.Context, in *CheckUserAccessRequest, opts ...client.CallOption) (*CheckUserAccessResponse, error)
+	// for micro service only
+	CreateDefaultTeam(ctx context.Context, in *UserID, opts ...client.CallOption) (*TeamID, error)
+	GetTeamIDByUserID(ctx context.Context, in *UserID, opts ...client.CallOption) (*TeamID, error)
 }
 
 type teamMgrService struct {
@@ -101,7 +107,7 @@ func (c *teamMgrService) UpdateTeam(ctx context.Context, in *Team, opts ...clien
 	return out, nil
 }
 
-func (c *teamMgrService) ListUserTeams(ctx context.Context, in *UserID, opts ...client.CallOption) (*ListUserTeamsResponse, error) {
+func (c *teamMgrService) ListUserTeams(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*ListUserTeamsResponse, error) {
 	req := c.c.NewRequest(c.name, "TeamMgr.ListUserTeams", in)
 	out := new(ListUserTeamsResponse)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -113,6 +119,16 @@ func (c *teamMgrService) ListUserTeams(ctx context.Context, in *UserID, opts ...
 
 func (c *teamMgrService) InviteTeamMember(ctx context.Context, in *InviteTeamMemberRequest, opts ...client.CallOption) (*common.Empty, error) {
 	req := c.c.NewRequest(c.name, "TeamMgr.InviteTeamMember", in)
+	out := new(common.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *teamMgrService) ReInviteTeamMember(ctx context.Context, in *ReInviteTeamMemberRequest, opts ...client.CallOption) (*common.Empty, error) {
+	req := c.c.NewRequest(c.name, "TeamMgr.ReInviteTeamMember", in)
 	out := new(common.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -141,8 +157,8 @@ func (c *teamMgrService) DeleteTeamMember(ctx context.Context, in *DeleteTeamMem
 	return out, nil
 }
 
-func (c *teamMgrService) UpdateTeamMemberRole(ctx context.Context, in *UpdateTeamMemberRoleRequest, opts ...client.CallOption) (*common.Empty, error) {
-	req := c.c.NewRequest(c.name, "TeamMgr.UpdateTeamMemberRole", in)
+func (c *teamMgrService) UpdateTeamMemberRoles(ctx context.Context, in *UpdateTeamMemberRolesRequest, opts ...client.CallOption) (*common.Empty, error) {
+	req := c.c.NewRequest(c.name, "TeamMgr.UpdateTeamMemberRoles", in)
 	out := new(common.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -201,6 +217,16 @@ func (c *teamMgrService) GetRole(ctx context.Context, in *RoleID, opts ...client
 	return out, nil
 }
 
+func (c *teamMgrService) ListTeamRoles(ctx context.Context, in *TeamID, opts ...client.CallOption) (*ListTeamRoleResponse, error) {
+	req := c.c.NewRequest(c.name, "TeamMgr.ListTeamRoles", in)
+	out := new(ListTeamRoleResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *teamMgrService) SetUserCurrentTeam(ctx context.Context, in *SetUserCurrentTeamRequest, opts ...client.CallOption) (*common.Empty, error) {
 	req := c.c.NewRequest(c.name, "TeamMgr.SetUserCurrentTeam", in)
 	out := new(common.Empty)
@@ -211,7 +237,7 @@ func (c *teamMgrService) SetUserCurrentTeam(ctx context.Context, in *SetUserCurr
 	return out, nil
 }
 
-func (c *teamMgrService) GetUserTeamID(ctx context.Context, in *UserID, opts ...client.CallOption) (*TeamID, error) {
+func (c *teamMgrService) GetUserTeamID(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*TeamID, error) {
 	req := c.c.NewRequest(c.name, "TeamMgr.GetUserTeamID", in)
 	out := new(TeamID)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -231,25 +257,51 @@ func (c *teamMgrService) CheckUserAccess(ctx context.Context, in *CheckUserAcces
 	return out, nil
 }
 
+func (c *teamMgrService) CreateDefaultTeam(ctx context.Context, in *UserID, opts ...client.CallOption) (*TeamID, error) {
+	req := c.c.NewRequest(c.name, "TeamMgr.CreateDefaultTeam", in)
+	out := new(TeamID)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *teamMgrService) GetTeamIDByUserID(ctx context.Context, in *UserID, opts ...client.CallOption) (*TeamID, error) {
+	req := c.c.NewRequest(c.name, "TeamMgr.GetTeamIDByUserID", in)
+	out := new(TeamID)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for TeamMgr service
 
 type TeamMgrHandler interface {
+	// public
 	CreateTeam(context.Context, *CreateTeamRequest, *TeamID) error
 	DeleteTeam(context.Context, *TeamID, *common.Empty) error
 	UpdateTeam(context.Context, *Team, *common.Empty) error
-	ListUserTeams(context.Context, *UserID, *ListUserTeamsResponse) error
+	ListUserTeams(context.Context, *common.Empty, *ListUserTeamsResponse) error
 	InviteTeamMember(context.Context, *InviteTeamMemberRequest, *common.Empty) error
+	ReInviteTeamMember(context.Context, *ReInviteTeamMemberRequest, *common.Empty) error
 	ConfirmTeamMember(context.Context, *ConfirmTeamMemberRequest, *common.Empty) error
 	DeleteTeamMember(context.Context, *DeleteTeamMemberRequest, *common.Empty) error
-	UpdateTeamMemberRole(context.Context, *UpdateTeamMemberRoleRequest, *common.Empty) error
+	UpdateTeamMemberRoles(context.Context, *UpdateTeamMemberRolesRequest, *common.Empty) error
 	ListTeamMembers(context.Context, *TeamID, *ListTeamMembersResponse) error
 	CreateRole(context.Context, *CreateRoleRequest, *RoleID) error
 	DeleteRole(context.Context, *RoleID, *common.Empty) error
 	UpdateRole(context.Context, *Role, *common.Empty) error
 	GetRole(context.Context, *RoleID, *Role) error
+	ListTeamRoles(context.Context, *TeamID, *ListTeamRoleResponse) error
 	SetUserCurrentTeam(context.Context, *SetUserCurrentTeamRequest, *common.Empty) error
-	GetUserTeamID(context.Context, *UserID, *TeamID) error
+	GetUserTeamID(context.Context, *common.Empty, *TeamID) error
 	CheckUserAccess(context.Context, *CheckUserAccessRequest, *CheckUserAccessResponse) error
+	// for micro service only
+	CreateDefaultTeam(context.Context, *UserID, *TeamID) error
+	GetTeamIDByUserID(context.Context, *UserID, *TeamID) error
 }
 
 func RegisterTeamMgrHandler(s server.Server, hdlr TeamMgrHandler, opts ...server.HandlerOption) error {
@@ -257,19 +309,23 @@ func RegisterTeamMgrHandler(s server.Server, hdlr TeamMgrHandler, opts ...server
 		CreateTeam(ctx context.Context, in *CreateTeamRequest, out *TeamID) error
 		DeleteTeam(ctx context.Context, in *TeamID, out *common.Empty) error
 		UpdateTeam(ctx context.Context, in *Team, out *common.Empty) error
-		ListUserTeams(ctx context.Context, in *UserID, out *ListUserTeamsResponse) error
+		ListUserTeams(ctx context.Context, in *common.Empty, out *ListUserTeamsResponse) error
 		InviteTeamMember(ctx context.Context, in *InviteTeamMemberRequest, out *common.Empty) error
+		ReInviteTeamMember(ctx context.Context, in *ReInviteTeamMemberRequest, out *common.Empty) error
 		ConfirmTeamMember(ctx context.Context, in *ConfirmTeamMemberRequest, out *common.Empty) error
 		DeleteTeamMember(ctx context.Context, in *DeleteTeamMemberRequest, out *common.Empty) error
-		UpdateTeamMemberRole(ctx context.Context, in *UpdateTeamMemberRoleRequest, out *common.Empty) error
+		UpdateTeamMemberRoles(ctx context.Context, in *UpdateTeamMemberRolesRequest, out *common.Empty) error
 		ListTeamMembers(ctx context.Context, in *TeamID, out *ListTeamMembersResponse) error
 		CreateRole(ctx context.Context, in *CreateRoleRequest, out *RoleID) error
 		DeleteRole(ctx context.Context, in *RoleID, out *common.Empty) error
 		UpdateRole(ctx context.Context, in *Role, out *common.Empty) error
 		GetRole(ctx context.Context, in *RoleID, out *Role) error
+		ListTeamRoles(ctx context.Context, in *TeamID, out *ListTeamRoleResponse) error
 		SetUserCurrentTeam(ctx context.Context, in *SetUserCurrentTeamRequest, out *common.Empty) error
-		GetUserTeamID(ctx context.Context, in *UserID, out *TeamID) error
+		GetUserTeamID(ctx context.Context, in *common.Empty, out *TeamID) error
 		CheckUserAccess(ctx context.Context, in *CheckUserAccessRequest, out *CheckUserAccessResponse) error
+		CreateDefaultTeam(ctx context.Context, in *UserID, out *TeamID) error
+		GetTeamIDByUserID(ctx context.Context, in *UserID, out *TeamID) error
 	}
 	type TeamMgr struct {
 		teamMgr
@@ -294,12 +350,16 @@ func (h *teamMgrHandler) UpdateTeam(ctx context.Context, in *Team, out *common.E
 	return h.TeamMgrHandler.UpdateTeam(ctx, in, out)
 }
 
-func (h *teamMgrHandler) ListUserTeams(ctx context.Context, in *UserID, out *ListUserTeamsResponse) error {
+func (h *teamMgrHandler) ListUserTeams(ctx context.Context, in *common.Empty, out *ListUserTeamsResponse) error {
 	return h.TeamMgrHandler.ListUserTeams(ctx, in, out)
 }
 
 func (h *teamMgrHandler) InviteTeamMember(ctx context.Context, in *InviteTeamMemberRequest, out *common.Empty) error {
 	return h.TeamMgrHandler.InviteTeamMember(ctx, in, out)
+}
+
+func (h *teamMgrHandler) ReInviteTeamMember(ctx context.Context, in *ReInviteTeamMemberRequest, out *common.Empty) error {
+	return h.TeamMgrHandler.ReInviteTeamMember(ctx, in, out)
 }
 
 func (h *teamMgrHandler) ConfirmTeamMember(ctx context.Context, in *ConfirmTeamMemberRequest, out *common.Empty) error {
@@ -310,8 +370,8 @@ func (h *teamMgrHandler) DeleteTeamMember(ctx context.Context, in *DeleteTeamMem
 	return h.TeamMgrHandler.DeleteTeamMember(ctx, in, out)
 }
 
-func (h *teamMgrHandler) UpdateTeamMemberRole(ctx context.Context, in *UpdateTeamMemberRoleRequest, out *common.Empty) error {
-	return h.TeamMgrHandler.UpdateTeamMemberRole(ctx, in, out)
+func (h *teamMgrHandler) UpdateTeamMemberRoles(ctx context.Context, in *UpdateTeamMemberRolesRequest, out *common.Empty) error {
+	return h.TeamMgrHandler.UpdateTeamMemberRoles(ctx, in, out)
 }
 
 func (h *teamMgrHandler) ListTeamMembers(ctx context.Context, in *TeamID, out *ListTeamMembersResponse) error {
@@ -334,14 +394,26 @@ func (h *teamMgrHandler) GetRole(ctx context.Context, in *RoleID, out *Role) err
 	return h.TeamMgrHandler.GetRole(ctx, in, out)
 }
 
+func (h *teamMgrHandler) ListTeamRoles(ctx context.Context, in *TeamID, out *ListTeamRoleResponse) error {
+	return h.TeamMgrHandler.ListTeamRoles(ctx, in, out)
+}
+
 func (h *teamMgrHandler) SetUserCurrentTeam(ctx context.Context, in *SetUserCurrentTeamRequest, out *common.Empty) error {
 	return h.TeamMgrHandler.SetUserCurrentTeam(ctx, in, out)
 }
 
-func (h *teamMgrHandler) GetUserTeamID(ctx context.Context, in *UserID, out *TeamID) error {
+func (h *teamMgrHandler) GetUserTeamID(ctx context.Context, in *common.Empty, out *TeamID) error {
 	return h.TeamMgrHandler.GetUserTeamID(ctx, in, out)
 }
 
 func (h *teamMgrHandler) CheckUserAccess(ctx context.Context, in *CheckUserAccessRequest, out *CheckUserAccessResponse) error {
 	return h.TeamMgrHandler.CheckUserAccess(ctx, in, out)
+}
+
+func (h *teamMgrHandler) CreateDefaultTeam(ctx context.Context, in *UserID, out *TeamID) error {
+	return h.TeamMgrHandler.CreateDefaultTeam(ctx, in, out)
+}
+
+func (h *teamMgrHandler) GetTeamIDByUserID(ctx context.Context, in *UserID, out *TeamID) error {
+	return h.TeamMgrHandler.GetTeamIDByUserID(ctx, in, out)
 }

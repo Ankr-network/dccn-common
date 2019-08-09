@@ -6,67 +6,74 @@ package gwteammgr;
 service TeamMgr {
   rpc CreateTeam(CreateTeamRequest) returns (TeamID) {
     option (google.api.http) = {
-            post: "/team/create"
-            body: "*"
+      post: "/team/create"
+      body: "*"
     };
   }
   rpc DeleteTeam(TeamID) returns (common.proto.Empty) {
     option (google.api.http) = {
-            post: "/team/delete"
-            body: "*"
+      post: "/team/delete"
+      body: "*"
     };
   }
   rpc UpdateTeam(Team) returns (common.proto.Empty) {
     option (google.api.http) = {
-            post: "/team/update"
-            body: "*"
+      post: "/team/update"
+      body: "*"
     };
   }
-  rpc ListUserTeams(UserID) returns (ListUserTeamsResponse) {
+  rpc ListUserTeams(common.proto.Empty) returns (ListUserTeamsResponse) {
     option (google.api.http) = {
-	             get:"/team/list"
-	        };
+      get:"/team/list"
+    };
   }
   rpc InviteTeamMember(InviteTeamMemberRequest) returns (common.proto.Empty) {
     option (google.api.http) = {
-            post: "/teammember/invite"
-            body: "*"
+      post: "/teammember/invite"
+      body: "*"
+    };
+  }
+  rpc ReInviteTeamMember(ReInviteTeamMemberRequest) returns (common.proto.Empty) {
+    option (google.api.http) = {
+      post: "/teammember/reinvite"
+      body: "*"
     };
   }
   rpc ConfirmTeamMember(ConfirmTeamMemberRequest) returns (common.proto.Empty) {
     option (google.api.http) = {
-            post: "/teammember/confirm"
-            body: "*"
+      post: "/teammember/confirm"
+      body: "*"
     };
   }
   rpc DeleteTeamMember(DeleteTeamMemberRequest) returns (common.proto.Empty) {
     option (google.api.http) = {
-            post: "/teammember/delete"
-            body: "*"
+      post: "/teammember/delete"
+      body: "*"
     };
   }
-  rpc UpdateTeamMemberRole(UpdateTeamMemberRoleRequest)returns (common.proto.Empty) {
+  rpc UpdateTeamMemberRoles(UpdateTeamMemberRolesRequest)returns (common.proto.Empty) {
     option (google.api.http) = {
-            post: "/teammember/update"
-            body: "*"
+      post: "/teammember/update"
+      body: "*"
     };
   }
   rpc ListTeamMembers(TeamID) returns (ListTeamMembersResponse) {
     option (google.api.http) = {
-	             get:"/teammember/list"
-	        };
+      get:"/teammember/list"
+    };
   }
   rpc CreateRole(CreateRoleRequest) returns (RoleID) {}
   rpc DeleteRole(RoleID) returns (common.proto.Empty) {}
   rpc UpdateRole(Role) returns (common.proto.Empty) {}
-  rpc GetRole(RoleID) returns (Role) {
-  }
+  rpc GetRole(RoleID) returns (Role) {}
+  rpc ListTeamRoles(TeamID) returns (ListTeamRoleResponse) {}
   rpc SetUserCurrentTeam(SetUserCurrentTeamRequest) returns (common.proto.Empty) {
     option (google.api.http) = {
-	             get:"/team/set"
-	        };
+      post:"/team/set"
+      body: "*"
+	  };
   }
-  rpc GetUserTeamID(UserID) returns (TeamID) {
+  rpc GetUserTeamID(common.proto.Empty) returns (TeamID) {
   }
   rpc CheckUserAccess(CheckUserAccessRequest) returns (CheckUserAccessResponse) {}
 }
@@ -87,17 +94,24 @@ message TeamID {
 message UserTeamInfo {
   string team_id = 1;
   string team_name = 2;
-  string role_name = 3;
-  string role_id = 4;
-  bool current = 5;
+  repeated RoleInfo roles = 3;
+  bool current = 4;
 }
+
 message ListUserTeamsResponse {
   repeated UserTeamInfo teams = 1;
+  UserTeamInfo default = 2;
 }
 
 message InviteTeamMemberRequest {
-  string email = 1;
-  string team_id = 2;
+  string team_id = 1;
+  repeated string emails = 2;
+  repeated string role_ids = 3;
+}
+
+message ReInviteTeamMemberRequest {
+  string team_id = 1;
+  string email = 2;
 }
 
 message ConfirmTeamMemberRequest {
@@ -108,15 +122,15 @@ message ConfirmTeamMemberRequest {
 enum TeamMemberStatus {
   INVITED = 0;
   CONFIRMED = 1;
+  SYSTEM_ADDED = 2;
 }
 
 message TeamMember {
   string uid = 1;
   string email = 2;
   string user_name = 3;
-  string role_name = 4;
-  string role_id = 5;
-  TeamMemberStatus status = 6;
+  repeated RoleInfo roles = 4;
+  TeamMemberStatus status = 5;
 }
 message ListTeamMembersResponse {
   repeated TeamMember members = 1;
@@ -137,26 +151,25 @@ message RoleID {
   string role_id = 1;
 }
 
+message RoleInfo {
+  string id = 1;
+  string name = 2;
+}
+
 message Role {
   string id = 1;
   string name = 2;
   repeated string privileges = 3;
 }
 
-message GetUserRoleResponse {
+message UpdateTeamMemberRolesRequest {
   string uid = 1;
   string team_id = 2;
-  Role role = 3;
+  repeated string role_ids = 3;
 }
 
-message UpdateTeamMemberRoleRequest {
-  string uid = 1;
-  string team_id = 2;
-  string role_id = 3;
-}
-
-message UserID {
-  string uid = 1;
+message ListTeamRoleResponse {
+  repeated Role roles = 1;
 }
 
 message SetUserCurrentTeamRequest {
