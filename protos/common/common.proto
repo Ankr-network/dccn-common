@@ -26,7 +26,14 @@ message AppDeployment {
     AppAttributes   attributes = 4;
     string  uid = 5;
     ChartDetail chart_detail = 6;
+    repeated CustomValue custom_values = 7;
 }
+
+message CustomValue{
+    string key = 1;
+    string value = 2;
+}
+
 message AppID {
     string  app_id = 1;
 }
@@ -119,6 +126,7 @@ message App {
         Namespace namespace = 3; // request for create new namespace
     }
     ChartDetail chart_detail = 4;
+    repeated CustomValue custom_values = 5;
 }
 
 
