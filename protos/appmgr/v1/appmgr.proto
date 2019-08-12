@@ -108,6 +108,7 @@ message ChartDetailResponse {
     repeated common.proto.ChartVersionDetail chart_version_details = 3; //for multiple version
     string readme_md = 4; // readme.md for current version 
 	string values_yaml = 5; // value.yaml for current version 
+    repeated common.proto.CustomValue custom_values = 6; 
 }
 
 message DownloadChartRequest {
