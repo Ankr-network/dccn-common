@@ -124,12 +124,11 @@ message UserID {
 }
 
 message ListTeamRoleResponse {
-  repeated Role roles = 1;
+  repeated RoleInfo roles = 1;
 }
 
 message SetUserCurrentTeamRequest {
-  string uid = 1;
-  string team_id = 2;
+  string team_id = 1;
 }
 
 message CheckUserAccessRequest {
