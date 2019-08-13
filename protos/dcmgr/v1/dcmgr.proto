@@ -41,11 +41,11 @@ message GetClusterCertificateResponse {
 
 
 message MyDataCenterRequest {
-  string uid = 1;
+  string team_id = 1;
 }
 
 message RegisterDataCenterRequest {
-  string user_id = 1;
+  string team_id = 1;
   string cluster_name = 2;
 }
 
@@ -64,7 +64,7 @@ message RegisterDataCenterResponse {
 message ClusterRecord {
   string cluster_id = 1;
   string cluster_name = 2;
-  string uid = 3;
+  string team_id = 3;
   string client_csr_cert = 4;
 }
 
@@ -110,7 +110,7 @@ message DCOverviewResponse {
 
 
 message DashBoardRequest {
-  string uid = 1;
+  string team_id = 1;
 }
 message DashBoardResponse{
    int32 total_income = 1;
@@ -148,12 +148,12 @@ service FeesService {
 }
 
 message InvoiceDetailRequest{
-   string uid = 1;
+   string team_id = 1;
    string invoice_id = 2;
 }
 
 message HistoryFeesRequest {
-  string uid = 1;
+  string team_id = 1;
   string start = 2;
   string end = 3;
 }
@@ -172,7 +172,7 @@ message HistoryFeesResponse {
 }
 
 message FeesDetailRequest {
-  string uid = 1;
+  string team_id = 1;
   string month = 2;
 }
 
