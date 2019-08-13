@@ -24,7 +24,7 @@ message AppDeployment {
     string  app_name = 2; // name of the app
     Namespace   namespace = 3; // request for create new namespace
     AppAttributes   attributes = 4;
-    string  uid = 5;
+    string  team_id = 5;
     ChartDetail chart_detail = 6;
     repeated CustomValue custom_values = 7;
 }
