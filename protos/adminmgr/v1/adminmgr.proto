@@ -4,6 +4,7 @@ package adminmgr;
 
 service AdminMgr {
     rpc ListAllUser(UserRequest) returns (UserResponse) {}
+    rpc GetUserByUserEmail(UserRequest) returns (UserResponse) {}
     rpc GetAppAttributeByAppID (AppAttributeRequest) returns (AppAttributeResponse) {}
     rpc ListAppResourceByUserEmail (AppResourceRequest) returns (AppResourceResponse) {}
     rpc ListNamespaceResourceByUserEmail (NamespaceResourceRequest) returns (NamespaceResourceResponse) {}
@@ -15,6 +16,7 @@ message UserRequest {
     string req_id = 1;
     uint32 page   = 2;  
     uint32 limit  = 3;
+    string email  = 4;
 }
 
 message UserResponse {
