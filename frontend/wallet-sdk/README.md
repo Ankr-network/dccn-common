@@ -1,13 +1,12 @@
 # wallet-sdk
 
-1.安装 nodejs ,详见:https://nodejs.org/en/。
-2.安装 babel https://babeljs.io
-3.运行 npm install。
-4.运行babel src -d dist/src。
-5.运行babel sample dist/sample。
-6.node encryptDataV3_sample.js，会在本地生成keyStore.txt文件。
-7.node decryptDataV3_sample.js, 加载本地的keyStore.txt文件生成私钥。
-8.在浏览器上面测试
-首先安装npm install --global webpack 然后运行 webpack src/*.js tests/index.js -o tests/main.js
-最后运行命令 npm install --global webpack
-可以在web中点击测试
+1. 安装 nodejs ,详见:https://nodejs.org/en/
+1. 运行 npm install
+1. 运行 npx babel src -d dist/src
+1. 运行 npx babel sample -d dist/sample
+1. node dist/sample/encryptDataV3_sample.js，会在本地生成 keyStore.txt 文件。
+1. node dist/sample/decryptDataV3_sample.js, 加载本地的 keyStore.txt 文件生成私钥。
+1. 在浏览器上面测试
+   运行 npx webpack src/\*.js tests/index.js -o tests/main.js
+   最后运行命令 npm install --global webpack
+   可以在 web 中点击测试
