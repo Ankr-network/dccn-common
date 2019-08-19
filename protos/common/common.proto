@@ -76,20 +76,22 @@ message DataCenterAttributes {
     google.protobuf.Timestamp last_modified_date = 3; //app creation date
 }
 
-
+message Resource {
+    int64 CPU = 1;
+    int64 Memory = 2;
+    int64 Storage = 3;
+}
 
 message DCHeartbeatReport {
     message Metrics {
         repeated string Nodes = 1;
-        int64 TotalCPU = 2;
-        int64 UsedCPU = 3;
-        int64 TotalMemory = 4;
-        int64 UsedMemory = 5;
-        int64 TotalStorage = 6;
-        int64 UsedStorage = 7;
-        int64 ImageCount = 8;
-        int64 EndPointCount = 9;
-        int64 NetworkIO = 10;
+        Resource total = 2;
+        Resource used = 3;
+        map<string,Resource> ns_hard = 4;
+        map<string,Resource> ns_used = 5;
+        int64 ImageCount = 6;
+        int64 EndPointCount = 7;
+        int64 NetworkIO = 8;
     }
 
     Metrics metrics = 1; //json string for Metrics structure which defined in constants
