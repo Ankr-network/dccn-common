@@ -187,10 +187,7 @@ func request_AppMgr_AppCount_0(ctx context.Context, marshaler runtime.Marshaler,
 	var protoReq AppCountRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_AppMgr_AppCount_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_AppMgr_AppCount_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -273,10 +270,7 @@ func request_AppMgr_ChartList_0(ctx context.Context, marshaler runtime.Marshaler
 	var protoReq ChartListRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_AppMgr_ChartList_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_AppMgr_ChartList_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -551,6 +545,23 @@ func request_AppMgr_AnkrPriceHistory_0(ctx context.Context, marshaler runtime.Ma
 	}
 
 	msg, err := client.AnkrPriceHistory(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+var (
+	filter_AppMgr_NamespaceCount_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_AppMgr_NamespaceCount_0(ctx context.Context, marshaler runtime.Marshaler, client AppMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq NamespaceCountRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_AppMgr_NamespaceCount_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.NamespaceCount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -993,49 +1004,71 @@ func RegisterAppMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 
 	})
 
+	mux.Handle("GET", pattern_AppMgr_NamespaceCount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_AppMgr_NamespaceCount_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_AppMgr_NamespaceCount_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	return nil
 }
 
 var (
-	pattern_AppMgr_CreateApp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"app", "create"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_CreateApp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"app", "create"}, ""))
 
-	pattern_AppMgr_AppList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"app", "list"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_AppList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"app", "list"}, ""))
 
-	pattern_AppMgr_AppDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"app", "detail", "app_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_AppDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"app", "detail", "app_id"}, ""))
 
-	pattern_AppMgr_CancelApp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"app", "cancel", "app_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_CancelApp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"app", "cancel", "app_id"}, ""))
 
-	pattern_AppMgr_PurgeApp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"app", "purge", "app_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_PurgeApp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"app", "purge", "app_id"}, ""))
 
-	pattern_AppMgr_UpdateApp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"app", "update", "app_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_UpdateApp_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"app", "update", "app_id"}, ""))
 
-	pattern_AppMgr_AppCount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"app", "count"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_AppCount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"app", "count"}, ""))
 
-	pattern_AppMgr_AppOverview_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"app", "overview"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_AppOverview_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"app", "overview"}, ""))
 
-	pattern_AppMgr_UploadChart_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"chart", "upload", "chart_repo", "chart_name", "chart_ver"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_UploadChart_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"chart", "upload", "chart_repo", "chart_name", "chart_ver"}, ""))
 
-	pattern_AppMgr_ChartList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chart", "list"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_ChartList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chart", "list"}, ""))
 
-	pattern_AppMgr_ChartDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"chart", "detail", "chart_repo", "chart_name", "chart_ver"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_ChartDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"chart", "detail", "chart_repo", "chart_name", "chart_ver"}, ""))
 
-	pattern_AppMgr_DeleteChart_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"chart", "delete", "chart_repo", "chart_name", "chart_ver"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_DeleteChart_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"chart", "delete", "chart_repo", "chart_name", "chart_ver"}, ""))
 
-	pattern_AppMgr_SaveAsChart_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chart", "saveas"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_SaveAsChart_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"chart", "saveas"}, ""))
 
-	pattern_AppMgr_DownloadChart_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"chart", "download", "chart_repo", "chart_name", "chart_ver"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_DownloadChart_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4}, []string{"chart", "download", "chart_repo", "chart_name", "chart_ver"}, ""))
 
-	pattern_AppMgr_CreateNamespace_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"namespace", "create"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_CreateNamespace_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"namespace", "create"}, ""))
 
-	pattern_AppMgr_NamespaceList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"namespace", "list"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_NamespaceList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"namespace", "list"}, ""))
 
-	pattern_AppMgr_UpdateNamespace_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"namespace", "update"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_UpdateNamespace_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"namespace", "update"}, ""))
 
-	pattern_AppMgr_DeleteNamespace_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"namespace", "delete", "ns_id"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_DeleteNamespace_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"namespace", "delete", "ns_id"}, ""))
 
-	pattern_AppMgr_AnkrPrice_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"price"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_AnkrPrice_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"price"}, ""))
 
-	pattern_AppMgr_AnkrPriceHistory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"price", "history", "history_request"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_AppMgr_AnkrPriceHistory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"price", "history", "history_request"}, ""))
+
+	pattern_AppMgr_NamespaceCount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"namespace", "count"}, ""))
 )
 
 var (
@@ -1078,4 +1111,6 @@ var (
 	forward_AppMgr_AnkrPrice_0 = runtime.ForwardResponseMessage
 
 	forward_AppMgr_AnkrPriceHistory_0 = runtime.ForwardResponseMessage
+
+	forward_AppMgr_NamespaceCount_0 = runtime.ForwardResponseMessage
 )

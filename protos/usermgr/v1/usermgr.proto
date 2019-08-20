@@ -54,8 +54,12 @@ service UserMgr {
     rpc Fetch (FetchAccountsRequest) returns (FetchAccountsResponse) {}
 
     rpc ApplyBecomeClusterProvider(ClusterProviderApplyRequest) returns (common.proto.Empty) {}
+    rpc UserCount (common.proto.Empty) returns (UserCountResponse) {}
 }
 
+message UserCountResponse {
+    uint64 user = 1;
+}
  // cluster provider status
 enum ClusterProviderStatus {
      NOT_PROVIDER = 0;

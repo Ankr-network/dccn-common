@@ -23,6 +23,16 @@ service AppMgr {
     rpc UpdateNamespace (UpdateNamespaceRequest) returns (common.proto.Empty) {}
     rpc DeleteNamespace (DeleteNamespaceRequest) returns (common.proto.Empty) {}
     rpc AppCount (AppCountRequest) returns (AppCountResponse){}
+    rpc NamespaceCount (NamespaceCountRequest) returns (NamespaceCountResponse) {}
+}
+
+message NamespaceCountRequest {
+    string cluster_id = 1;
+}
+
+message NamespaceCountResponse {
+    uint64 namespace = 1;
+       uint64 app = 2;
 }
 
 // The dccn client request message containing the user's token
