@@ -94,11 +94,11 @@ message DCHeartbeatReport {
         int64 NetworkIO = 8;
     }
 
-    Metrics metrics = 1; //json string for Metrics structure which defined in constants
+    string metrics = 1;
     string report = 2;
     uint64 report_time = 3;
+    Metrics metrics_raw = 4; //json string for Metrics structure which defined in constants
 }
-
 
 message Chart {
 	string chart_name = 1; //chart name
