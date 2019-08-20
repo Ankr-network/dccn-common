@@ -54,6 +54,7 @@ type AppMgrService interface {
 	UpdateNamespace(ctx context.Context, in *UpdateNamespaceRequest, opts ...client.CallOption) (*common.Empty, error)
 	DeleteNamespace(ctx context.Context, in *DeleteNamespaceRequest, opts ...client.CallOption) (*common.Empty, error)
 	AppCount(ctx context.Context, in *AppCountRequest, opts ...client.CallOption) (*AppCountResponse, error)
+	NamespaceCount(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*NamespaceCountResponse, error)
 }
 
 type appMgrService struct {
@@ -254,6 +255,16 @@ func (c *appMgrService) AppCount(ctx context.Context, in *AppCountRequest, opts 
 	return out, nil
 }
 
+func (c *appMgrService) NamespaceCount(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*NamespaceCountResponse, error) {
+	req := c.c.NewRequest(c.name, "AppMgr.NamespaceCount", in)
+	out := new(NamespaceCountResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for AppMgr service
 
 type AppMgrHandler interface {
@@ -276,6 +287,7 @@ type AppMgrHandler interface {
 	UpdateNamespace(context.Context, *UpdateNamespaceRequest, *common.Empty) error
 	DeleteNamespace(context.Context, *DeleteNamespaceRequest, *common.Empty) error
 	AppCount(context.Context, *AppCountRequest, *AppCountResponse) error
+	NamespaceCount(context.Context, *common.Empty, *NamespaceCountResponse) error
 }
 
 func RegisterAppMgrHandler(s server.Server, hdlr AppMgrHandler, opts ...server.HandlerOption) error {
@@ -298,6 +310,7 @@ func RegisterAppMgrHandler(s server.Server, hdlr AppMgrHandler, opts ...server.H
 		UpdateNamespace(ctx context.Context, in *UpdateNamespaceRequest, out *common.Empty) error
 		DeleteNamespace(ctx context.Context, in *DeleteNamespaceRequest, out *common.Empty) error
 		AppCount(ctx context.Context, in *AppCountRequest, out *AppCountResponse) error
+		NamespaceCount(ctx context.Context, in *common.Empty, out *NamespaceCountResponse) error
 	}
 	type AppMgr struct {
 		appMgr
@@ -380,4 +393,8 @@ func (h *appMgrHandler) DeleteNamespace(ctx context.Context, in *DeleteNamespace
 
 func (h *appMgrHandler) AppCount(ctx context.Context, in *AppCountRequest, out *AppCountResponse) error {
 	return h.AppMgrHandler.AppCount(ctx, in, out)
+}
+
+func (h *appMgrHandler) NamespaceCount(ctx context.Context, in *common.Empty, out *NamespaceCountResponse) error {
+	return h.AppMgrHandler.NamespaceCount(ctx, in, out)
 }

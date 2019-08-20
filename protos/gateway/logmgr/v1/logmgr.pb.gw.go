@@ -36,10 +36,7 @@ func request_LogMgr_GetLogCountByAppId_0(ctx context.Context, marshaler runtime.
 	var protoReq LogAppCountRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_LogMgr_GetLogCountByAppId_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_LogMgr_GetLogCountByAppId_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -56,10 +53,7 @@ func request_LogMgr_GetLogCountByPodName_0(ctx context.Context, marshaler runtim
 	var protoReq LogPodCountRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_LogMgr_GetLogCountByPodName_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_LogMgr_GetLogCountByPodName_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -76,10 +70,7 @@ func request_LogMgr_ListLogByAppId_0(ctx context.Context, marshaler runtime.Mars
 	var protoReq LogAppRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_LogMgr_ListLogByAppId_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_LogMgr_ListLogByAppId_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -96,10 +87,7 @@ func request_LogMgr_ListLogByPodName_0(ctx context.Context, marshaler runtime.Ma
 	var protoReq LogPodRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_LogMgr_ListLogByPodName_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_LogMgr_ListLogByPodName_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -230,13 +218,13 @@ func RegisterLogMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, cli
 }
 
 var (
-	pattern_LogMgr_GetLogCountByAppId_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"log", "count", "appid"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_LogMgr_GetLogCountByAppId_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"log", "count", "appid"}, ""))
 
-	pattern_LogMgr_GetLogCountByPodName_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"log", "count", "podname"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_LogMgr_GetLogCountByPodName_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"log", "count", "podname"}, ""))
 
-	pattern_LogMgr_ListLogByAppId_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"log", "list", "appid"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_LogMgr_ListLogByAppId_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"log", "list", "appid"}, ""))
 
-	pattern_LogMgr_ListLogByPodName_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"log", "list", "podname"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_LogMgr_ListLogByPodName_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"log", "list", "podname"}, ""))
 )
 
 var (

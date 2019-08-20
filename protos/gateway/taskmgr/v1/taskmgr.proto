@@ -103,6 +103,15 @@ service AppMgr {
             get: "/price/history/{history_request}"
     };
     }
+    rpc NamespaceCount (common.proto.Empty) returns (NamespaceCountResponse) {
+        option (google.api.http) = {
+            get: "/namespace/count"
+    };
+    }
+}
+
+message NamespaceCountResponse {
+    uint64 namespace = 1;
 }
 message AnkrPriceHistoryRequest{
     string history_request = 1;

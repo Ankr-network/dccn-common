@@ -98,10 +98,7 @@ func request_DCAPI_ClusterDashBoard_0(ctx context.Context, marshaler runtime.Mar
 	var protoReq DashBoardRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_DCAPI_ClusterDashBoard_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_DCAPI_ClusterDashBoard_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -118,10 +115,7 @@ func request_DCAPI_UserHistoryFeesList_0(ctx context.Context, marshaler runtime.
 	var protoReq HistoryFeesRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_DCAPI_UserHistoryFeesList_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_DCAPI_UserHistoryFeesList_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -138,10 +132,7 @@ func request_DCAPI_MonthFeesDetail_0(ctx context.Context, marshaler runtime.Mars
 	var protoReq FeesDetailRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_DCAPI_MonthFeesDetail_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_DCAPI_MonthFeesDetail_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -158,10 +149,7 @@ func request_DCAPI_InvoiceDetail_0(ctx context.Context, marshaler runtime.Marsha
 	var protoReq InvoiceDetailRequest
 	var metadata runtime.ServerMetadata
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_DCAPI_InvoiceDetail_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_DCAPI_InvoiceDetail_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
@@ -392,23 +380,23 @@ func RegisterDCAPIHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 }
 
 var (
-	pattern_DCAPI_DataCenterList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "list"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_DCAPI_DataCenterList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "list"}, ""))
 
-	pattern_DCAPI_NetworkInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "networkinfo"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_DCAPI_NetworkInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "networkinfo"}, ""))
 
-	pattern_DCAPI_RegisterDataCenter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "register"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_DCAPI_RegisterDataCenter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "register"}, ""))
 
-	pattern_DCAPI_ResetDataCenter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "reset"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_DCAPI_ResetDataCenter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "reset"}, ""))
 
-	pattern_DCAPI_MyDataCenter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "mydc"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_DCAPI_MyDataCenter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "mydc"}, ""))
 
-	pattern_DCAPI_ClusterDashBoard_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "dashboard"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_DCAPI_ClusterDashBoard_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "dashboard"}, ""))
 
-	pattern_DCAPI_UserHistoryFeesList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"fees", "history_list"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_DCAPI_UserHistoryFeesList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"fees", "history_list"}, ""))
 
-	pattern_DCAPI_MonthFeesDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"fees", "month_detail"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_DCAPI_MonthFeesDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"fees", "month_detail"}, ""))
 
-	pattern_DCAPI_InvoiceDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"fees", "invoice_detail"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_DCAPI_InvoiceDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"fees", "invoice_detail"}, ""))
 )
 
 var (
