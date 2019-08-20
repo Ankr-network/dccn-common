@@ -116,6 +116,7 @@ message NamespaceCountRequest {
 
 message NamespaceCountResponse {
     uint64 namespace = 1;
+    uint64 app = 2;
 }
 message AnkrPriceHistoryRequest{
     string history_request = 1;

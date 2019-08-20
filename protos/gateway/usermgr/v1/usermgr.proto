@@ -108,14 +108,14 @@ service UserMgr {
             body: "*"
         };
     }
-    rpc UserCount (common.proto.Empty) returns (UserCountResponse) {
-        option (google.api.http).get = "/user/count";
-    }
+//    rpc UserCount (common.proto.Empty) returns (UserCountResponse) {
+//        option (google.api.http).get = "/user/count";
+//    }
 }
 
-message UserCountResponse {
-    uint64 user = 1;
-}
+//message UserCountResponse {
+//    uint64 user = 1;
+//}
  // cluster provider status
 enum ClusterProviderStatus {
      NOT_PROVIDER = 0;

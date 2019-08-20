@@ -285,15 +285,6 @@ func request_UserMgr_ApplyBecomeClusterProvider_0(ctx context.Context, marshaler
 
 }
 
-func request_UserMgr_UserCount_0(ctx context.Context, marshaler runtime.Marshaler, client UserMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq common_proto.Empty
-	var metadata runtime.ServerMetadata
-
-	msg, err := client.UserCount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
-	return msg, metadata, err
-
-}
-
 // RegisterUserMgrHandlerFromEndpoint is same as RegisterUserMgrHandler but
 // automatically dials to "endpoint" and closes the connection when "ctx" gets done.
 func RegisterUserMgrHandlerFromEndpoint(ctx context.Context, mux *runtime.ServeMux, endpoint string, opts []grpc.DialOption) (err error) {
@@ -652,26 +643,6 @@ func RegisterUserMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 
 	})
 
-	mux.Handle("GET", pattern_UserMgr_UserCount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
-		ctx, cancel := context.WithCancel(req.Context())
-		defer cancel()
-		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		rctx, err := runtime.AnnotateContext(ctx, mux, req)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-		resp, md, err := request_UserMgr_UserCount_0(rctx, inboundMarshaler, client, req, pathParams)
-		ctx = runtime.NewServerMetadataContext(ctx, md)
-		if err != nil {
-			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
-			return
-		}
-
-		forward_UserMgr_UserCount_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
-
-	})
-
 	return nil
 }
 
@@ -707,8 +678,6 @@ var (
 	pattern_UserMgr_UserDetail_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"user", "detail"}, ""))
 
 	pattern_UserMgr_ApplyBecomeClusterProvider_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"user", "applyprovider"}, ""))
-
-	pattern_UserMgr_UserCount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"user", "count"}, ""))
 )
 
 var (
@@ -743,6 +712,4 @@ var (
 	forward_UserMgr_UserDetail_0 = runtime.ForwardResponseMessage
 
 	forward_UserMgr_ApplyBecomeClusterProvider_0 = runtime.ForwardResponseMessage
-
-	forward_UserMgr_UserCount_0 = runtime.ForwardResponseMessage
 )

@@ -32,6 +32,7 @@ message NamespaceCountRequest {
 
 message NamespaceCountResponse {
     uint64 namespace = 1;
+       uint64 app = 2;
 }
 
 // The dccn client request message containing the user's token
