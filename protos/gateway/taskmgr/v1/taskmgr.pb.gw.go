@@ -549,9 +549,17 @@ func request_AppMgr_AnkrPriceHistory_0(ctx context.Context, marshaler runtime.Ma
 
 }
 
+var (
+	filter_AppMgr_NamespaceCount_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
 func request_AppMgr_NamespaceCount_0(ctx context.Context, marshaler runtime.Marshaler, client AppMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq common_proto.Empty
+	var protoReq NamespaceCountRequest
 	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_AppMgr_NamespaceCount_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
 
 	msg, err := client.NamespaceCount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err

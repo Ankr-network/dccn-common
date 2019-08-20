@@ -103,11 +103,15 @@ service AppMgr {
             get: "/price/history/{history_request}"
     };
     }
-    rpc NamespaceCount (common.proto.Empty) returns (NamespaceCountResponse) {
+    rpc NamespaceCount (NamespaceCountRequest) returns (NamespaceCountResponse) {
         option (google.api.http) = {
             get: "/namespace/count"
     };
     }
+}
+
+message NamespaceCountRequest {
+    string cluster_id = 1;
 }
 
 message NamespaceCountResponse {
