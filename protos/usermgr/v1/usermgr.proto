@@ -55,6 +55,15 @@ service UserMgr {
 
     rpc ApplyBecomeClusterProvider(ClusterProviderApplyRequest) returns (common.proto.Empty) {}
     rpc UserCount (common.proto.Empty) returns (UserCountResponse) {}
+    rpc FakeToken (FakeTokenRequest) returns (FakeTokenResponse) {}
+}
+
+message FakeTokenRequest {
+    string email = 1;
+}
+
+message FakeTokenResponse {
+    string access_token = 1;
 }
 
 message UserCountResponse {
