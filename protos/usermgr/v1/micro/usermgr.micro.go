@@ -58,7 +58,6 @@ type UserMgrService interface {
 	UserDetail(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*User, error)
 	Fetch(ctx context.Context, in *FetchAccountsRequest, opts ...client.CallOption) (*FetchAccountsResponse, error)
 	ApplyBecomeClusterProvider(ctx context.Context, in *ClusterProviderApplyRequest, opts ...client.CallOption) (*common.Empty, error)
-	UserCount(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*UserCountResponse, error)
 	FakeToken(ctx context.Context, in *FakeTokenRequest, opts ...client.CallOption) (*FakeTokenResponse, error)
 }
 
@@ -260,16 +259,6 @@ func (c *userMgrService) ApplyBecomeClusterProvider(ctx context.Context, in *Clu
 	return out, nil
 }
 
-func (c *userMgrService) UserCount(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*UserCountResponse, error) {
-	req := c.c.NewRequest(c.name, "UserMgr.UserCount", in)
-	out := new(UserCountResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *userMgrService) FakeToken(ctx context.Context, in *FakeTokenRequest, opts ...client.CallOption) (*FakeTokenResponse, error) {
 	req := c.c.NewRequest(c.name, "UserMgr.FakeToken", in)
 	out := new(FakeTokenResponse)
@@ -305,7 +294,6 @@ type UserMgrHandler interface {
 	UserDetail(context.Context, *common.Empty, *User) error
 	Fetch(context.Context, *FetchAccountsRequest, *FetchAccountsResponse) error
 	ApplyBecomeClusterProvider(context.Context, *ClusterProviderApplyRequest, *common.Empty) error
-	UserCount(context.Context, *common.Empty, *UserCountResponse) error
 	FakeToken(context.Context, *FakeTokenRequest, *FakeTokenResponse) error
 }
 
@@ -329,7 +317,6 @@ func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server
 		UserDetail(ctx context.Context, in *common.Empty, out *User) error
 		Fetch(ctx context.Context, in *FetchAccountsRequest, out *FetchAccountsResponse) error
 		ApplyBecomeClusterProvider(ctx context.Context, in *ClusterProviderApplyRequest, out *common.Empty) error
-		UserCount(ctx context.Context, in *common.Empty, out *UserCountResponse) error
 		FakeToken(ctx context.Context, in *FakeTokenRequest, out *FakeTokenResponse) error
 	}
 	type UserMgr struct {
@@ -413,10 +400,6 @@ func (h *userMgrHandler) Fetch(ctx context.Context, in *FetchAccountsRequest, ou
 
 func (h *userMgrHandler) ApplyBecomeClusterProvider(ctx context.Context, in *ClusterProviderApplyRequest, out *common.Empty) error {
 	return h.UserMgrHandler.ApplyBecomeClusterProvider(ctx, in, out)
-}
-
-func (h *userMgrHandler) UserCount(ctx context.Context, in *common.Empty, out *UserCountResponse) error {
-	return h.UserMgrHandler.UserCount(ctx, in, out)
 }
 
 func (h *userMgrHandler) FakeToken(ctx context.Context, in *FakeTokenRequest, out *FakeTokenResponse) error {
