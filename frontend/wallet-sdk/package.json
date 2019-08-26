@@ -4,15 +4,28 @@
   "description": "",
   "main": "gen_key.js",
   "dependencies": {
+    "@babel/polyfill": "^7.4.4",
+    "aes-js": "^3.1.2",
+    "btoa": "^1.2.1",
     "js-sha256": "^0.9.0",
+    "keccak256": "^1.0.0",
+    "scrypt-js": "^2.0.4",
     "session25519": "^1.1.0",
     "static-server": "^2.2.1",
     "tweetnacl": "^1.0.1",
     "tweetnacl-util": "^0.15.0",
+    "unorm": "^1.6.0",
     "webpack": "^4.29.6"
   },
   "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
     "@babel/preset-es2015": "^7.0.0-beta.53",
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-eslatest-node6": "^1.0.1",
+    "babel-preset-latest": "^6.24.1",
     "webpack-cli": "^3.2.3"
   },
   "scripts": {
