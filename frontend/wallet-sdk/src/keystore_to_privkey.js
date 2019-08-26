@@ -2,13 +2,13 @@ import scrypt from 'scrypt-js';
 import { Counter, ModeOfOperation } from 'aes-js';
 import keccak256 from 'keccak256';
 
-const decryptDataV3Errors = {
+const keystoreToPrivkeyErrors = {
     CYPHER_IS_NOT_SUPPORTED: 'CYPHER_IS_NOT_SUPPORTED',
     WRONG_PASSWORD: 'WRONG_PASSWORD',
 }
 const SUPPORTED_CYPHER_NAME = 'aes-128-ctr';
 
-export const decryptDataV3 =(encryptedPrivateKey,auth) =>{
+export const keystoreToPrivkey =(encryptedPrivateKey,auth) =>{
     if (encryptedPrivateKey.cipher !== SUPPORTED_CYPHER_NAME) {
         throw new Error(decryptDataV3Errors.CYPHER_IS_NOT_SUPPORTED);
     }

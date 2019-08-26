@@ -1,4 +1,4 @@
-import {encryptDataV3} from "../src/encryptDataV3"
+import {privkeyToKeystoreDeterministic,privkeyToKeystore} from "../src/privkey_to_keystore"
 import btoa from "btoa"
 import fs from "fs"
 
@@ -35,12 +35,20 @@ var salt = new Uint8Array([83, 174, 68, 194, 13, 87, 23, 31, 61, 121, 2, 24, 170
 // prettier-ignore
 var iv = new Uint8Array([37, 8, 192, 48, 234, 198, 43, 102, 211, 83, 231, 250, 78, 104, 219, 236]);
 
-const encryptDataV3_test =()=>{
-    return encryptDataV3(privateKey, password, address, publickey, salt, iv)
+// const privkeyToKeystoreDeterministicTest =()=>{
+//     return privkeyToKeystoreDeterministic(privateKey, password, address, publickey, salt, iv,"keyStore")
+//         .then((data)=>{
+//             console.log(data)
+//             fs.writeFileSync("keystore.txt",JSON.stringify(data),"utf-8");
+//         })
+// }
+
+const privkeyToKeystoreTest =()=>{
+    return privkeyToKeystore(privateKey,password,publickey,"keyStore")
         .then((data)=>{
             console.log(data)
             fs.writeFileSync("keystore.txt",JSON.stringify(data),"utf-8");
         })
 }
 
-encryptDataV3_test()
+privkeyToKeystoreTest()

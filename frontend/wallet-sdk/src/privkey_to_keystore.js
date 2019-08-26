@@ -2,10 +2,10 @@ import scrypt from 'scrypt-js';
 import unorm from 'unorm';
 import keccak256 from 'keccak256';
 import {Counter, ModeOfOperation} from 'aes-js';
-export const encryptDataV3 = (data, auth, address, publickey, name) => {
+export const privkeyToKeystore = (data, auth, address, publickey, name) => {
     const salt = getRandomArray(32);
     const iv = getRandomArray(16);
-    return encryptDataV3Deterministic(data, auth, address, publickey, salt, iv, name)
+    return privkeyToKeystoreDeterministic(data, auth, address, publickey, salt, iv, name)
 }
 
 const getRandomArray = (length) => {
@@ -15,7 +15,7 @@ const getRandomArray = (length) => {
 };
 
 
-const encryptDataV3Deterministic = (data, auth, address, publickey, salt, iv, name)=> {
+export const privkeyToKeystoreDeterministic = (data, auth, address, publickey, salt, iv, name)=> {
     const n = 262144;
     const r = 8;
     const p = 1;

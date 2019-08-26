@@ -7,9 +7,9 @@ import {
     set_blockchain_addr as set_history_bc_addr
 } from '../src/get_history';
 import {send_coin, set_blockchain_addr as set_coin_bc_addr} from '../src/send_coin';
-import {encryptDataV3} from '../src/encryptDataV3'
+import {privkeyToKeystoreDeterministic} from '../src/privkey_to_keystore'
 import btoa from "btoa"
-import {decryptDataV3} from '../src/decryptDataV3'
+import {keystoreToPrivkey} from '../src/keystore_to_privkey'
 
 let element = null;
 
@@ -145,7 +145,7 @@ document.getElementById('encryptDataV3_btn')
     var salt = new Uint8Array([83, 174, 68, 194, 13, 87, 23, 31, 61, 121, 2, 24, 170, 3, 101, 35, 221, 180, 65, 45, 85, 218, 220, 9, 28, 222, 121, 67, 90, 195, 124, 224]);
 // prettier-ignore
     var iv = new Uint8Array([37, 8, 192, 48, 234, 198, 43, 102, 211, 83, 231, 250, 78, 104, 219, 236]);
-    var kestore = await encryptDataV3(privateKey, password, address, publickey, salt, iv)
+    var kestore = await privkeyToKeystoreDeterministic(privateKey, password, address, publickey, salt, iv)
     document.getElementById('decryptDataV3_text').innerHTML="decryptDataV3 :"+JSON.stringify(kestore)
 }
 
@@ -173,6 +173,6 @@ document.getElementById('decryptDataV3_btn')
         "version": 3
     }
     var password = '12345678qw';
-    var decry = await decryptDataV3(keystore.crypto,password)
+    var decry = await keystoreToPrivkey(keystore.crypto,password)
     document.getElementById('encryptDataV3_text').innerHTML="encryptDataV3 :"+JSON.stringify(decry)
 }
