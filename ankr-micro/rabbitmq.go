@@ -6,9 +6,9 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/Ankr-network/dccn-common/protos"
 	"github.com/golang/protobuf/proto"
 	"github.com/streadway/amqp"
-	"github.com/Ankr-network/dccn-common/protos"
 )
 
 // RabbitMQHost contains the endpoint of RabbitMQ broker
@@ -82,7 +82,7 @@ func Send(topic string, e interface{}) error {
 
 	if err != nil {
 		return ankr_default.ErrRabbitMQPublishFailed
-	}else{
+	} else {
 		return nil
 	}
 }
@@ -136,7 +136,7 @@ func Receive(topic string, handler interface{}) {
 		conn.NotifyClose(rabbitCloseError)
 
 		q, err := ch.QueueDeclare(
-			"",    // name
+			topic, // currently use topic as queue name
 			true,  // durable
 			false, // delete when unused
 			false, // exclusive
