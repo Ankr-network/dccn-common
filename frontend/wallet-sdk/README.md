@@ -1,4 +1,5 @@
 # wallet-sdk
+
 1. You'll need installed nodejs,see https://nodejs.org/en/
 2. Install the build tool babel,see https://babeljs.io
 3. Install the dependencies and run npm install
@@ -10,3 +11,4 @@ First run npm install --global webpack to install webpack
 Then run webpack src/*.js tests/index.js -o tests/main.js compile and package javascript
 Finally run npm run-script start to open http://localhost:9080 in the browser.
 We can click test in the web
+
