@@ -58,7 +58,7 @@ message DataCenter {
 message DataCenterStatus {
     string dc_id = 1;  //data center id
     string dc_name = 2; // data center name
-    GeoLocation geo_location = 3;
+    GeoLocation geo_locationd = 3;
     DCStatus dc_status = 4; // data center status // 1. online 2. offline
     DataCenterAttributes dc_attributes = 5;
     DCHeartbeatReport dc_heartbeat_report = 6;
@@ -218,4 +218,5 @@ message Deposit {
     string confirmedBlockHeight = 8;
     TransactionState txState = 9;
     string toTxHash = 10;
+    string toTxHashMemo = 11;
 }
