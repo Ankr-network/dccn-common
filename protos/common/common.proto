@@ -24,9 +24,16 @@ message AppDeployment {
     string  app_name = 2; // name of the app
     Namespace   namespace = 3; // request for create new namespace
     AppAttributes   attributes = 4;
-    string  uid = 5;
+    string  team_id = 5;
     ChartDetail chart_detail = 6;
+    repeated CustomValue custom_values = 7;
 }
+
+message CustomValue{
+    string key = 1;
+    string value = 2;
+}
+
 message AppID {
     string  app_id = 1;
 }
@@ -51,7 +58,7 @@ message DataCenter {
 message DataCenterStatus {
     string dc_id = 1;  //data center id
     string dc_name = 2; // data center name
-    GeoLocation geo_location = 3;
+    GeoLocation geo_locationd = 3;
     DCStatus dc_status = 4; // data center status // 1. online 2. offline
     DataCenterAttributes dc_attributes = 5;
     DCHeartbeatReport dc_heartbeat_report = 6;
@@ -69,12 +76,29 @@ message DataCenterAttributes {
     google.protobuf.Timestamp last_modified_date = 3; //app creation date
 }
 
-message DCHeartbeatReport {
-    string metrics = 1; //json string for Metrics structure which defined in constants
-    string report = 2;
-    uint64 report_time = 3;
+message Resource {
+    int64 CPU = 1;
+    int64 Memory = 2;
+    int64 Storage = 3;
 }
 
+message DCHeartbeatReport {
+    message Metrics {
+        repeated string Nodes = 1;
+        Resource total = 2;
+        Resource used = 3;
+        map<string,Resource> ns_hard = 4;
+        map<string,Resource> ns_used = 5;
+        int64 ImageCount = 6;
+        int64 EndPointCount = 7;
+        int64 NetworkIO = 8;
+    }
+
+    string metrics = 1;
+    string report = 2;
+    uint64 report_time = 3;
+    Metrics metrics_raw = 4; //json string for Metrics structure which defined in constants
+}
 
 message Chart {
 	string chart_name = 1; //chart name
@@ -88,9 +112,10 @@ message Chart {
 message ChartDetail {
     string chart_name = 1;
     string chart_repo = 2;
-    string chart_ver = 3; //chart version 
-	string chart_app_ver = 4; //application version 
-    string chart_icon_url = 5; // Chart icon image url
+    string chart_description = 3;
+    string chart_icon_url = 4; // Chart icon image url
+    string chart_ver = 5; //chart version 
+	string chart_app_ver = 6; //application version 
 }
 
 message ChartVersionDetail{
@@ -119,6 +144,7 @@ message App {
         Namespace namespace = 3; // request for create new namespace
     }
     ChartDetail chart_detail = 4;
+    repeated CustomValue custom_values = 5;
 }
 
 
@@ -192,4 +218,5 @@ message Deposit {
     string confirmedBlockHeight = 8;
     TransactionState txState = 9;
     string toTxHash = 10;
+    string toTxHashMemo = 11;
 }

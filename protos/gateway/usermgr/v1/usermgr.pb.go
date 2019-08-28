@@ -27,6 +27,9 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+//message UserCountResponse {
+//    uint64 user = 1;
+//}
 // cluster provider status
 type ClusterProviderStatus int32
 

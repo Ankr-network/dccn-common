@@ -54,6 +54,15 @@ service UserMgr {
     rpc Fetch (FetchAccountsRequest) returns (FetchAccountsResponse) {}
 
     rpc ApplyBecomeClusterProvider(ClusterProviderApplyRequest) returns (common.proto.Empty) {}
+    rpc FakeToken (FakeTokenRequest) returns (FakeTokenResponse) {}
+}
+
+message FakeTokenRequest {
+    string email = 1;
+}
+
+message FakeTokenResponse {
+    string access_token = 1;
 }
 
  // cluster provider status

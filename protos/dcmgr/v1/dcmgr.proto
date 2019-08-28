@@ -45,7 +45,7 @@ message MyDataCenterRequest {
 }
 
 message RegisterDataCenterRequest {
-  string user_id = 1;
+  string uid = 1;
   string cluster_name = 2;
 }
 
@@ -148,12 +148,12 @@ service FeesService {
 }
 
 message InvoiceDetailRequest{
-   string uid = 1;
+   string team_id = 1;
    string invoice_id = 2;
 }
 
 message HistoryFeesRequest {
-  string uid = 1;
+  string team_id = 1;
   string start = 2;
   string end = 3;
 }
@@ -172,7 +172,7 @@ message HistoryFeesResponse {
 }
 
 message FeesDetailRequest {
-  string uid = 1;
+  string team_id = 1;
   string month = 2;
 }
 

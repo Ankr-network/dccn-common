@@ -58,6 +58,7 @@ type UserMgrService interface {
 	UserDetail(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*User, error)
 	Fetch(ctx context.Context, in *FetchAccountsRequest, opts ...client.CallOption) (*FetchAccountsResponse, error)
 	ApplyBecomeClusterProvider(ctx context.Context, in *ClusterProviderApplyRequest, opts ...client.CallOption) (*common.Empty, error)
+	FakeToken(ctx context.Context, in *FakeTokenRequest, opts ...client.CallOption) (*FakeTokenResponse, error)
 }
 
 type userMgrService struct {
@@ -258,6 +259,16 @@ func (c *userMgrService) ApplyBecomeClusterProvider(ctx context.Context, in *Clu
 	return out, nil
 }
 
+func (c *userMgrService) FakeToken(ctx context.Context, in *FakeTokenRequest, opts ...client.CallOption) (*FakeTokenResponse, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.FakeToken", in)
+	out := new(FakeTokenResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for UserMgr service
 
 type UserMgrHandler interface {
@@ -283,6 +294,7 @@ type UserMgrHandler interface {
 	UserDetail(context.Context, *common.Empty, *User) error
 	Fetch(context.Context, *FetchAccountsRequest, *FetchAccountsResponse) error
 	ApplyBecomeClusterProvider(context.Context, *ClusterProviderApplyRequest, *common.Empty) error
+	FakeToken(context.Context, *FakeTokenRequest, *FakeTokenResponse) error
 }
 
 func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server.HandlerOption) error {
@@ -305,6 +317,7 @@ func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server
 		UserDetail(ctx context.Context, in *common.Empty, out *User) error
 		Fetch(ctx context.Context, in *FetchAccountsRequest, out *FetchAccountsResponse) error
 		ApplyBecomeClusterProvider(ctx context.Context, in *ClusterProviderApplyRequest, out *common.Empty) error
+		FakeToken(ctx context.Context, in *FakeTokenRequest, out *FakeTokenResponse) error
 	}
 	type UserMgr struct {
 		userMgr
@@ -387,4 +400,8 @@ func (h *userMgrHandler) Fetch(ctx context.Context, in *FetchAccountsRequest, ou
 
 func (h *userMgrHandler) ApplyBecomeClusterProvider(ctx context.Context, in *ClusterProviderApplyRequest, out *common.Empty) error {
 	return h.UserMgrHandler.ApplyBecomeClusterProvider(ctx, in, out)
+}
+
+func (h *userMgrHandler) FakeToken(ctx context.Context, in *FakeTokenRequest, out *FakeTokenResponse) error {
+	return h.UserMgrHandler.FakeToken(ctx, in, out)
 }
