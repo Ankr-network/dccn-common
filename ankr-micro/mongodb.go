@@ -3,15 +3,20 @@ package ankrmicro
 import (
 	"fmt"
 	"sync"
+	"time"
 
+	cfg "github.com/Ankr-network/dccn-common/config"
 	"gopkg.in/mgo.v2"
 )
 
 // MongoDBHost saves the endpoint of mongo db
-var MongoDBHost string
-var instance *mgo.Database
-var once sync.Once
-var session *mgo.Session
+var (
+	MongoDBHost string
+	instance    *mgo.Database
+	once        sync.Once
+	session     *mgo.Session
+	err         error
+)
 
 // GetCollection return the mongo db collection instance
 func GetCollection(collection string) *mgo.Collection {
@@ -28,41 +33,51 @@ func GetDBInstance() *mgo.Database {
 	return instance
 }
 
-func mongodbconnect() *mgo.Database {
+func getMgoConfig() *cfg.MgoConfig {
 	config := GetConfig()
-	logStr := fmt.Sprintf("mongodb hostname : %s", config.DatabaseHost)
-	WriteLog(logStr)
-	session, err := mgo.Dial(config.DatabaseHost)
+	mc, err := cfg.GetMgoConfig(config.VaultAddr, config.VaultRole, config.DataPath)
 	if err != nil {
-		WriteLog("can not connect to database")
-		return nil
+		panic(err)
 	}
-	//defer session.Close()
+	return mc
+}
 
-	// Optional. Switch the session to a monotonic behavior.
-	session.SetMode(mgo.Monotonic, true)
-	db := session.DB(config.DatabaseName)
-	return db
+func mongodbconnect() *mgo.Database {
+	session, err = CreateDBSession()
+	if err != nil {
+		panic(err)
+	}
+	return session.DB(getMgoConfig().DbName)
 }
 
 func GetDB(database string) *mgo.Database {
 	if session == nil {
-		localSession, _ := CreateDBSession()
-		session = localSession
+		session, err = CreateDBSession()
+		if err != nil {
+			panic(err)
+		}
 	}
-	session.SetMode(mgo.Monotonic, true)
-	db := session.DB(database)
-	return db
+	return session.DB(database)
 }
 
 func CreateDBSession() (*mgo.Session, error) {
 	config := GetConfig()
-	logStr := fmt.Sprintf("mongodb hostname : %s", config.DatabaseHost)
+	mc, err := cfg.GetMgoConfig(config.VaultAddr, config.VaultRole, config.DataPath)
+	if err != nil {
+		panic(err)
+	}
+	logStr := fmt.Sprintf("mongodb hostname : %s", mc.Address)
 	WriteLog(logStr)
-	session, err := mgo.Dial(config.DatabaseHost)
+	session, err := mgo.DialWithTimeout(
+		fmt.Sprintf("mongodb://%s:%s@%s", mc.UserName, mc.PassWd, mc.Address),
+		15*time.Second)
 	if err != nil {
 		WriteLog("can not connect to database")
-		return session, err
+		return nil, err
 	}
+	//defer session.Close()
+	session.SetPoolLimit(int(mc.PoolSize))
+	// Optional. Switch the session to a monotonic behavior.
+	session.SetMode(mgo.Monotonic, true)
 	return session, err
 }
