@@ -45,7 +45,8 @@ func mongodbconnect() *mgo.Database {
 	return db
 }
 
-func GetDB(database string) *mgo.Database {
+
+func GetDB(database string)*mgo.Database{
 	if session == nil {
 		localSession, _ := CreateDBSession()
 		session = localSession
@@ -55,7 +56,8 @@ func GetDB(database string) *mgo.Database {
 	return db
 }
 
-func CreateDBSession() (*mgo.Session, error) {
+
+func CreateDBSession() (*mgo.Session,  error) {
 	config := GetConfig()
 	logStr := fmt.Sprintf("mongodb hostname : %s", config.DatabaseHost)
 	WriteLog(logStr)
