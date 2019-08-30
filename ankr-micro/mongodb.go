@@ -33,6 +33,7 @@ func mongodbConnect() *mgo.Database {
 	if err != nil {
 		panic(err)
 	}
+        session.SetMode(mgo.Monotonic, true)
 	config := GetConfig()
 	if config.DbAuth {
 		mc, err := cfg.GetMgoConfig(config.VaultAddr, config.VaultRole, config.DataPath)
