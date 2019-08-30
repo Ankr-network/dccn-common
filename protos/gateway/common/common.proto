@@ -173,6 +173,7 @@ message NamespaceReport{
     Namespace namespace = 1;
     NamespaceStatus ns_status = 2;
     NamespaceEvent ns_event = 3;
+    string report = 4;
 }
 
 message App {
