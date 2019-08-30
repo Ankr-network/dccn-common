@@ -76,14 +76,11 @@ func LoadConfigFromEnv() Config {
 
 	}
 
-<<<<<<< HEAD
-=======
 	config.VaultAddr = os.Getenv("VAULT_ADDR")
 	config.VaultRole = os.Getenv("VAULT_ROLE")
 	config.DataPath = os.Getenv("DATA_PATH")
 	config.DbAuth = strings.ToLower(os.Getenv("DB_AUTH")) == "true"
 
->>>>>>> supoort mongodb compatible with old way which no secrets
 	return config
 }
 

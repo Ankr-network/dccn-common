@@ -59,8 +59,6 @@ func GetDB(database string)*mgo.Database{
 
 func CreateDBSession() (*mgo.Session,  error) {
 	config := GetConfig()
-<<<<<<< HEAD
-=======
 
 	if config.DbAuth {
 		// support auth
@@ -86,20 +84,13 @@ func CreateDBSession() (*mgo.Session,  error) {
 	}
 
 	// compatible old way
->>>>>>> supoort mongodb compatible with old way which no secrets
 	logStr := fmt.Sprintf("mongodb hostname : %s", config.DatabaseHost)
 	WriteLog(logStr)
 	session, err := mgo.Dial(config.DatabaseHost)
 	if err != nil {
-<<<<<<< HEAD
-		WriteLog("can not connect to database")
-		return session, err
-	}
-=======
 		panic(err)
 	}
 	// Optional. Switch the session to a monotonic behavior.
 	session.SetMode(mgo.Monotonic, true)
->>>>>>> supoort mongodb compatible with old way which no secrets
 	return session, err
 }
