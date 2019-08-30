@@ -28,23 +28,6 @@ func GetDBInstance() *mgo.Database {
 	return instance
 }
 
-<<<<<<< HEAD
-func mongodbconnect() *mgo.Database {
-	config := GetConfig()
-	logStr := fmt.Sprintf("mongodb hostname : %s", config.DatabaseHost)
-	WriteLog(logStr)
-	session, err := mgo.Dial(config.DatabaseHost)
-	if err != nil {
-		WriteLog("can not connect to database")
-		return nil
-	}
-	//defer session.Close()
-
-	// Optional. Switch the session to a monotonic behavior.
-	session.SetMode(mgo.Monotonic, true)
-	db := session.DB(config.DatabaseName)
-	return db
-=======
 func mongodbConnect() *mgo.Database {
 	session, err = CreateDBSession()
 	if err != nil {
@@ -60,7 +43,6 @@ func mongodbConnect() *mgo.Database {
 	}
 
 	return session.DB(config.DatabaseName)
->>>>>>> supoort mongodb compatible with old way which no secrets
 }
 
 
