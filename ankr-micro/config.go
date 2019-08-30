@@ -15,9 +15,6 @@ type Config struct {
 	DatabaseName string
 	Listen       string
 	DevEnv       bool
-	VaultAddr    string // eg: http://127.0.0.1:8200
-	VaultRole    string
-	DataPath     string
 }
 
 var config Config
@@ -41,10 +38,6 @@ func GetConfig() Config {
 
 // LoadConfigFromEnv function reads configurations from environment
 // variables.
-// add by mobius@ankr time: 2019-08-29
-// description:
-// 				clear secret information
-//				get secret information from kms
 func LoadConfigFromEnv() Config {
 	value := os.Getenv("MICRO_BROKER_ADDRESS")
 	if len(value) > 0 {
@@ -68,6 +61,7 @@ func LoadConfigFromEnv() Config {
 		config.Listen = value
 	}
 
+
 	value = os.Getenv("DEV_EVN")
 
 	if len(value) > 0 {
@@ -77,10 +71,6 @@ func LoadConfigFromEnv() Config {
 		}
 
 	}
-
-	config.VaultAddr = os.Getenv("VAULT_ADDR")
-	config.VaultRole = os.Getenv("VAULT_ROLE")
-	config.DataPath = os.Getenv("DATA_PATH")
 
 	return config
 }
