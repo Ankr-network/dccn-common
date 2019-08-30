@@ -23,6 +23,7 @@ const (
 	LogMgrError        = "LogMgrError:"
 	ClusterError       = "DcMgrError:"
 	AnkrMicroError     = "AnkrMicroError:"
+	ScheduleError      = "ScheduleError:"
 )
 
 var (
@@ -71,6 +72,7 @@ var (
 	ErrPublish                   = errors.New(PublishError + "mq publish message error")
 	ErrConnection                = errors.New(AuthError + "Connection error")
 	ErrNoAvailableDataCenter     = errors.New(NotFoundError + "No available data center")
+	ErrNotEnoughResource         = errors.New(ScheduleError + "Not enough resource")
 	ErrEmailFormat               = errors.New(ArgumentError + "Email invalid format")
 	ErrEmailShouldNotSame        = errors.New(ArgumentError + "Email should not same as before")
 	ErrPasswordFormat            = errors.New(AuthError + "Password invalid format")
