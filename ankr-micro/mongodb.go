@@ -3,7 +3,9 @@ package ankrmicro
 import (
 	"fmt"
 	"sync"
+	"time"
 
+	cfg "github.com/Ankr-network/dccn-common/config"
 	"gopkg.in/mgo.v2"
 )
 
@@ -29,11 +31,12 @@ func GetDBInstance() *mgo.Database {
 }
 
 func mongodbConnect() *mgo.Database {
+	var err error
 	session, err = CreateDBSession()
 	if err != nil {
 		panic(err)
 	}
-        session.SetMode(mgo.Monotonic, true)
+	session.SetMode(mgo.Monotonic, true)
 	config := GetConfig()
 	if config.DbAuth {
 		mc, err := cfg.GetMgoConfig(config.VaultAddr, config.VaultRole, config.DataPath)
@@ -46,8 +49,7 @@ func mongodbConnect() *mgo.Database {
 	return session.DB(config.DatabaseName)
 }
 
-
-func GetDB(database string)*mgo.Database{
+func GetDB(database string) *mgo.Database {
 	if session == nil {
 		localSession, _ := CreateDBSession()
 		session = localSession
@@ -57,8 +59,7 @@ func GetDB(database string)*mgo.Database{
 	return db
 }
 
-
-func CreateDBSession() (*mgo.Session,  error) {
+func CreateDBSession() (*mgo.Session, error) {
 	config := GetConfig()
 
 	if config.DbAuth {
