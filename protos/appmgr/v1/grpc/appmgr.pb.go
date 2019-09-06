@@ -9,8 +9,6 @@ import (
 	common "github.com/Ankr-network/dccn-common/protos/common"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -1595,68 +1593,6 @@ type AppMgrServer interface {
 	DeleteNamespace(context.Context, *DeleteNamespaceRequest) (*common.Empty, error)
 	AppCount(context.Context, *AppCountRequest) (*AppCountResponse, error)
 	NamespaceCount(context.Context, *NamespaceCountRequest) (*NamespaceCountResponse, error)
-}
-
-// UnimplementedAppMgrServer can be embedded to have forward compatible implementations.
-type UnimplementedAppMgrServer struct {
-}
-
-func (*UnimplementedAppMgrServer) CreateApp(ctx context.Context, req *CreateAppRequest) (*CreateAppResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateApp not implemented")
-}
-func (*UnimplementedAppMgrServer) AppList(ctx context.Context, req *common.Empty) (*AppListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AppList not implemented")
-}
-func (*UnimplementedAppMgrServer) AppDetail(ctx context.Context, req *AppID) (*AppDetailResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AppDetail not implemented")
-}
-func (*UnimplementedAppMgrServer) CancelApp(ctx context.Context, req *AppID) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CancelApp not implemented")
-}
-func (*UnimplementedAppMgrServer) PurgeApp(ctx context.Context, req *AppID) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PurgeApp not implemented")
-}
-func (*UnimplementedAppMgrServer) UpdateApp(ctx context.Context, req *UpdateAppRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateApp not implemented")
-}
-func (*UnimplementedAppMgrServer) AppOverview(ctx context.Context, req *common.Empty) (*AppOverviewResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AppOverview not implemented")
-}
-func (*UnimplementedAppMgrServer) UploadChart(ctx context.Context, req *UploadChartRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UploadChart not implemented")
-}
-func (*UnimplementedAppMgrServer) SaveAsChart(ctx context.Context, req *SaveAsChartRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SaveAsChart not implemented")
-}
-func (*UnimplementedAppMgrServer) ChartList(ctx context.Context, req *ChartListRequest) (*ChartListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChartList not implemented")
-}
-func (*UnimplementedAppMgrServer) ChartDetail(ctx context.Context, req *ChartDetailRequest) (*ChartDetailResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChartDetail not implemented")
-}
-func (*UnimplementedAppMgrServer) DownloadChart(ctx context.Context, req *DownloadChartRequest) (*DownloadChartResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DownloadChart not implemented")
-}
-func (*UnimplementedAppMgrServer) DeleteChart(ctx context.Context, req *DeleteChartRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteChart not implemented")
-}
-func (*UnimplementedAppMgrServer) CreateNamespace(ctx context.Context, req *CreateNamespaceRequest) (*CreateNamespaceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateNamespace not implemented")
-}
-func (*UnimplementedAppMgrServer) NamespaceList(ctx context.Context, req *common.Empty) (*NamespaceListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method NamespaceList not implemented")
-}
-func (*UnimplementedAppMgrServer) UpdateNamespace(ctx context.Context, req *UpdateNamespaceRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateNamespace not implemented")
-}
-func (*UnimplementedAppMgrServer) DeleteNamespace(ctx context.Context, req *DeleteNamespaceRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteNamespace not implemented")
-}
-func (*UnimplementedAppMgrServer) AppCount(ctx context.Context, req *AppCountRequest) (*AppCountResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AppCount not implemented")
-}
-func (*UnimplementedAppMgrServer) NamespaceCount(ctx context.Context, req *NamespaceCountRequest) (*NamespaceCountResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method NamespaceCount not implemented")
 }
 
 func RegisterAppMgrServer(s *grpc.Server, srv AppMgrServer) {

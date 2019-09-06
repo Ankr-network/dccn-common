@@ -63,6 +63,7 @@ message FakeTokenRequest {
 
 message FakeTokenResponse {
     string access_token = 1;
+    User   user = 2;
 }
 
  // cluster provider status

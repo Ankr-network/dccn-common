@@ -8,8 +8,6 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -195,14 +193,6 @@ func (c *fetchAccountsClient) Fetch(ctx context.Context, in *FetchAccountsReq, o
 // FetchAccountsServer is the server API for FetchAccounts service.
 type FetchAccountsServer interface {
 	Fetch(context.Context, *FetchAccountsReq) (*FetchAccountsResp, error)
-}
-
-// UnimplementedFetchAccountsServer can be embedded to have forward compatible implementations.
-type UnimplementedFetchAccountsServer struct {
-}
-
-func (*UnimplementedFetchAccountsServer) Fetch(ctx context.Context, req *FetchAccountsReq) (*FetchAccountsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Fetch not implemented")
 }
 
 func RegisterFetchAccountsServer(s *grpc.Server, srv FetchAccountsServer) {
