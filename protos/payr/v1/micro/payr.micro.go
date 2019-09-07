@@ -38,8 +38,8 @@ type PayrService interface {
 	CollectFee(ctx context.Context, in *CollectFeeRequest, opts ...client.CallOption) (*CollectFeeResponse, error)
 	PlanFee(ctx context.Context, in *PlanFeeRequest, opts ...client.CallOption) (*CollectFeeResponse, error)
 	NewOrder(ctx context.Context, in *NewOrderRequest, opts ...client.CallOption) (*NewOrderResponse, error)
-	OrderStatus(ctx context.Context, in *OrderID, opts ...client.CallOption) (*OrderStatusResponse, error)
-	CancelOrder(ctx context.Context, in *OrderID, opts ...client.CallOption) (*common.Empty, error)
+	OrderStatus(ctx context.Context, in *TeamID, opts ...client.CallOption) (*OrderStatusResponse, error)
+	CancelOrder(ctx context.Context, in *TeamID, opts ...client.CallOption) (*common.Empty, error)
 	ListPlan(ctx context.Context, in *ListPlanRequest, opts ...client.CallOption) (*ListPlanResponse, error)
 }
 
@@ -91,7 +91,7 @@ func (c *payrService) NewOrder(ctx context.Context, in *NewOrderRequest, opts ..
 	return out, nil
 }
 
-func (c *payrService) OrderStatus(ctx context.Context, in *OrderID, opts ...client.CallOption) (*OrderStatusResponse, error) {
+func (c *payrService) OrderStatus(ctx context.Context, in *TeamID, opts ...client.CallOption) (*OrderStatusResponse, error) {
 	req := c.c.NewRequest(c.name, "Payr.OrderStatus", in)
 	out := new(OrderStatusResponse)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -101,7 +101,7 @@ func (c *payrService) OrderStatus(ctx context.Context, in *OrderID, opts ...clie
 	return out, nil
 }
 
-func (c *payrService) CancelOrder(ctx context.Context, in *OrderID, opts ...client.CallOption) (*common.Empty, error) {
+func (c *payrService) CancelOrder(ctx context.Context, in *TeamID, opts ...client.CallOption) (*common.Empty, error) {
 	req := c.c.NewRequest(c.name, "Payr.CancelOrder", in)
 	out := new(common.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -127,8 +127,8 @@ type PayrHandler interface {
 	CollectFee(context.Context, *CollectFeeRequest, *CollectFeeResponse) error
 	PlanFee(context.Context, *PlanFeeRequest, *CollectFeeResponse) error
 	NewOrder(context.Context, *NewOrderRequest, *NewOrderResponse) error
-	OrderStatus(context.Context, *OrderID, *OrderStatusResponse) error
-	CancelOrder(context.Context, *OrderID, *common.Empty) error
+	OrderStatus(context.Context, *TeamID, *OrderStatusResponse) error
+	CancelOrder(context.Context, *TeamID, *common.Empty) error
 	ListPlan(context.Context, *ListPlanRequest, *ListPlanResponse) error
 }
 
@@ -137,8 +137,8 @@ func RegisterPayrHandler(s server.Server, hdlr PayrHandler, opts ...server.Handl
 		CollectFee(ctx context.Context, in *CollectFeeRequest, out *CollectFeeResponse) error
 		PlanFee(ctx context.Context, in *PlanFeeRequest, out *CollectFeeResponse) error
 		NewOrder(ctx context.Context, in *NewOrderRequest, out *NewOrderResponse) error
-		OrderStatus(ctx context.Context, in *OrderID, out *OrderStatusResponse) error
-		CancelOrder(ctx context.Context, in *OrderID, out *common.Empty) error
+		OrderStatus(ctx context.Context, in *TeamID, out *OrderStatusResponse) error
+		CancelOrder(ctx context.Context, in *TeamID, out *common.Empty) error
 		ListPlan(ctx context.Context, in *ListPlanRequest, out *ListPlanResponse) error
 	}
 	type Payr struct {
@@ -164,11 +164,11 @@ func (h *payrHandler) NewOrder(ctx context.Context, in *NewOrderRequest, out *Ne
 	return h.PayrHandler.NewOrder(ctx, in, out)
 }
 
-func (h *payrHandler) OrderStatus(ctx context.Context, in *OrderID, out *OrderStatusResponse) error {
+func (h *payrHandler) OrderStatus(ctx context.Context, in *TeamID, out *OrderStatusResponse) error {
 	return h.PayrHandler.OrderStatus(ctx, in, out)
 }
 
-func (h *payrHandler) CancelOrder(ctx context.Context, in *OrderID, out *common.Empty) error {
+func (h *payrHandler) CancelOrder(ctx context.Context, in *TeamID, out *common.Empty) error {
 	return h.PayrHandler.CancelOrder(ctx, in, out)
 }
 

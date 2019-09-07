@@ -12,10 +12,10 @@ service Payr {
     rpc NewOrder(NewOrderRequest) returns (NewOrderResponse){
 
     }
-    rpc OrderStatus(OrderID) returns (OrderStatusResponse){
+    rpc OrderStatus(TeamID) returns (OrderStatusResponse){
 
     }
-    rpc CancelOrder(OrderID) returns (common.proto.Empty){
+    rpc CancelOrder(TeamID) returns (common.proto.Empty){
 
     }
     rpc ListPlan(ListPlanRequest) returns (ListPlanResponse){
@@ -94,8 +94,8 @@ message NewOrderResponse{
     string order_id = 1;
     uint64 expiration = 2;
 }
-message OrderID{
-    string order_id = 1;
+message TeamID{
+    string team_id = 1;
 }
 message OrderStatusResponse{
     Order order = 1;

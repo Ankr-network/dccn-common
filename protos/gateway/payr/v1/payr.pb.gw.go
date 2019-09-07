@@ -84,7 +84,7 @@ var (
 )
 
 func request_Payr_OrderStatus_0(ctx context.Context, marshaler runtime.Marshaler, client PayrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq OrderID
+	var protoReq TeamID
 	var metadata runtime.ServerMetadata
 
 	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_Payr_OrderStatus_0); err != nil {
@@ -97,7 +97,7 @@ func request_Payr_OrderStatus_0(ctx context.Context, marshaler runtime.Marshaler
 }
 
 func request_Payr_CancelOrder_0(ctx context.Context, marshaler runtime.Marshaler, client PayrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq OrderID
+	var protoReq TeamID
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)

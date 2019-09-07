@@ -24,10 +24,10 @@ service Payr {
             body: "*"
     };
     }
-    rpc OrderStatus(OrderID) returns (OrderStatusResponse){
+    rpc OrderStatus(TeamID) returns (OrderStatusResponse){
         option (google.api.http).get = "/order/status";
     }
-    rpc CancelOrder(OrderID) returns (common.proto.Empty){
+    rpc CancelOrder(TeamID) returns (common.proto.Empty){
         option (google.api.http) = {
             post: "/order/cancel"
             body: "*"
@@ -109,8 +109,8 @@ message NewOrderResponse{
     string order_id = 1;
     uint64 expiration = 2;
 }
-message OrderID{
-    string order_id = 1;
+message TeamID{
+    string team_id = 1;
 }
 message OrderStatusResponse{
     Order order = 1;
