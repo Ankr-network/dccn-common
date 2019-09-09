@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+import "common/common.proto";
+package payr;
+
+// TODO: supports filter
+service Payr {
+    rpc CollectFee(CollectFeeRequest) returns (CollectFeeResponse) {
+    }
+    rpc PlanFee(PlanFeeRequest) returns (CollectFeeResponse){
+    }
+    rpc NewOrder(NewOrderRequest) returns (NewOrderResponse){
+
+    }
+    rpc OrderStatus(TeamID) returns (OrderStatusResponse){
+
+    }
+    rpc CancelOrder(TeamID) returns (common.proto.Empty){
+
+    }
+    rpc ListPlan(common.proto.Empty) returns (ListPlanResponse){
+    }
+    rpc ListSubs(ListSubsRequest) returns (ListSubsResponse){
+    }
+}
+
+message Order {
+    // order number
+    string id = 1;
+    // Order type, marking the kind of currency using.
+    string type = 2;
+    // How much money left to pay.
+    string balance = 3; 
+    OrderStatus status = 4;
+    uint64 issued_at = 5;
+    uint64 expiration = 6;
+    string team_id = 7; //The order belongs to which team.
+    string plan = 8; //The related plan type. 
+    string plan_id = 9; //After the plan is confirmed, arrange the plan id to order.
+}
+
+message Subscription {
+    string id = 1;
+    string order_id = 2;
+    string plan_type = 3; // Plan type, which should use a map or Enum in the future.
+    string team_id = 4; //which team is using it
+    PlanStatus status = 5; //The status of current plan
+}
+
+message PlanType {
+    string   plan_type = 1;
+    string   cpu_number = 2;
+    string   memory_number = 3;
+    string   storage_number = 4;
+    string   price = 5;
+}
+
+message ListSubsRequest {
+    string team_id = 1;
+}
+
+message ListSubsResponse {
+    repeated Subscription subs = 1;
+}
+
+message ListPlanResponse {
+    repeated PlanType plans = 1;
+}
+
+message CollectFeeRequest {
+    string cpu_number = 1;
+    string memory_number = 2;
+    string storage_number = 3;
+    string time = 4;
+}
+
+message PlanFeeRequest {
+    string plan = 1;
+    string time = 2;
+    string team_id = 3;
+}
+
+message CollectFeeResponse {
+    string plan = 1;
+    string fee = 2;
+}
+
+enum OrderStatus {
+    CONFIRMING = 0; // default when order is created
+    CONFIRMED = 1;
+    DEACTIVATED = 2;
+}
+
+enum PlanStatus {
+    UNPAID = 0; // default when plan is created
+    PAID = 1;
+    EXPRIED = 2;
+}
+
+message NewOrderRequest{
+    string team_id = 1;
+    string type = 2;
+    string plan = 3;
+}
+
+message NewOrderResponse{
+    string order_id = 1;
+    uint64 expiration = 2;
+}
+message TeamID{
+    string team_id = 1;
+}
+message OrderStatusResponse{
+    Order order = 1;
+}
