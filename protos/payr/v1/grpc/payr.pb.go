@@ -153,6 +153,7 @@ func (m *Order) GetStatus() OrderStatus {
 	return OrderStatus_CONFIRMING
 }
 
+
 func (m *Order) GetIssuedAt() int64 {
 	if m != nil {
 		return m.IssuedAt
@@ -160,7 +161,9 @@ func (m *Order) GetIssuedAt() int64 {
 	return 0
 }
 
+
 func (m *Order) GetExpiration() int64 {
+
 	if m != nil {
 		return m.Expiration
 	}
@@ -174,6 +177,7 @@ func (m *Order) GetTeamId() string {
 	return ""
 }
 
+
 func (m *Order) GetPlanType() string {
 	if m != nil {
 		return m.PlanType
@@ -184,13 +188,16 @@ func (m *Order) GetPlanType() string {
 func (m *Order) GetTime() string {
 	if m != nil {
 		return m.Time
+
 	}
 	return ""
 }
 
+
 func (m *Order) GetSubId() string {
 	if m != nil {
 		return m.SubId
+
 	}
 	return ""
 }
@@ -871,6 +878,7 @@ var fileDescriptor_91f59d6d1c7771cd = []byte{
 	0x09, 0xbd, 0x00, 0x95, 0x6f, 0x00, 0xf4, 0x90, 0x0b, 0x07, 0x5a, 0x5c, 0x13, 0xec, 0x96, 0x7c,
 	0xf1, 0xf0, 0x5b, 0x16, 0x96, 0x96, 0x18, 0x2c, 0xee, 0x27, 0xa3, 0xb4, 0xac, 0xd2, 0x1a, 0xcf,
 	0x7f, 0x05, 0x00, 0x00, 0xff, 0xff, 0x8e, 0xbb, 0x4a, 0x0b, 0x81, 0x07, 0x00, 0x00,
+
 }
 
 // Reference imports to suppress errors if they are not otherwise used.

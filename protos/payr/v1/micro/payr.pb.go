@@ -91,6 +91,7 @@ type Order struct {
 	PlanType             string      `protobuf:"bytes,8,opt,name=plan_type,json=planType,proto3" json:"plan_type,omitempty"`
 	Time                 string      `protobuf:"bytes,9,opt,name=time,proto3" json:"time,omitempty"`
 	SubId                string      `protobuf:"bytes,10,opt,name=sub_id,json=subId,proto3" json:"sub_id,omitempty"`
+
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
 	XXX_unrecognized     []byte      `json:"-"`
 	XXX_sizecache        int32       `json:"-"`
@@ -155,6 +156,7 @@ func (m *Order) GetIssuedAt() int64 {
 	}
 	return 0
 }
+
 
 func (m *Order) GetExpiration() int64 {
 	if m != nil {
@@ -867,4 +869,5 @@ var fileDescriptor_0f994f2a80bf3f67 = []byte{
 	0x94, 0xd0, 0x0b, 0x50, 0xf9, 0x06, 0x40, 0xf7, 0xb9, 0x70, 0xa0, 0xc5, 0x35, 0xc1, 0x6e, 0xc9,
 	0x17, 0x0f, 0xbf, 0x65, 0x61, 0x69, 0x89, 0xc1, 0xe2, 0x7e, 0x32, 0x4a, 0xcb, 0x2a, 0xad, 0xf1,
 	0xfc, 0x77, 0x00, 0x00, 0x00, 0xff, 0xff, 0x0b, 0x7f, 0xeb, 0x03, 0x82, 0x07, 0x00, 0x00,
+
 }
