@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package notify;
+
+enum AccountsType {
+    AccountsUnknown = 0;
+    AccountsEthereum = 1;
+    AccountsDCCNTendermint = 2;
+    AccountsBinance = 3;
+    AccountsUsdt = 5;
+    AccountsGeth = 6;
+}
