@@ -40,7 +40,8 @@ type PayrService interface {
 	NewOrder(ctx context.Context, in *NewOrderRequest, opts ...client.CallOption) (*NewOrderResponse, error)
 	OrderStatus(ctx context.Context, in *TeamID, opts ...client.CallOption) (*OrderStatusResponse, error)
 	CancelOrder(ctx context.Context, in *TeamID, opts ...client.CallOption) (*common.Empty, error)
-	ListPlan(ctx context.Context, in *ListPlanRequest, opts ...client.CallOption) (*ListPlanResponse, error)
+	ListPlan(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*ListPlanResponse, error)
+	ListSubs(ctx context.Context, in *ListSubsRequest, opts ...client.CallOption) (*ListSubsResponse, error)
 }
 
 type payrService struct {
@@ -111,9 +112,19 @@ func (c *payrService) CancelOrder(ctx context.Context, in *TeamID, opts ...clien
 	return out, nil
 }
 
-func (c *payrService) ListPlan(ctx context.Context, in *ListPlanRequest, opts ...client.CallOption) (*ListPlanResponse, error) {
+func (c *payrService) ListPlan(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*ListPlanResponse, error) {
 	req := c.c.NewRequest(c.name, "Payr.ListPlan", in)
 	out := new(ListPlanResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *payrService) ListSubs(ctx context.Context, in *ListSubsRequest, opts ...client.CallOption) (*ListSubsResponse, error) {
+	req := c.c.NewRequest(c.name, "Payr.ListSubs", in)
+	out := new(ListSubsResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -129,7 +140,8 @@ type PayrHandler interface {
 	NewOrder(context.Context, *NewOrderRequest, *NewOrderResponse) error
 	OrderStatus(context.Context, *TeamID, *OrderStatusResponse) error
 	CancelOrder(context.Context, *TeamID, *common.Empty) error
-	ListPlan(context.Context, *ListPlanRequest, *ListPlanResponse) error
+	ListPlan(context.Context, *common.Empty, *ListPlanResponse) error
+	ListSubs(context.Context, *ListSubsRequest, *ListSubsResponse) error
 }
 
 func RegisterPayrHandler(s server.Server, hdlr PayrHandler, opts ...server.HandlerOption) error {
@@ -139,7 +151,8 @@ func RegisterPayrHandler(s server.Server, hdlr PayrHandler, opts ...server.Handl
 		NewOrder(ctx context.Context, in *NewOrderRequest, out *NewOrderResponse) error
 		OrderStatus(ctx context.Context, in *TeamID, out *OrderStatusResponse) error
 		CancelOrder(ctx context.Context, in *TeamID, out *common.Empty) error
-		ListPlan(ctx context.Context, in *ListPlanRequest, out *ListPlanResponse) error
+		ListPlan(ctx context.Context, in *common.Empty, out *ListPlanResponse) error
+		ListSubs(ctx context.Context, in *ListSubsRequest, out *ListSubsResponse) error
 	}
 	type Payr struct {
 		payr
@@ -172,6 +185,10 @@ func (h *payrHandler) CancelOrder(ctx context.Context, in *TeamID, out *common.E
 	return h.PayrHandler.CancelOrder(ctx, in, out)
 }
 
-func (h *payrHandler) ListPlan(ctx context.Context, in *ListPlanRequest, out *ListPlanResponse) error {
+func (h *payrHandler) ListPlan(ctx context.Context, in *common.Empty, out *ListPlanResponse) error {
 	return h.PayrHandler.ListPlan(ctx, in, out)
+}
+
+func (h *payrHandler) ListSubs(ctx context.Context, in *ListSubsRequest, out *ListSubsResponse) error {
+	return h.PayrHandler.ListSubs(ctx, in, out)
 }

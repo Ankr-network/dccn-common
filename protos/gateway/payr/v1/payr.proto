@@ -33,8 +33,12 @@ service Payr {
             body: "*"
     };
     }
-    rpc ListPlan(ListPlanRequest) returns (ListPlanResponse){
+    rpc ListPlan(common.proto.Empty) returns (ListPlanResponse){
         option (google.api.http).get = "/plan/list";
+    }
+
+    rpc ListSubs(ListSubsRequest) returns (ListSubsResponse){
+        option (google.api.http).get = "/subs/list";
     }
 }
 
@@ -53,7 +57,7 @@ message Order {
     string plan_id = 9; //After the plan is confirmed, arrange the plan id to order.
 }
 
-message Plan {
+message Subscription {
     string id = 1;
     string order_id = 2;
     string type = 3; // Plan type, which should use a map or Enum in the future.
@@ -61,12 +65,25 @@ message Plan {
     PlanStatus status = 5; //The status of current plan
 }
 
-message ListPlanRequest {
+
+message PlanType {
+    string   plan_type = 1;
+    string   cpu_number = 2;
+    string   memory_number = 3;
+    string   storage_number = 4;
+    string   price = 5;
+}
+
+message ListSubsRequest {
     string team_id = 1;
 }
 
+message ListSubsResponse {
+    repeated Subscription subs = 1;
+}
+
 message ListPlanResponse {
-    repeated Plan plans = 1;
+    repeated PlanType plans = 1;
 }
 
 message CollectFeeRequest {
