@@ -28,12 +28,12 @@ message Order {
     // order number
     string id = 1;
     // Order type, marking the kind of currency using.
-    string type = 2;
+    string order_type = 2;
     // How much money left to pay.
     string balance = 3; 
     OrderStatus status = 4;
-    uint64 issued_at = 5;
-    uint64 expiration = 6;
+    int64 issued_at = 5;
+    int64 expiration = 6;
     string team_id = 7; //The order belongs to which team.
     string plan = 8; //The related plan type. 
     string plan_id = 9; //After the plan is confirmed, arrange the plan id to order.
