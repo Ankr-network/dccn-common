@@ -102,6 +102,7 @@ message NewOrderRequest{
     string team_id = 1;
     string type = 2;
     string plan = 3;
+    string time = 4;
 }
 
 message NewOrderResponse{
