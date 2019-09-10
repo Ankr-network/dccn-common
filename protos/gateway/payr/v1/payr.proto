@@ -126,7 +126,7 @@ message NewOrderRequest{
 
 message NewOrderResponse{
     string order_id = 1;
-    uint64 expiration = 2;
+    int64 expiration = 2;
 }
 message TeamID{
     string team_id = 1;
