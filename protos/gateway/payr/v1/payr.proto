@@ -61,7 +61,7 @@ message Order {
 message Subscription {
     string id = 1;
     string order_id = 2;
-    string type = 3; // Plan type, which should use a map or Enum in the future.
+    string plan_type = 3; // Plan type, which should use a map or Enum in the future.
     string team_id = 4; //which team is using it
     PlanStatus status = 5; //The status of current plan
 }
@@ -121,6 +121,7 @@ message NewOrderRequest{
     string team_id = 1;
     string type = 2;
     string plan = 3;
+    string time = 4;
 }
 
 message NewOrderResponse{

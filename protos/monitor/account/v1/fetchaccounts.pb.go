@@ -4,12 +4,8 @@
 package account
 
 import (
-	context "context"
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
-	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -158,84 +154,4 @@ var fileDescriptor_e9cd09881d9cf7fa = []byte{
 	0xc1, 0x02, 0x42, 0x92, 0xd8, 0xfd, 0x1d, 0x94, 0x5a, 0x28, 0x25, 0x85, 0x4b, 0xaa, 0xb8, 0x40,
 	0x89, 0x21, 0x89, 0x0d, 0x1c, 0xd2, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0xf2, 0xdd, 0xbe,
 	0xed, 0x8b, 0x01, 0x00, 0x00,
-}
-
-// Reference imports to suppress errors if they are not otherwise used.
-var _ context.Context
-var _ grpc.ClientConn
-
-// This is a compile-time assertion to ensure that this generated file
-// is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion4
-
-// FetchAccountsClient is the client API for FetchAccounts service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type FetchAccountsClient interface {
-	Fetch(ctx context.Context, in *FetchAccountsReq, opts ...grpc.CallOption) (*FetchAccountsResp, error)
-}
-
-type fetchAccountsClient struct {
-	cc *grpc.ClientConn
-}
-
-func NewFetchAccountsClient(cc *grpc.ClientConn) FetchAccountsClient {
-	return &fetchAccountsClient{cc}
-}
-
-func (c *fetchAccountsClient) Fetch(ctx context.Context, in *FetchAccountsReq, opts ...grpc.CallOption) (*FetchAccountsResp, error) {
-	out := new(FetchAccountsResp)
-	err := c.cc.Invoke(ctx, "/account.FetchAccounts/Fetch", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// FetchAccountsServer is the server API for FetchAccounts service.
-type FetchAccountsServer interface {
-	Fetch(context.Context, *FetchAccountsReq) (*FetchAccountsResp, error)
-}
-
-// UnimplementedFetchAccountsServer can be embedded to have forward compatible implementations.
-type UnimplementedFetchAccountsServer struct {
-}
-
-func (*UnimplementedFetchAccountsServer) Fetch(ctx context.Context, req *FetchAccountsReq) (*FetchAccountsResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Fetch not implemented")
-}
-
-func RegisterFetchAccountsServer(s *grpc.Server, srv FetchAccountsServer) {
-	s.RegisterService(&_FetchAccounts_serviceDesc, srv)
-}
-
-func _FetchAccounts_Fetch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(FetchAccountsReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FetchAccountsServer).Fetch(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/account.FetchAccounts/Fetch",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FetchAccountsServer).Fetch(ctx, req.(*FetchAccountsReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-var _FetchAccounts_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "account.FetchAccounts",
-	HandlerType: (*FetchAccountsServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Fetch",
-			Handler:    _FetchAccounts_Fetch_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "account/v1/fetchaccounts.proto",
 }
