@@ -7,6 +7,7 @@ import (
 )
 
 type connection struct {
+	confirm       bool
 	url           string
 	conn          *amqp.Connection
 	channel       *amqp.Channel
@@ -14,9 +15,10 @@ type connection struct {
 	chnCloseChan  chan *amqp.Error
 	changeChChan  chan struct{}
 	stopChan      chan struct{}
+	confirmChan   chan amqp.Confirmation
 }
 
-func newConnection(url string, conn *amqp.Connection) (*connection, error) {
+func newConnection(url string, confirm bool, conn *amqp.Connection) (*connection, error) {
 	connCloseCh := make(chan *amqp.Error)
 	chnCloseCh := make(chan *amqp.Error)
 
@@ -25,6 +27,12 @@ func newConnection(url string, conn *amqp.Connection) (*connection, error) {
 	channel, err := channel(conn)
 	if err != nil {
 		return nil, err
+	}
+
+	if confirm {
+		if err := channel.Confirm(false); err != nil {
+			return nil, err
+		}
 	}
 
 	channel.NotifyClose(chnCloseCh)
@@ -36,6 +44,10 @@ func newConnection(url string, conn *amqp.Connection) (*connection, error) {
 		connCloseChan: connCloseCh,
 		changeChChan:  make(chan struct{}),
 		stopChan:      make(chan struct{}),
+	}
+
+	if confirm {
+		r.confirmChan = channel.NotifyPublish(make(chan amqp.Confirmation))
 	}
 
 	return r, nil
@@ -99,6 +111,14 @@ func (r *connection) connect() {
 					log.Printf("channel error: %v", err)
 					time.Sleep(4 * time.Second)
 					continue
+				}
+				if r.confirm {
+					if err := c.Confirm(false); err != nil {
+						log.Printf("channel.Confirm error: %v", err)
+						time.Sleep(4 * time.Second)
+						continue
+					}
+					r.confirmChan = c.NotifyPublish(make(chan amqp.Confirmation, 1))
 				}
 				break
 			}

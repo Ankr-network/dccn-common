@@ -30,13 +30,13 @@ func (s *logHandler) handle(h *proto.Hello) error {
 func init() {
 	var err error
 	ankrBroker = rabbitmq.NewBroker()
-	if helloPublisher, err = ankrBroker.Publisher(topic); err != nil {
+	if helloPublisher, err = ankrBroker.Publisher(topic, true); err != nil {
 		log.Fatal(err)
 	}
-	if err := ankrBroker.Subscribe("hello1", topic, helloSubscriber1.handle); err != nil {
+	if err := ankrBroker.Subscribe("hello1", topic, true, helloSubscriber1.handle); err != nil {
 		log.Fatal(err)
 	}
-	if err := ankrBroker.Subscribe("hello2", topic, helloSubscriber2.handle); err != nil {
+	if err := ankrBroker.Subscribe("hello2", topic, false, helloSubscriber2.handle); err != nil {
 		log.Fatal(err)
 	}
 }

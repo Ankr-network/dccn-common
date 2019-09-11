@@ -46,9 +46,11 @@ func queueBind(queue, key, exchange string, channel *amqp.Channel) error {
 	return nil
 }
 
-func queueDeclare(name string, channel *amqp.Channel) error {
+func queueDeclare(name string, reliable bool, channel *amqp.Channel) error {
 	args := amqp.Table{}
-	args["x-message-ttl"] = 20000 // 20 second
+	if !reliable {
+		args["x-message-ttl"] = 20000 // 20 second
+	}
 	if _, err := channel.QueueDeclare(name, true, false, false, false, args); err != nil {
 		return fmt.Errorf("channel.QueueDeclare error: %w", err)
 	}

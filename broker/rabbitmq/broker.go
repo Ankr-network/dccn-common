@@ -33,10 +33,11 @@ func NewBroker(args ...string) broker.Broker {
 	return &rabbitBroker{url: url}
 }
 
-func (r *rabbitBroker) Publisher(topic string) (broker.Publisher, error) {
+func (r *rabbitBroker) Publisher(topic string, reliable bool) (broker.Publisher, error) {
 	p := &rabbitPublisher{
-		url:   r.url,
-		topic: topic,
+		reliable: reliable,
+		url:      r.url,
+		topic:    topic,
 	}
 	if err := p.Connect(); err != nil {
 		return nil, err
@@ -44,16 +45,17 @@ func (r *rabbitBroker) Publisher(topic string) (broker.Publisher, error) {
 	return p, nil
 }
 
-func (r *rabbitBroker) Subscribe(name, topic string, handler interface{}) error {
+func (r *rabbitBroker) Subscribe(name, topic string, reliable bool, handler interface{}) error {
 	h, err := newHandler(handler)
 	if err != nil {
 		return err
 	}
 
 	s := rabbitSubscriber{
-		name:  name,
-		url:   r.url,
-		topic: topic,
+		reliable: reliable,
+		name:     name,
+		url:      r.url,
+		topic:    topic,
 	}
 
 	if err := s.Connect(); err != nil {
@@ -74,7 +76,17 @@ func (r *rabbitBroker) Subscribe(name, topic string, handler interface{}) error 
 			}
 
 			if err := h.call(msg); err != nil {
-				log.Printf("handle message %v error: %v", msg, h.call(msg))
+				log.Printf("handle message %v error: %v", msg, err)
+				if s.reliable {
+					if err := d.Nack(false, true); err != nil {
+						log.Printf("Nack error: %v", err)
+					}
+				}
+			}
+			if s.reliable {
+				if err := d.Ack(false); err != nil {
+					log.Printf("Ack error: %v", err)
+				}
 			}
 		}
 	}()

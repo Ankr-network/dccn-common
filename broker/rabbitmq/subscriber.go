@@ -7,10 +7,11 @@ import (
 )
 
 type rabbitSubscriber struct {
-	name  string
-	url   string
-	topic string
-	conn  *connection
+	reliable bool
+	name     string
+	url      string
+	topic    string
+	conn     *connection
 }
 
 func (s *rabbitSubscriber) Connect() error {
@@ -30,7 +31,7 @@ func (s *rabbitSubscriber) Connect() error {
 		return err
 	}
 
-	if err := queueDeclare(s.name, channel); err != nil {
+	if err := queueDeclare(s.name, s.reliable, channel); err != nil {
 		return err
 	}
 
@@ -38,7 +39,7 @@ func (s *rabbitSubscriber) Connect() error {
 		return err
 	}
 
-	if s.conn, err = newConnection(s.url, conn); err != nil {
+	if s.conn, err = newConnection(s.url, false, conn); err != nil {
 		return err
 	}
 
@@ -55,7 +56,7 @@ func (s *rabbitSubscriber) Consume() (<-chan amqp.Delivery, error) {
 	deliveries := make(chan amqp.Delivery)
 	go func() {
 		for {
-			ds, err := consume(s.name, "", true, s.conn.channel)
+			ds, err := consume(s.name, "", !s.reliable, s.conn.channel)
 			if err != nil {
 				log.Printf("consume error: %v", err)
 				time.Sleep(8 * time.Second)
