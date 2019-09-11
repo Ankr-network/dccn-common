@@ -51,7 +51,7 @@ func (p *rabbitPublisher) Publish(m interface{}) error {
 	}
 
 	if err := p.conn.channel.Publish(defaultExchange, p.topic, false, false, amqp.Publishing{
-		ContentType: "application/octet-stream",
+		ContentType: "application/protobuf",
 		Body:        body,
 	}); err != nil {
 		return fmt.Errorf("channel.Publish error: %w", err)
