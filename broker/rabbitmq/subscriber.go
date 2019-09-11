@@ -7,6 +7,7 @@ import (
 )
 
 type rabbitSubscriber struct {
+	name  string
 	url   string
 	topic string
 	conn  *connection
@@ -25,17 +26,15 @@ func (s *rabbitSubscriber) Connect() error {
 
 	defer channel.Close()
 
-	queue := s.topic
-
 	if err := exchangeDeclare(defaultExchange, channel); err != nil {
 		return err
 	}
 
-	if err := queueDeclare(queue, channel); err != nil {
+	if err := queueDeclare(s.name, channel); err != nil {
 		return err
 	}
 
-	if err := queueBind(queue, s.topic, defaultExchange, channel); err != nil {
+	if err := queueBind(s.name, s.topic, defaultExchange, channel); err != nil {
 		return err
 	}
 
@@ -55,9 +54,8 @@ func (s *rabbitSubscriber) Close() error {
 func (s *rabbitSubscriber) Consume() (<-chan amqp.Delivery, error) {
 	deliveries := make(chan amqp.Delivery)
 	go func() {
-		queue := s.topic
 		for {
-			ds, err := consume(queue, "", true, s.conn.channel)
+			ds, err := consume(s.name, "", true, s.conn.channel)
 			if err != nil {
 				log.Printf("consume error: %v", err)
 				time.Sleep(8 * time.Second)

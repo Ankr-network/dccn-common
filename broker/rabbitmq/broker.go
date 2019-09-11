@@ -44,13 +44,14 @@ func (r *rabbitBroker) Publisher(topic string) (broker.Publisher, error) {
 	return p, nil
 }
 
-func (r *rabbitBroker) Subscribe(topic string, handler interface{}) error {
+func (r *rabbitBroker) Subscribe(name, topic string, handler interface{}) error {
 	h, err := newHandler(handler)
 	if err != nil {
 		return err
 	}
 
 	s := rabbitSubscriber{
+		name:  name,
 		url:   r.url,
 		topic: topic,
 	}

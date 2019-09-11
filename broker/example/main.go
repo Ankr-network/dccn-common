@@ -11,16 +11,19 @@ import (
 )
 
 var (
-	topic           = "ankr.topic.hello"
-	ankrBroker      broker.Broker
-	helloPublisher  broker.Publisher
-	helloSubscriber logHandler
+	topic            = "ankr.topic.hello"
+	ankrBroker       broker.Broker
+	helloPublisher   broker.Publisher
+	helloSubscriber1 = logHandler{name: "hello1"}
+	helloSubscriber2 = logHandler{name: "hello2"}
 )
 
-type logHandler struct{}
+type logHandler struct {
+	name string
+}
 
 func (s *logHandler) handle(h *proto.Hello) error {
-	log.Printf("handle %+v", h)
+	log.Printf("%s handle %+v", s.name, h)
 	return nil
 }
 
@@ -30,7 +33,10 @@ func init() {
 	if helloPublisher, err = ankrBroker.Publisher(topic); err != nil {
 		log.Fatal(err)
 	}
-	if err := ankrBroker.Subscribe(topic, helloSubscriber.handle); err != nil {
+	if err := ankrBroker.Subscribe("hello1", topic, helloSubscriber1.handle); err != nil {
+		log.Fatal(err)
+	}
+	if err := ankrBroker.Subscribe("hello2", topic, helloSubscriber2.handle); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -51,5 +57,5 @@ func pub() {
 
 func main() {
 	go pub()
-	<-time.After(time.Second * 100)
+	<-time.After(time.Second * 10)
 }
