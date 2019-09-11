@@ -10,7 +10,7 @@ import (
 
 const (
 	defaultRabbitURL = "amqp://guest:guest@127.0.0.1:5672"
-	defaultExchange  = "micro"
+	defaultExchange  = "ankr.micro"
 )
 
 type rabbitBroker struct {

@@ -53,7 +53,7 @@ func Send(topic string, e interface{}) error {
 	err = ch.ExchangeDeclare(
 		defaultExchange, // name
 		"topic",         // type
-		true,           // durable
+		false,           // durable
 		false,           // auto-deleted
 		false,           // internal
 		false,           // no-wait
@@ -121,7 +121,7 @@ func Receive(topic string, handler interface{}) {
 		err = ch.ExchangeDeclare(
 			defaultExchange, // name
 			"topic",         // type
-			true,           // durable
+			false,           // durable
 			false,           // auto-deleted
 			false,           // internal
 			false,           // no-wait
