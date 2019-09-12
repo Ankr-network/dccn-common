@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-import "notify/v1/common.proto";
-
 package notify;
 import "notify/v1/common.proto";
 
