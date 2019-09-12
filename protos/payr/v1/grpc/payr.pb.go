@@ -684,7 +684,7 @@ func (m *NewOrderRequest) GetTime() string {
 
 type NewOrderResponse struct {
 	OrderId              string   `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	Expiration           uint64   `protobuf:"varint,2,opt,name=expiration,proto3" json:"expiration,omitempty"`
+	Expiration           int64    `protobuf:"varint,2,opt,name=expiration,proto3" json:"expiration,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -722,7 +722,7 @@ func (m *NewOrderResponse) GetOrderId() string {
 	return ""
 }
 
-func (m *NewOrderResponse) GetExpiration() uint64 {
+func (m *NewOrderResponse) GetExpiration() int64 {
 	if m != nil {
 		return m.Expiration
 	}

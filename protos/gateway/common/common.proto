@@ -55,6 +55,7 @@ enum DCStatus {
 }
 
 
+
 // Emtpy Message
 message Empty {}
 
@@ -242,4 +243,17 @@ message Deposit {
     TransactionState txState = 9;
     string toTxHash = 10;
     string toTxHashMemo = 11;
+}
+
+message Payment {
+    google.protobuf.Timestamp time = 1;
+    string order_id = 2;
+    string team_id = 3;
+    string from_account_address = 4;
+    string to_account_address = 5;
+    string payment_type = 5;
+    string tx_hash = 6;
+    string amount = 7;
+    string confirmed_block_height = 8;
+    TransactionState transaction_state = 9;
 }
