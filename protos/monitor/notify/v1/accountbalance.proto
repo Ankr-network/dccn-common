@@ -1,8 +1,7 @@
 syntax = "proto3";
 
-import "common.proto";
-
 package notify;
+import "notify/v1/common.proto";
 
 message AccountBalanceChangeEvent {
     string fromAccountAddress = 1;
