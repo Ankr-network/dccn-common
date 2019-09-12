@@ -1,7 +1,10 @@
 package ethereum
 
 import (
+    "context"
     "fmt"
+    "github.com/ethereum/go-ethereum/core/types"
+    "github.com/ethereum/go-ethereum/crypto"
     "math"
     "math/big"
     "strings"
@@ -12,7 +15,7 @@ import (
 )
 
 const (
-    EthereumNodeURL = "https://kindly-civil-escargot.quiknode.io/baa643a7-78b4-438e-b53a-76569410a448/bEpPhdsXJUrNvWzednALKg==/"
+    EthereumNodeURL = "https://mainnet.infura.io/v3/3141358baff64c0ca4154e356c1dd20d"
 )
 
 type EthService struct {
@@ -58,6 +61,33 @@ func (s *EthService) TokenTransfer(assertName, fromKey, fromPassword, toAddress 
     fmt.Printf("%s", convertAmount.String())
 
     tx, err := token.transfer(auth, toAddr, convertAmount)
-
     return tx.Hash().Hex(), err
+}
+
+func (s *EthService) EthTransaction(ctx context.Context, from, to, key string, amount *big.Int) (hash string, err error) {
+    gas, err := s.EthClient.SuggestGasPrice(ctx)
+    if err != nil {
+        return hash, err
+    }
+    gasLimit := uint64(21000)
+    nonce, err := s.EthClient.PendingNonceAt(ctx, common.HexToAddress(from))
+    if err != nil {
+        return hash, err
+    }
+    tx := types.NewTransaction(nonce, common.HexToAddress(to), amount, gasLimit, gas, nil)
+    chainID, err := s.EthClient.NetworkID(context.Background())
+    if err != nil {
+        return hash, err
+    }
+    privateKey, err := crypto.HexToECDSA(key)
+    if err != nil {
+        return hash, err
+    }
+    signedTx, err := types.SignTx(tx, types.NewEIP155Signer(chainID), privateKey)
+    if err != nil {
+        return signedTx.Hash().Hex(), err
+    }
+    err = s.EthClient.SendTransaction(ctx, signedTx)
+    return signedTx.Hash().Hex(), err
+
 }
