@@ -47,7 +47,7 @@ func (r *rabbitBroker) Publisher(topic string, reliable bool) (broker.Publisher,
 	return p, nil
 }
 
-func (r *rabbitBroker) Subscribe(name, topic string, reliable bool, handler interface{}) error {
+func (r *rabbitBroker) Subscribe(name, topic string, reliable, requeue bool, handler interface{}) error {
 	h, err := newHandler(handler)
 	if err != nil {
 		return err
@@ -80,7 +80,7 @@ func (r *rabbitBroker) Subscribe(name, topic string, reliable bool, handler inte
 			if err := h.call(msg); err != nil {
 				logger.Printf("handle message error: %v, message: %v", err, msg)
 				time.Sleep(nackDelay * time.Second)
-				if err := d.Nack(false, true); err != nil {
+				if err := d.Nack(false, requeue); err != nil {
 					log.Printf("Nack error: %v", err)
 				}
 			} else {

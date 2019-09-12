@@ -32,7 +32,7 @@ func init() {
 	if helloPublisher, err = ankrBroker.Publisher(topic, true); err != nil {
 		log.Fatal(err)
 	}
-	if err := ankrBroker.Subscribe("hello1", topic, true, helloSubscriber1.handle); err != nil {
+	if err := ankrBroker.Subscribe("hello1", topic, true, false, helloSubscriber1.handle); err != nil {
 		log.Fatal(err)
 	}
 }
