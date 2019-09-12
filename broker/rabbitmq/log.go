@@ -5,4 +5,4 @@ import (
 	"os"
 )
 
-var logger = log.New(os.Stderr, "", log.LstdFlags|log.Llongfile)
+var logger = log.New(os.Stderr, "", log.LstdFlags|log.Lshortfile)
