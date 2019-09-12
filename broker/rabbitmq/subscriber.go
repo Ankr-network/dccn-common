@@ -2,8 +2,6 @@ package rabbitmq
 
 import (
 	"github.com/streadway/amqp"
-	"log"
-	"time"
 )
 
 type rabbitSubscriber struct {
@@ -11,62 +9,55 @@ type rabbitSubscriber struct {
 	name     string
 	url      string
 	topic    string
-	conn     *connection
+	conn     *Connection
+	channel  *Channel
 }
 
 func (s *rabbitSubscriber) Connect() error {
-	conn, err := dial(s.url)
+	conn, err := Dial(s.url)
 	if err != nil {
 		return err
 	}
 
-	channel, err := channel(conn)
+	channel, err := conn.Channel(true)
 	if err != nil {
+		if err := conn.Close(); err != nil {
+			logger.Printf("Connection.Close error %v", err)
+		}
 		return err
 	}
 
-	defer channel.Close()
-
-	if err := exchangeDeclare(defaultExchange, channel); err != nil {
+	if err := exchangeDeclare(defaultExchange, channel.Channel); err != nil {
+		if err := conn.Close(); err != nil {
+			logger.Printf("Connection.Close error %v", err)
+		}
 		return err
 	}
 
-	if err := queueDeclare(s.name, s.reliable, channel); err != nil {
+	if err := queueDeclare(s.name, s.reliable, channel.Channel); err != nil {
+		if err := conn.Close(); err != nil {
+			logger.Printf("Connection.Close error %v", err)
+		}
 		return err
 	}
 
-	if err := queueBind(s.name, s.topic, defaultExchange, channel); err != nil {
+	if err := queueBind(s.name, s.topic, defaultExchange, channel.Channel); err != nil {
+		if err := conn.Close(); err != nil {
+			logger.Printf("Connection.Close error %v", err)
+		}
 		return err
 	}
 
-	if s.conn, err = newConnection(s.url, false, conn); err != nil {
-		return err
-	}
-
-	s.conn.connect()
+	s.conn = conn
+	s.channel = channel
 
 	return nil
 }
 
 func (s *rabbitSubscriber) Close() error {
-	return s.conn.close()
+	return s.conn.Close()
 }
 
 func (s *rabbitSubscriber) Consume() (<-chan amqp.Delivery, error) {
-	deliveries := make(chan amqp.Delivery)
-	go func() {
-		for {
-			ds, err := consume(s.name, "", !s.reliable, s.conn.channel)
-			if err != nil {
-				log.Printf("consume error: %v", err)
-				time.Sleep(8 * time.Second)
-				continue
-			}
-			for d := range ds {
-				deliveries <- d
-			}
-			log.Printf("delivery chan close, reconsume")
-		}
-	}()
-	return deliveries, nil
+	return s.channel.Consume(s.name, "", !s.reliable, false, false, false, nil)
 }

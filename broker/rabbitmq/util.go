@@ -57,14 +57,6 @@ func queueDeclare(name string, reliable bool, channel *amqp.Channel) error {
 	return nil
 }
 
-func consume(queue, consumer string, autoAck bool, channel *amqp.Channel) (<-chan amqp.Delivery, error) {
-	delivery, err := channel.Consume(queue, consumer, autoAck, false, false, false, nil)
-	if err != nil {
-		return nil, fmt.Errorf("channel.Consume error: %w", err)
-	}
-	return delivery, nil
-}
-
 func checkIsProtoMessage(t reflect.Type) error {
 	if t.Kind() != reflect.Ptr {
 		return errTypeIsNotPtr
