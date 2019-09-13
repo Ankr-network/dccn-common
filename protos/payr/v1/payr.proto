@@ -46,6 +46,8 @@ message Subscription {
     string plan_type = 3; // Plan type, which should use a map or Enum in the future.
     string team_id = 4; //which team is using it
     PlanStatus status = 5; //The status of current plan
+    int64 issued_at = 6;
+    string time = 7;
 }
 
 message PlanType {
