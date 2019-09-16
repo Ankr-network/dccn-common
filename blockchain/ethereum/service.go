@@ -61,6 +61,9 @@ func (s *EthService) TokenTransfer(assertName, fromKey, fromPassword, toAddress 
     fmt.Printf("%s", convertAmount.String())
 
     tx, err := token.transfer(auth, toAddr, convertAmount)
+    if err != nil {
+        return hash, err
+    }
     return tx.Hash().Hex(), err
 }
 
@@ -85,9 +88,10 @@ func (s *EthService) EthTransaction(ctx context.Context, from, to, key string, a
     }
     signedTx, err := types.SignTx(tx, types.NewEIP155Signer(chainID), privateKey)
     if err != nil {
-        return signedTx.Hash().Hex(), err
+        return hash, err
     }
     err = s.EthClient.SendTransaction(ctx, signedTx)
+
     return signedTx.Hash().Hex(), err
 
 }
