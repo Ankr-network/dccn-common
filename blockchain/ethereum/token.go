@@ -30,6 +30,10 @@ func newToken(name string, ethClient *ethclient.Client) (*Token, error) {
 	case "ANKR":
 		contractAddress = AnkrContractAddress
 		contractAbi     = AnkrContractAbi
+	case"USDT":
+		contractAddress = UsdtContractAddress
+		contractAbi     = UsdtContractAbi
+
 	}
 	parsed, err := abi.JSON(strings.NewReader(contractAbi))
 	if err != nil {

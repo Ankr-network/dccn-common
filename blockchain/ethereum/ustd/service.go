@@ -52,5 +52,4 @@ func (eth *UsdtService) TokenTransfer(to, key, password string, mount *big.Int) 
     }
     fmt.Printf("Transfer pending: 0x%x\n", tx.Hash())
     return tx.Hash().Hex(), err
-
 }
