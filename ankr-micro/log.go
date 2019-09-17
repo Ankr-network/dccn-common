@@ -53,7 +53,7 @@ func WriteLog2(msg string) {
 
 
 func Printf(format string, a...interface{}){
-	logStr := fmt.Sprintf(format, a)
+	logStr := fmt.Sprintf(format, a...)
 	WriteLog2(logStr)
 }
 

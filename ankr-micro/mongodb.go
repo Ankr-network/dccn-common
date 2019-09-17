@@ -33,7 +33,8 @@ func GetDBInstance() *mgo.Database {
 }
 
 func mongodbConnect() *mgo.Database {
-	session, err := CreateDBSession()
+	var err error
+	session, err = CreateDBSession()
 	if err != nil {
 		panic(err)
 	}
