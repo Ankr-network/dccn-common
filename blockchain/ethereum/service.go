@@ -40,27 +40,41 @@ func (s *EthService) TokenTransfer(assertName, fromKey, fromPassword, toAddress 
     toAddr := common.HexToAddress(toAddress)
 
     auth, err := bind.NewTransactor(strings.NewReader(fromKey), fromPassword)
+
     if err != nil {
 
         return hash, err
     }
+    var convertAmount = new(big.Int)
+    switch assertName {
+    case "ANKR":
+        decimal, err := token.Decimals(nil)
+        if err != nil {
+            return hash, err
+        }
 
-    decimal, err := token.Decimals(nil)
-    if err != nil {
-        return hash, err
+        tenDecimal := big.NewFloat(math.Pow(10, float64(decimal)))
+        tens := tenDecimal.String()
+
+        fmt.Printf("%s, %s\n", tens, amount.String())
+        convertAmountF := new(big.Float).Mul(tenDecimal, amount)
+        convertAmountF.Int(convertAmount)
+
+        fmt.Printf("%s", convertAmount.String())
+    case "USDT":
+        dec := big.NewFloat(1000000)
+        amount.Mul(dec, amount)
+        amount.Int(convertAmount)
     }
 
-    tenDecimal := big.NewFloat(math.Pow(10, float64(decimal)))
-    tens := tenDecimal.String()
-
-    fmt.Printf("%s, %s\n", tens, amount.String())
-    convertAmountF := new(big.Float).Mul(tenDecimal, amount)
-    convertAmount := new(big.Int)
-    convertAmountF.Int(convertAmount)
-
-    fmt.Printf("%s", convertAmount.String())
-
+    gasPrice, err := s.EthClient.SuggestGasPrice(context.Background())
+    if err != nil {
+      return hash, err
+    }
+    auth.GasPrice = gasPrice
+    auth.GasLimit = uint64(21000)
     tx, err := token.transfer(auth, toAddr, convertAmount)
+
     if err != nil {
         return hash, err
     }
