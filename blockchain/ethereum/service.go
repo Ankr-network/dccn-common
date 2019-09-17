@@ -2,10 +2,8 @@ package ethereum
 
 import (
     "context"
-    "fmt"
     "github.com/ethereum/go-ethereum/core/types"
     "github.com/ethereum/go-ethereum/crypto"
-    "math"
     "math/big"
     "strings"
 
@@ -36,31 +34,24 @@ func (s *EthService) TokenTransfer(assertName, fromKey, fromPassword, toAddress 
     if err != nil {
         return hash, err
     }
-
     toAddr := common.HexToAddress(toAddress)
 
     auth, err := bind.NewTransactor(strings.NewReader(fromKey), fromPassword)
+
     if err != nil {
 
         return hash, err
     }
+    var convertAmount = new(big.Int)
 
-    decimal, err := token.Decimals(nil)
+    gasPrice, err := s.EthClient.SuggestGasPrice(context.Background())
     if err != nil {
-        return hash, err
+      return hash, err
     }
-
-    tenDecimal := big.NewFloat(math.Pow(10, float64(decimal)))
-    tens := tenDecimal.String()
-
-    fmt.Printf("%s, %s\n", tens, amount.String())
-    convertAmountF := new(big.Float).Mul(tenDecimal, amount)
-    convertAmount := new(big.Int)
-    convertAmountF.Int(convertAmount)
-
-    fmt.Printf("%s", convertAmount.String())
-
+    auth.GasPrice = gasPrice
+    auth.GasLimit = uint64(21000)
     tx, err := token.transfer(auth, toAddr, convertAmount)
+
     if err != nil {
         return hash, err
     }
