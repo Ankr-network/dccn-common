@@ -196,6 +196,7 @@ message AppRunStatus {
   AppStatus app_status = 2;
   string message = 3;
   repeated uint32 node_ports = 4;
+  string gateway_addr = 5;
 }
 
 enum TransactionState {
