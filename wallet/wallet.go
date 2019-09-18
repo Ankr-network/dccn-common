@@ -152,6 +152,9 @@ func SetValidator(ip, port, pubkey, power, admin_priv_key string) (err_ret error
 	}
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "val_nonce")))
+	if err != nil {
+		return err
+	}
 	qres := res.Response
 	if !qres.IsOK() {
 		return errors.New("Query nonce failure, connect error.")
@@ -225,6 +228,9 @@ func GetBalance(ip, port, address string) (balance string, err_ret error) {
 	// curl  'localhost:26657/abci_query?data="bal:1234567890123456789012345678901234567890"'
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s:%s", "bal", address)))
+	if err != nil {
+		return err
+	}
 	qres := res.Response
 	if !qres.IsOK() {
 		return "", errors.New("Query balance failure, connect error.")
@@ -258,6 +264,9 @@ func GetAllDatacenterIds(ip, port string) (allIDs string, err_ret error) {
 	}
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "all_crts")))
+	if err != nil {
+		return err
+	}
 	qres := res.Response
 	if !qres.IsOK() {
 		return "", errors.New("Query data center failure, connect error.")
@@ -296,6 +305,9 @@ func SendCoins(ip, port, priv_key, from_address, to_address, amount string) (has
 	}
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s:%s", "bal", from_address)))
+	if err != nil {
+		return hash, err
+	}
 	qres := res.Response
 	if !qres.IsOK() {
 		return hash, errors.New("Query nonce failure, connect error.")
@@ -352,6 +364,9 @@ func GetStake(ip, port string) (stake string, err_ret error) {
 
 	// curl  'localhost:26657/abci_query?data="stk"'
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "stk")))
+	if err != nil {
+		return err
+	}
 	qres := res.Response
 	if !qres.IsOK() {
 		return "", errors.New("Query balance failure, connect error.")
@@ -386,6 +401,9 @@ func SetStake(ip, port, priv_key, amount, public_key string) error {
 	}
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "stk")))
+	if err != nil {
+		return err
+	}
 	qres := res.Response
 	if !qres.IsOK() {
 		return errors.New("Query nonce failure, connect error.")
@@ -437,6 +455,9 @@ func SetMeteringCert(ip, port, op_priv_key, dc_name, cert_pem string) error {
 	pemB64 := base64.StdEncoding.EncodeToString([]byte(cert_pem))
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "set_crt_nonce")))
+	if err != nil {
+		return err
+	}
 	qres := res.Response
 	if !qres.IsOK() {
 		return errors.New("Query nonce failure, connect error.")
@@ -491,6 +512,9 @@ func RemoveMeteringCert(ip, port, op_priv_key, dc_name string) error {
 	}
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "rmv_crt_nonce")))
+	if err != nil {
+		return err
+	}
 	qres := res.Response
 	if !qres.IsOK() {
 		return errors.New("Query nonce failure, connect error.")
@@ -543,6 +567,9 @@ func GetMeteringCert(ip, port, dc_name string) (pem string, err error) {
 	}
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s:%s", "crt", dc_name)))
+	if err != nil {
+		return "", err
+	}
 	qres := res.Response
 	var pemB64 string = ""
 	if !qres.IsOK() {
@@ -582,6 +609,9 @@ func SetBalance(ip, port, address, amount, admin_priv_key string) error {
 	}
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s:%s", "bal", address)))
+	if err != nil {
+		return err
+	}
 	qres := res.Response
 	if !qres.IsOK() {
 		return errors.New("Query nonce failure, connect error.")
@@ -641,6 +671,9 @@ func SetOpKey(ip, port, keyname, value, admin_priv_key string) error {
 	}
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "admin_nonce")))
+	if err != nil {
+		return err
+	}
 	qres := res.Response
 	if !qres.IsOK() {
 		return errors.New("Query nonce failure, connect error.")
@@ -759,6 +792,9 @@ func SetMetering(ip, port, priv_key_pem, dc, ns, value string) error {
 	}
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s:%s:%s", "mtr", dc, ns)))
+	if err != nil {
+		return err
+	}
 	qres := res.Response
 	nonce := "0"
 	if !qres.IsOK() {
