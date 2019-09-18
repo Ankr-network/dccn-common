@@ -10,7 +10,7 @@ import (
 )
 
 type Token interface {
-    DecimalsConvert(opts *bind.CallOpts, amount *big.Float) (convertAmount *big.Int, err error)
+    DecimalsConvert(amount *big.Float) (convertAmount *big.Int, err error)
     transfer(opts *bind.TransactOpts, toAddress common.Address, value *big.Int) (*types.Transaction, error)
 }
 

@@ -42,16 +42,18 @@ func (s *EthService) TokenTransfer(assertName, fromKey, fromPassword, toAddress 
 
         return hash, err
     }
-    var convertAmount = new(big.Int)
 
     gasPrice, err := s.EthClient.SuggestGasPrice(context.Background())
     if err != nil {
-      return hash, err
+        return hash, err
     }
     auth.GasPrice = gasPrice
     auth.GasLimit = uint64(100000)
+    convertAmount, err := token.DecimalsConvert(amount)
+    if err != nil {
+        return hash, err
+    }
     tx, err := token.transfer(auth, toAddr, convertAmount)
-
     if err != nil {
         return hash, err
     }
