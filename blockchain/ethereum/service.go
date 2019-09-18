@@ -49,7 +49,7 @@ func (s *EthService) TokenTransfer(assertName, fromKey, fromPassword, toAddress 
       return hash, err
     }
     auth.GasPrice = gasPrice
-    auth.GasLimit = uint64(21000)
+    auth.GasLimit = uint64(100000)
     tx, err := token.transfer(auth, toAddr, convertAmount)
 
     if err != nil {
