@@ -55,6 +55,7 @@ enum DCStatus {
 }
 
 
+
 // Emtpy Message
 message Empty {}
 
@@ -124,6 +125,7 @@ message DCHeartbeatReport {
         int64 ImageCount = 6;
         int64 EndPointCount = 7;
         int64 NetworkIO = 8;
+        uint32 NodePortCount = 9;
     }
 
     string metrics = 1;
@@ -221,6 +223,8 @@ message AppReport {
     AppEvent app_event = 4;
     string detail = 5; //string for app resource detail
     string endpoint = 6;
+    repeated uint32 node_ports = 7;
+    string gateway_addr = 8;
 }
 
 enum TransactionState {
@@ -242,4 +246,17 @@ message Deposit {
     TransactionState txState = 9;
     string toTxHash = 10;
     string toTxHashMemo = 11;
+}
+
+message Payment {
+    google.protobuf.Timestamp time = 1;
+    string order_id = 2;
+    string team_id = 3;
+    string from_account_address = 4;
+    string to_account_address = 5;
+    string payment_type = 6;
+    string tx_hash = 7;
+    string amount = 8;
+    string confirmed_block_height = 9;
+    TransactionState transaction_state = 10;
 }

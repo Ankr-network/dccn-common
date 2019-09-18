@@ -15,7 +15,6 @@ var (
 	ankrBroker       broker.Broker
 	helloPublisher   broker.Publisher
 	helloSubscriber1 = logHandler{name: "hello1"}
-	helloSubscriber2 = logHandler{name: "hello2"}
 )
 
 type logHandler struct {
@@ -33,10 +32,7 @@ func init() {
 	if helloPublisher, err = ankrBroker.Publisher(topic, true); err != nil {
 		log.Fatal(err)
 	}
-	if err := ankrBroker.Subscribe("hello1", topic, true, helloSubscriber1.handle); err != nil {
-		log.Fatal(err)
-	}
-	if err := ankrBroker.Subscribe("hello2", topic, false, helloSubscriber2.handle); err != nil {
+	if err := ankrBroker.Subscribe("hello1", topic, true, false, helloSubscriber1.handle); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -57,5 +53,5 @@ func pub() {
 
 func main() {
 	go pub()
-	<-time.After(time.Second * 10)
+	<-time.After(time.Second * 100)
 }

@@ -10,38 +10,56 @@ type rabbitPublisher struct {
 	reliable bool
 	url      string
 	topic    string
-	conn     *connection
+	conn     *Connection
 }
 
 func (p *rabbitPublisher) Connect() error {
-	conn, err := dial(p.url)
+	conn, err := Dial(p.url)
 	if err != nil {
 		return err
 	}
 
-	channel, err := channel(conn)
+	channel, err := conn.Channel(false)
 	if err != nil {
+		if err := conn.Close(); err != nil {
+			logger.Printf("Connection.Close error: %v", err)
+		}
 		return err
 	}
-	defer channel.Close()
+	defer func() {
+		if err := channel.Close(); err != nil {
+			logger.Printf("Channel.Close error: %v", err)
+		}
+	}()
 
-	if err := exchangeDeclare(defaultExchange, channel); err != nil {
+	if err := exchangeDeclare(defaultExchange, channel.Channel); err != nil {
+		if err := conn.Close(); err != nil {
+			logger.Printf("Connection.Close error: %v", err)
+		}
 		return err
 	}
 
-	if p.conn, err = newConnection(p.url, p.reliable, conn); err != nil {
-		return err
-	}
-	p.conn.connect()
+	p.conn = conn
 
 	return nil
 }
 
 func (p *rabbitPublisher) Close() error {
-	return p.conn.close()
+	return p.conn.Close()
 }
 
 func (p *rabbitPublisher) Publish(m interface{}) error {
+	// ever single channel for publish
+	channel, err := p.conn.Channel(false)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := channel.Close(); err != nil {
+			logger.Printf("Channel.Close error %v", err)
+		}
+	}()
+
 	msg, ok := m.(proto.Message)
 	if !ok {
 		return ErrMessageIsNotProtoMessage
@@ -50,24 +68,31 @@ func (p *rabbitPublisher) Publish(m interface{}) error {
 	if err != nil {
 		return fmt.Errorf("proto.Marshal error: %w", err)
 	}
-
 	publishing := amqp.Publishing{
 		ContentType: "application/protobuf",
 		Body:        body,
 	}
 
 	if p.reliable {
+		if err := channel.Confirm(false); err != nil {
+			return fmt.Errorf("Channel.Confirm error: %w", err)
+		}
+
+		confirmCh := channel.NotifyPublish(make(chan amqp.Confirmation, 1))
+
 		publishing.DeliveryMode = amqp.Persistent
-	}
 
-	if err := p.conn.channel.Publish(defaultExchange, p.topic, false, false, publishing); err != nil {
-		return fmt.Errorf("channel.Publish error: %w", err)
-	}
+		if err := channel.Publish(defaultExchange, p.topic, false, false, publishing); err != nil {
+			return fmt.Errorf("channel.Publish error: %w", err)
+		}
 
-	if p.reliable {
-		confirm := <-p.conn.confirmChan
+		confirm := <-confirmCh
 		if !confirm.Ack {
 			return ErrPublishMessageNotAck
+		}
+	} else {
+		if err := channel.Publish(defaultExchange, p.topic, false, false, publishing); err != nil {
+			return fmt.Errorf("channel.Publish error: %w", err)
 		}
 	}
 

@@ -11,6 +11,7 @@ service AdminMgr {
     rpc ListNamespaceResourceByUserEmail (NamespaceResourceRequest) returns (NamespaceResourceResponse) {}
     rpc ListTransactionRecordByUserEmail (TransactionRecordRequest) returns (TransactionRecordResponse) {}
     rpc ListTransactionDetailByTxID (TransactionDetailRequest) returns (TransactionDetailResponse) {}
+    rpc ListTransactionRecordByTokenAddr (TransactionRecordRequest) returns (TransactionRecordResponse) {}
 }
 
 message UserRequest {
@@ -139,10 +140,11 @@ message NamespaceResourceResponse {
 message TransactionRecordRequest {
     string req_id = 1;
     string email  = 2;
-    uint64 start_time = 3;
-    uint64 end_time   = 4;
-    uint32 page       = 5;
-    uint32 limit      = 6;
+    string token_addr = 3;
+    uint64 start_time = 4;
+    uint64 end_time   = 5;
+    uint32 page       = 6;
+    uint32 limit      = 7;
 }
 
 message TransactionRecordResponse {

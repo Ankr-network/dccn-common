@@ -65,7 +65,6 @@ func LoadConfigFromEnv() Config {
 		config.Listen = value
 	}
 
-
 	value = os.Getenv("DEV_EVN")
 
 	if len(value) > 0 {
@@ -95,5 +94,5 @@ func (config *Config) Show() {
 	fmt.Printf("VAULT_ADDR   :%s  \n", config.VaultAddr)
 	fmt.Printf("VAULT_ROLE   :%s \n", config.VaultRole)
 	fmt.Printf("DATA_PATH   :%s  \n", config.DataPath)
-	fmt.Printf("DB_AUTH   : %s  \n", config.DbAuth)
+	fmt.Printf("DB_AUTH   : %v  \n", config.DbAuth)
 }

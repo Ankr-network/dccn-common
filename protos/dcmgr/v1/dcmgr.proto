@@ -91,6 +91,7 @@ message NetworkInfoResponse {
   string storage_total = 10;  // MB
   string storage_used = 11;  // MB
   int32 network_count = 12;
+  uint32 nodeport_count = 13;
 }
 
 
