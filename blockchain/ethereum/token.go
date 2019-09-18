@@ -15,14 +15,12 @@ type Token interface {
 }
 
 func newToken(name string, ethClient *ethclient.Client) (Token, error) {
+    ContractAddreses = make(map[string]string)
+    ContractAddreses["ANKR"]=AnkrContractAddress
+    ContractAddreses["ANKR-T"]=AnkrContractAddressTest
     switch name {
-    case "ANKR":
-        contractAddress:="0x8290333cef9e6d528dd5618fb97a76f268f3edd4"
-        token, err := NewAnkrToken(name, ethClient,contractAddress)
-        return token, err
-    case "ANKR-T":
-        contractAddress:="0x38A03b35a6662D35B226879E57d499eE26A6D4B5"
-        token, err := NewAnkrToken(name, ethClient,contractAddress)
+    case "ANKR","ANKR-T":
+        token, err := NewAnkrToken(name, ethClient)
         return token, err
     case "USDT":
         token, err := NewUsdtToken(name, ethClient)
