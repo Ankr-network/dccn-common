@@ -229,7 +229,7 @@ func GetBalance(ip, port, address string) (balance string, err_ret error) {
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s:%s", "bal", address)))
 	if err != nil {
-		return err
+		return "", err
 	}
 	qres := res.Response
 	if !qres.IsOK() {
@@ -265,7 +265,7 @@ func GetAllDatacenterIds(ip, port string) (allIDs string, err_ret error) {
 
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "all_crts")))
 	if err != nil {
-		return err
+		return "", err
 	}
 	qres := res.Response
 	if !qres.IsOK() {
@@ -365,7 +365,7 @@ func GetStake(ip, port string) (stake string, err_ret error) {
 	// curl  'localhost:26657/abci_query?data="stk"'
 	res, err := cl.ABCIQuery("/websocket", cmn.HexBytes(fmt.Sprintf("%s", "stk")))
 	if err != nil {
-		return err
+		return "", err
 	}
 	qres := res.Response
 	if !qres.IsOK() {
