@@ -30,7 +30,7 @@ func NewUsdtToken(name string, ethClient *ethclient.Client) (token Token, err er
     return &UsdtToken{name, bindContract, nil}, nil
 }
 
-func (t *UsdtToken) DecimalsConvert(opts *bind.CallOpts, amount *big.Float) (convertAmount *big.Int, err error) {
+func (t *UsdtToken) DecimalsConvert(amount *big.Float) (convertAmount *big.Int, err error) {
     convertAmount = new(big.Int)
     dec := big.NewFloat(1000000)
     amount.Mul(dec, amount)

@@ -35,12 +35,12 @@ func NewAnkrToken(name string, ethClient *ethclient.Client,contractAddress strin
     return &AnkrToken{name, bindContract, nil}, nil
 }
 
-func (t *AnkrToken) DecimalsConvert(opts *bind.CallOpts, amount *big.Float) (convertAmount *big.Int, err error) {
+func (t *AnkrToken) DecimalsConvert(amount *big.Float) (convertAmount *big.Int, err error) {
     decimal, err := t.Decimals(nil)
     if err != nil {
         return convertAmount, err
     }
-
+    convertAmount = new(big.Int)
     tenDecimal := big.NewFloat(math.Pow(10, float64(decimal)))
     tens := tenDecimal.String()
     fmt.Printf("%s, %s\n", tens, amount.String())
