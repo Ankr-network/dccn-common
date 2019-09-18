@@ -151,7 +151,7 @@ func SetValidator(ip, port, pubkey, power, admin_priv_key string) (err_ret error
 		return err
 	}
 
-    	res, err := cl.ABCIQuery("/store/main", cmn.HexBytes(fmt.Sprintf("%s", "val_nonce")))
+	res, err := doABCIQuery(cl, cmn.HexBytes(fmt.Sprintf("%s", "val_nonce")))
 	if err != nil {
 		return err
 	}
@@ -227,7 +227,7 @@ func GetBalance(ip, port, address string) (balance string, err_ret error) {
 	//fmt.Println("LatestBlockHeight:", status.SyncInfo.LatestBlockHeight)
 	// curl  'localhost:26657/abci_query?data="bal:1234567890123456789012345678901234567890"'
 
-    	res, err := cl.ABCIQuery("/store/account", cmn.HexBytes(fmt.Sprintf("%s:%s", "bal", address)))
+	res, err := doABCIQuery(cl, cmn.HexBytes(fmt.Sprintf("%s:%s", "bal", address)))
 	if err != nil {
 		return "", err
 	}
@@ -263,7 +263,7 @@ func GetAllDatacenterIds(ip, port string) (allIDs string, err_ret error) {
 		return "", err
 	}
 
-    	res, err := cl.ABCIQuery("/store/main", cmn.HexBytes(fmt.Sprintf("%s", "all_crts")))
+	res, err := doABCIQuery(cl, cmn.HexBytes(fmt.Sprintf("%s", "all_crts")))
 	if err != nil {
 		return "", err
 	}
@@ -304,7 +304,7 @@ func SendCoins(ip, port, priv_key, from_address, to_address, amount string) (has
 		return hash, err
 	}
 
-    	res, err := cl.ABCIQuery("/store/account", cmn.HexBytes(fmt.Sprintf("%s:%s", "bal", from_address)))
+	res, err := doABCIQuery(cl, cmn.HexBytes(fmt.Sprintf("%s:%s", "bal", from_address)))
 	if err != nil {
 		return hash, err
 	}
@@ -363,7 +363,7 @@ func GetStake(ip, port string) (stake string, err_ret error) {
 	}
 
 	// curl  'localhost:26657/abci_query?data="stk"'
-    	res, err := cl.ABCIQuery("/store/main", cmn.HexBytes(fmt.Sprintf("%s", "stk")))
+	res, err := doABCIQuery(cl, cmn.HexBytes(fmt.Sprintf("%s", "stk")))
 	if err != nil {
 		return "", err
 	}
@@ -400,7 +400,7 @@ func SetStake(ip, port, priv_key, amount, public_key string) error {
 		return err
 	}
 
-    	res, err := cl.ABCIQuery("/store/main", cmn.HexBytes(fmt.Sprintf("%s", "stk")))
+	res, err := doABCIQuery(cl, cmn.HexBytes(fmt.Sprintf("%s", "stk")))
 	if err != nil {
 		return err
 	}
@@ -454,7 +454,7 @@ func SetMeteringCert(ip, port, op_priv_key, dc_name, cert_pem string) error {
 
 	pemB64 := base64.StdEncoding.EncodeToString([]byte(cert_pem))
 
-    	res, err := cl.ABCIQuery("/store/main", cmn.HexBytes(fmt.Sprintf("%s", "set_crt_nonce")))
+	res, err := doABCIQuery(cl, cmn.HexBytes(fmt.Sprintf("%s", "set_crt_nonce")))
 	if err != nil {
 		return err
 	}
@@ -511,7 +511,7 @@ func RemoveMeteringCert(ip, port, op_priv_key, dc_name string) error {
 		return err
 	}
 
-    	res, err := cl.ABCIQuery("/store/main", cmn.HexBytes(fmt.Sprintf("%s", "rmv_crt_nonce")))
+	res, err := doABCIQuery(cl, cmn.HexBytes(fmt.Sprintf("%s", "rmv_crt_nonce")))
 	if err != nil {
 		return err
 	}
@@ -566,7 +566,7 @@ func GetMeteringCert(ip, port, dc_name string) (pem string, err error) {
 		return "", err
 	}
 
-    	res, err := cl.ABCIQuery("/store/main", cmn.HexBytes(fmt.Sprintf("%s:%s", "crt", dc_name)))
+	res, err := doABCIQuery(cl, cmn.HexBytes(fmt.Sprintf("%s:%s", "crt", dc_name)))
 	if err != nil {
 		return "", err
 	}
@@ -600,7 +600,7 @@ func SetOpKey(ip, port, keyname, value, admin_priv_key string) error {
 		return err
 	}
 
-    	res, err := cl.ABCIQuery("/store/main", cmn.HexBytes(fmt.Sprintf("%s", "admin_nonce")))
+	res, err := doABCIQuery(cl, cmn.HexBytes(fmt.Sprintf("%s", "admin_nonce")))
 	if err != nil {
 		return err
 	}
@@ -721,7 +721,7 @@ func SetMetering(ip, port, priv_key_pem, dc, ns, value string) error {
 		return err
 	}
 
-    	res, err := cl.ABCIQuery("/store/main", cmn.HexBytes(fmt.Sprintf("%s:%s:%s", "mtr", dc, ns)))
+	res, err := doABCIQuery(cl, cmn.HexBytes(fmt.Sprintf("%s:%s:%s", "mtr", dc, ns)))
 	if err != nil {
 		return err
 	}
@@ -920,4 +920,17 @@ func toBalanceLongFormat(input string) (string, error) {
 	amount.Int(result)
 
 	return result.String(), nil
+}
+
+// helper functions
+// in case unknown response received
+func doABCIQuery(cl *client.HTTP, data cmn.HexBytes) (*ctypes.ResultABCIQuery, error) {
+	resp, err := cl.ABCIQuery("/store/account",data)
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, errors.New("Unrecognized response! ")
+	}
+	return resp, err
 }
