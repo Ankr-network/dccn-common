@@ -26,12 +26,9 @@ type AnkrToken struct {
     amount   *big.Int
 }
 
-var contractAddreses map[string]string
+var contractAddreses =map[string]string{"ANKR":AnkrContractAddress,"ANKR-T":AnkrContractAddressTest}
 
 func NewAnkrToken(name string, ethClient *ethclient.Client) (token Token, err error) {
-    contractAddreses = map[string]string{}
-    contractAddreses["ANKR"]=AnkrContractAddress
-    contractAddreses["ANKR-T"]=AnkrContractAddressTest
     parsed, err := abi.JSON(strings.NewReader(AnkrContractAbi))
     if err != nil {
         return nil, err

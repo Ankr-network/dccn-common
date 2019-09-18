@@ -6,7 +6,7 @@ let bc_addr = '//localhost:26657/broadcast_tx_commit';
 let bc_addr_query = '//localhost:26657/abci_query';
 export const set_blockchain_addr = (blockchain_addr) => {
     bc_addr = '//' + blockchain_addr + '/broadcast_tx_commit';
-    bc_addr_query = '//' + blockchain_addr + '/abci_query';
+    bc_addr_query = '//' + blockchain_addr + '/store/account';
 }
 
 const hex2bytes = (hex) => {
@@ -18,7 +18,7 @@ const hex2bytes = (hex) => {
     return bytes
 }
 
-export const send_coin = async (from, to, amount, private_key, public_key) => {
+export const send_coin = async (from, to, amount, private_key) => {
 
     const nonce = await get_nonce(bc_addr_query, from); //TODO check balance is FAIL.
     if (nonce === "") {
