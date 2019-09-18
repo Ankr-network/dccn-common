@@ -15,9 +15,6 @@ type Token interface {
 }
 
 func newToken(name string, ethClient *ethclient.Client) (Token, error) {
-    contractAddreses = map[string]string{}
-    contractAddreses["ANKR"]=AnkrContractAddress
-    contractAddreses["ANKR-T"]=AnkrContractAddressTest
     switch name {
     case "ANKR","ANKR-T":
         token, err := NewAnkrToken(name, ethClient)
