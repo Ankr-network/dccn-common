@@ -26,14 +26,14 @@ type AnkrToken struct {
     amount   *big.Int
 }
 
-var ContractAddreses map[string]string
+var contractAddreses map[string]string
 
 func NewAnkrToken(name string, ethClient *ethclient.Client) (token Token, err error) {
     parsed, err := abi.JSON(strings.NewReader(AnkrContractAbi))
     if err != nil {
         return nil, err
     }
-    bindContract := bind.NewBoundContract(common.HexToAddress(ContractAddreses[name]), parsed, ethClient, ethClient, ethClient)
+    bindContract := bind.NewBoundContract(common.HexToAddress(contractAddreses[name]), parsed, ethClient, ethClient, ethClient)
     return &AnkrToken{name, bindContract, nil}, nil
 }
 
