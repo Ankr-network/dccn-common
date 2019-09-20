@@ -25,7 +25,7 @@ service DCAPI {
       rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){}
       rpc RegisterDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
       rpc ResetDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
-      rpc MyDataCenter(MyDataCenterRequest) returns (common.proto.DataCenterStatus){}
+      rpc MyDataCenter(MyDataCenterRequest) returns (common.proto.DataCenterStatuses){}
       rpc GetClusterCertificate (GetClusterCertificateRequest) returns (GetClusterCertificateResponse) {}
 }
 

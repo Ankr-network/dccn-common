@@ -30,8 +30,8 @@ service DCAPI {
             body: "*"
     };
       }
-      rpc MyDataCenter(common.proto.Empty) returns (common.proto.DataCenterStatus){
-        option (google.api.http).get = "/dc/mydc";
+      rpc MyDataCenter(common.proto.Empty) returns (common.proto.DataCenterStatuses){
+        option (google.api.http).get = "/dc/mydc_list";
       }
 
 

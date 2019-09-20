@@ -50,6 +50,9 @@ message DataCenter {
   DataCenterAttributes dc_attributes = 4;
 }
 
+message DataCenterStatuses{
+  repeated DataCenterStatus statuses = 1;
+}
 // Data Center structure  this only used by deamon reply
 message DataCenterStatus {
   string dc_id = 1;   // data center id

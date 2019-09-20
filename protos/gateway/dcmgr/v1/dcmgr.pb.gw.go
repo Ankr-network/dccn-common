@@ -701,7 +701,7 @@ var (
 
 	pattern_DCAPI_ResetDataCenter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "reset"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_DCAPI_MyDataCenter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "mydc"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_DCAPI_MyDataCenter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "mydc_list"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_DCAPI_ClusterDashBoard_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "dashboard"}, "", runtime.AssumeColonVerbOpt(true)))
 

@@ -86,7 +86,9 @@ message DataCenter {
     DataCenterAttributes    dc_attributes = 4;
 }
 
-
+message DataCenterStatuses{
+  repeated DataCenterStatus statuses = 1;
+}
 // Data Center structure  this only used by deamon reply
 message DataCenterStatus {
     string dc_id = 1;  //data center id
@@ -165,7 +167,7 @@ message Namespace {
     string cluster_name = 4; //name of cluster
 	google.protobuf.Timestamp creation_date = 5;
     google.protobuf.Timestamp last_modified_date = 6;
-    uint32 ns_cpu_limit = 7;  // number of mcpu 
+    uint32 ns_cpu_limit = 7;  // number of mcpu
     uint32 ns_mem_limit = 8; // number of Mi mem usage
     uint32 ns_storage_limit = 9; // number of Gi storage
     NamespaceStatus ns_status = 10;
