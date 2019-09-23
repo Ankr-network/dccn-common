@@ -22,6 +22,9 @@ service UserMgr {
     rpc ConfirmRegistration(ConfirmRegistrationRequest) returns (common.proto.Empty) {
     }
 
+    // ConfirmPhoneRegistration confirm phone registration
+    rpc ConfirmPhoneRegistration(ConfirmPhoneRegistrationRequest) returns (common.proto.Empty) {}
+
     rpc ForgotPassword(ForgotPasswordRequest) returns (common.proto.Empty) {
     }
 
@@ -109,8 +112,9 @@ message User {
     string id = 1;
     // email user's email, unique.
     string email = 2;
-    UserStatus status = 3;
-    UserAttributes attributes = 4;
+    string phone = 3;
+    UserStatus status = 4;
+    UserAttributes attributes = 5;
 }
 
 enum UserStatus {
@@ -170,6 +174,11 @@ message RefreshToken {
 
 message ConfirmRegistrationRequest {
     string email = 1;
+    string confirmation_code = 2;
+}
+
+message ConfirmPhoneRegistrationRequest {
+    string phone = 1;
     string confirmation_code = 2;
 }
 
