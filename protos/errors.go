@@ -98,6 +98,7 @@ var (
 	ErrOldPassword               = errors.New(ArgumentError + "Old password does not match")
 	ErrEmailSame                 = errors.New(ArgumentError + "Email must be not same as before")
 	ErrUserNotVariyEmail         = errors.New(ArgumentError + "User's email has not been varified, please verify email first")
+	ErrUserNotVariyPhone         = errors.New(ArgumentError + "User's phone has not been varified, please verify phone first")
 	ErrUserDeactive              = errors.New(AuthError + "Login failed, account has been locked, please contact admin")
 	ErrEmailNoExit               = errors.New(ArgumentError + "Login/Register get something wrong")
 	ErrPhoneNotExist             = errors.New(ArgumentError + "Phone not found")
