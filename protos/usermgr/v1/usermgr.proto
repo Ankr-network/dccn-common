@@ -12,6 +12,8 @@ service UserMgr {
     // Login login
     rpc Login(LoginRequest) returns (LoginResponse) {
     }
+    // Phone Login login
+    rpc PhoneLogin(PhoneLoginRequest) returns (LoginResponse) {}
     // Logout need verify permission , disable RefreshToken , access_token still work for 2 hours.
     rpc Logout(RefreshToken) returns (common.proto.Empty) {
     }
@@ -153,6 +155,11 @@ message RegisterRequest {
 
 message LoginRequest {
     string email = 1;
+    string password = 2;
+}
+
+message PhoneLoginRequest {
+    string phone = 1;
     string password = 2;
 }
 

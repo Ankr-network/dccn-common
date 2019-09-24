@@ -40,6 +40,8 @@ type UserMgrService interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...client.CallOption) (*common.Empty, error)
 	// Login login
 	Login(ctx context.Context, in *LoginRequest, opts ...client.CallOption) (*LoginResponse, error)
+	// Phone Login login
+	PhoneLogin(ctx context.Context, in *PhoneLoginRequest, opts ...client.CallOption) (*LoginResponse, error)
 	// Logout need verify permission , disable RefreshToken , access_token still work for 2 hours.
 	Logout(ctx context.Context, in *RefreshToken, opts ...client.CallOption) (*common.Empty, error)
 	// RefreshToken reset token last access token
@@ -93,6 +95,16 @@ func (c *userMgrService) Register(ctx context.Context, in *RegisterRequest, opts
 
 func (c *userMgrService) Login(ctx context.Context, in *LoginRequest, opts ...client.CallOption) (*LoginResponse, error) {
 	req := c.c.NewRequest(c.name, "UserMgr.Login", in)
+	out := new(LoginResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userMgrService) PhoneLogin(ctx context.Context, in *PhoneLoginRequest, opts ...client.CallOption) (*LoginResponse, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.PhoneLogin", in)
 	out := new(LoginResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -288,6 +300,8 @@ type UserMgrHandler interface {
 	Register(context.Context, *RegisterRequest, *common.Empty) error
 	// Login login
 	Login(context.Context, *LoginRequest, *LoginResponse) error
+	// Phone Login login
+	PhoneLogin(context.Context, *PhoneLoginRequest, *LoginResponse) error
 	// Logout need verify permission , disable RefreshToken , access_token still work for 2 hours.
 	Logout(context.Context, *RefreshToken, *common.Empty) error
 	// RefreshToken reset token last access token
@@ -315,6 +329,7 @@ func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server
 	type userMgr interface {
 		Register(ctx context.Context, in *RegisterRequest, out *common.Empty) error
 		Login(ctx context.Context, in *LoginRequest, out *LoginResponse) error
+		PhoneLogin(ctx context.Context, in *PhoneLoginRequest, out *LoginResponse) error
 		Logout(ctx context.Context, in *RefreshToken, out *common.Empty) error
 		RefreshSession(ctx context.Context, in *RefreshToken, out *AuthenticationResult) error
 		ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, out *common.Empty) error
@@ -351,6 +366,10 @@ func (h *userMgrHandler) Register(ctx context.Context, in *RegisterRequest, out 
 
 func (h *userMgrHandler) Login(ctx context.Context, in *LoginRequest, out *LoginResponse) error {
 	return h.UserMgrHandler.Login(ctx, in, out)
+}
+
+func (h *userMgrHandler) PhoneLogin(ctx context.Context, in *PhoneLoginRequest, out *LoginResponse) error {
+	return h.UserMgrHandler.PhoneLogin(ctx, in, out)
 }
 
 func (h *userMgrHandler) Logout(ctx context.Context, in *RefreshToken, out *common.Empty) error {

@@ -20,6 +20,14 @@ service UserMgr {
             body: "*"
     };
     }
+    // PhoneLogin phone login
+    rpc PhoneLogin(PhoneLoginRequest) returns (LoginResponse) {
+        option (google.api.http) = {
+            post: "/phone_login"
+            body: "*"
+        };
+    }
+
     // Logout need verify permission , disable RefreshToken , access_token still work for 2 hours.
     rpc Logout(RefreshToken) returns (common.proto.Empty) {
         option (google.api.http) = {
@@ -205,6 +213,11 @@ message RegisterRequest {
 
 message LoginRequest {
     string email = 1;
+    string password = 2;
+}
+
+message PhoneLoginRequest {
+    string phone = 1;
     string password = 2;
 }
 
