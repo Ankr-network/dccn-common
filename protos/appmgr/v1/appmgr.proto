@@ -24,6 +24,15 @@ service AppMgr {
     rpc DeleteNamespace (DeleteNamespaceRequest) returns (common.proto.Empty) {}
     rpc AppCount (AppCountRequest) returns (AppCountResponse){}
     rpc NamespaceCount (NamespaceCountRequest) returns (NamespaceCountResponse) {}
+    rpc NamespaceUsage (NamespaceUsageRequest) returns (NamespaceUsageResponse) {}
+}
+
+message NamespaceUsageRequest {
+    string ns_id = 1;
+}
+
+message NamespaceUsageResponse {
+    uint32 ns_cpu_usage = 1;
 }
 
 message NamespaceCountRequest {

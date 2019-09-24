@@ -133,6 +133,7 @@ message Namespace {
   uint32 ns_cpu_limit = 7;     // number of mcpu
   uint32 ns_mem_limit = 8;     // number of Mi mem usage
   uint32 ns_storage_limit = 9; // number of Gi storage
+  uint32 ns_cpu_usage = 10;
 }
 
 // Used by appmgr
