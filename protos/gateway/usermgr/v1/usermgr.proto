@@ -209,6 +209,7 @@ message RegisterRequest {
   string password = 2;
   string name = 3;
   string token = 4;
+  string phone = 5;
 }
 
 message LoginRequest {
