@@ -12,8 +12,6 @@ service UserMgr {
     // Login login
     rpc Login(LoginRequest) returns (LoginResponse) {
     }
-    // Phone Login login
-    rpc PhoneLogin(PhoneLoginRequest) returns (LoginResponse) {}
     // Logout need verify permission , disable RefreshToken , access_token still work for 2 hours.
     rpc Logout(RefreshToken) returns (common.proto.Empty) {
     }
@@ -23,9 +21,6 @@ service UserMgr {
 
     rpc ConfirmRegistration(ConfirmRegistrationRequest) returns (common.proto.Empty) {
     }
-
-    // ConfirmPhoneRegistration confirm phone registration
-    rpc ConfirmPhoneRegistration(ConfirmPhoneRegistrationRequest) returns (common.proto.Empty) {}
 
     rpc ForgotPassword(ForgotPasswordRequest) returns (common.proto.Empty) {
     }
@@ -60,6 +55,40 @@ service UserMgr {
 
     rpc ApplyBecomeClusterProvider(ClusterProviderApplyRequest) returns (common.proto.Empty) {}
     rpc FakeToken (FakeTokenRequest) returns (FakeTokenResponse) {}
+
+    // mobile app api
+    rpc PhoneVerify(PhoneVerifyRequest) returns (common.proto.Empty) {}
+    rpc PhoneRegister(PhoneRegisterRequest) returns (common.proto.Empty){}
+    rpc PhoneLogin(PhoneLoginRequest) returns (LoginResponse) {}
+    rpc PhoneResetPassword(PhoneResetPasswordRequest) returns (common.proto.Empty){}
+    rpc PhoneChange(PhoneChangeRequest) returns (common.proto.Empty) {}
+}
+
+message PhoneRegisterRequest {
+    string name = 1;
+    string phone = 2;
+    string password = 3;
+    string code = 4;
+}
+
+message PhoneVerifyRequest {
+    string phone = 1;
+}
+
+message PhoneResetPasswordRequest {
+    string phone = 1;
+    string code = 2;
+    string new_password = 3;
+} 
+
+message PhoneLoginRequest {
+    string phone = 1;
+    string password = 2;
+}
+
+message PhoneChangeRequest {
+    string new_phone = 1;
+    string code = 2;
 }
 
 message FakeTokenRequest {
@@ -114,9 +143,9 @@ message User {
     string id = 1;
     // email user's email, unique.
     string email = 2;
-    string phone = 3;
-    UserStatus status = 4;
-    UserAttributes attributes = 5;
+    UserStatus status = 3;
+    UserAttributes attributes = 4;
+    string phone = 5;
 }
 
 enum UserStatus {
@@ -158,11 +187,6 @@ message LoginRequest {
     string password = 2;
 }
 
-message PhoneLoginRequest {
-    string phone = 1;
-    string password = 2;
-}
-
 message LoginResponse {
     AuthenticationResult authentication_result = 1;
     User user = 2;
@@ -181,11 +205,6 @@ message RefreshToken {
 
 message ConfirmRegistrationRequest {
     string email = 1;
-    string confirmation_code = 2;
-}
-
-message ConfirmPhoneRegistrationRequest {
-    string phone = 1;
     string confirmation_code = 2;
 }
 

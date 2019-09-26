@@ -40,15 +40,11 @@ type UserMgrService interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...client.CallOption) (*common.Empty, error)
 	// Login login
 	Login(ctx context.Context, in *LoginRequest, opts ...client.CallOption) (*LoginResponse, error)
-	// Phone Login login
-	PhoneLogin(ctx context.Context, in *PhoneLoginRequest, opts ...client.CallOption) (*LoginResponse, error)
 	// Logout need verify permission , disable RefreshToken , access_token still work for 2 hours.
 	Logout(ctx context.Context, in *RefreshToken, opts ...client.CallOption) (*common.Empty, error)
 	// RefreshToken reset token last access token
 	RefreshSession(ctx context.Context, in *RefreshToken, opts ...client.CallOption) (*AuthenticationResult, error)
 	ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, opts ...client.CallOption) (*common.Empty, error)
-	// ConfirmPhoneRegistration confirm phone registration
-	ConfirmPhoneRegistration(ctx context.Context, in *ConfirmPhoneRegistrationRequest, opts ...client.CallOption) (*common.Empty, error)
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...client.CallOption) (*common.Empty, error)
 	ConfirmPassword(ctx context.Context, in *ConfirmPasswordRequest, opts ...client.CallOption) (*common.Empty, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...client.CallOption) (*common.Empty, error)
@@ -63,6 +59,12 @@ type UserMgrService interface {
 	Fetch(ctx context.Context, in *FetchAccountsRequest, opts ...client.CallOption) (*FetchAccountsResponse, error)
 	ApplyBecomeClusterProvider(ctx context.Context, in *ClusterProviderApplyRequest, opts ...client.CallOption) (*common.Empty, error)
 	FakeToken(ctx context.Context, in *FakeTokenRequest, opts ...client.CallOption) (*FakeTokenResponse, error)
+	// mobile app api
+	PhoneVerify(ctx context.Context, in *PhoneVerifyRequest, opts ...client.CallOption) (*common.Empty, error)
+	PhoneRegister(ctx context.Context, in *PhoneRegisterRequest, opts ...client.CallOption) (*common.Empty, error)
+	PhoneLogin(ctx context.Context, in *PhoneLoginRequest, opts ...client.CallOption) (*LoginResponse, error)
+	PhoneResetPassword(ctx context.Context, in *PhoneResetPasswordRequest, opts ...client.CallOption) (*common.Empty, error)
+	PhoneChange(ctx context.Context, in *PhoneChangeRequest, opts ...client.CallOption) (*common.Empty, error)
 }
 
 type userMgrService struct {
@@ -103,16 +105,6 @@ func (c *userMgrService) Login(ctx context.Context, in *LoginRequest, opts ...cl
 	return out, nil
 }
 
-func (c *userMgrService) PhoneLogin(ctx context.Context, in *PhoneLoginRequest, opts ...client.CallOption) (*LoginResponse, error) {
-	req := c.c.NewRequest(c.name, "UserMgr.PhoneLogin", in)
-	out := new(LoginResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *userMgrService) Logout(ctx context.Context, in *RefreshToken, opts ...client.CallOption) (*common.Empty, error) {
 	req := c.c.NewRequest(c.name, "UserMgr.Logout", in)
 	out := new(common.Empty)
@@ -135,16 +127,6 @@ func (c *userMgrService) RefreshSession(ctx context.Context, in *RefreshToken, o
 
 func (c *userMgrService) ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, opts ...client.CallOption) (*common.Empty, error) {
 	req := c.c.NewRequest(c.name, "UserMgr.ConfirmRegistration", in)
-	out := new(common.Empty)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userMgrService) ConfirmPhoneRegistration(ctx context.Context, in *ConfirmPhoneRegistrationRequest, opts ...client.CallOption) (*common.Empty, error) {
-	req := c.c.NewRequest(c.name, "UserMgr.ConfirmPhoneRegistration", in)
 	out := new(common.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -293,6 +275,56 @@ func (c *userMgrService) FakeToken(ctx context.Context, in *FakeTokenRequest, op
 	return out, nil
 }
 
+func (c *userMgrService) PhoneVerify(ctx context.Context, in *PhoneVerifyRequest, opts ...client.CallOption) (*common.Empty, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.PhoneVerify", in)
+	out := new(common.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userMgrService) PhoneRegister(ctx context.Context, in *PhoneRegisterRequest, opts ...client.CallOption) (*common.Empty, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.PhoneRegister", in)
+	out := new(common.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userMgrService) PhoneLogin(ctx context.Context, in *PhoneLoginRequest, opts ...client.CallOption) (*LoginResponse, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.PhoneLogin", in)
+	out := new(LoginResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userMgrService) PhoneResetPassword(ctx context.Context, in *PhoneResetPasswordRequest, opts ...client.CallOption) (*common.Empty, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.PhoneResetPassword", in)
+	out := new(common.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userMgrService) PhoneChange(ctx context.Context, in *PhoneChangeRequest, opts ...client.CallOption) (*common.Empty, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.PhoneChange", in)
+	out := new(common.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for UserMgr service
 
 type UserMgrHandler interface {
@@ -300,15 +332,11 @@ type UserMgrHandler interface {
 	Register(context.Context, *RegisterRequest, *common.Empty) error
 	// Login login
 	Login(context.Context, *LoginRequest, *LoginResponse) error
-	// Phone Login login
-	PhoneLogin(context.Context, *PhoneLoginRequest, *LoginResponse) error
 	// Logout need verify permission , disable RefreshToken , access_token still work for 2 hours.
 	Logout(context.Context, *RefreshToken, *common.Empty) error
 	// RefreshToken reset token last access token
 	RefreshSession(context.Context, *RefreshToken, *AuthenticationResult) error
 	ConfirmRegistration(context.Context, *ConfirmRegistrationRequest, *common.Empty) error
-	// ConfirmPhoneRegistration confirm phone registration
-	ConfirmPhoneRegistration(context.Context, *ConfirmPhoneRegistrationRequest, *common.Empty) error
 	ForgotPassword(context.Context, *ForgotPasswordRequest, *common.Empty) error
 	ConfirmPassword(context.Context, *ConfirmPasswordRequest, *common.Empty) error
 	ChangePassword(context.Context, *ChangePasswordRequest, *common.Empty) error
@@ -323,17 +351,21 @@ type UserMgrHandler interface {
 	Fetch(context.Context, *FetchAccountsRequest, *FetchAccountsResponse) error
 	ApplyBecomeClusterProvider(context.Context, *ClusterProviderApplyRequest, *common.Empty) error
 	FakeToken(context.Context, *FakeTokenRequest, *FakeTokenResponse) error
+	// mobile app api
+	PhoneVerify(context.Context, *PhoneVerifyRequest, *common.Empty) error
+	PhoneRegister(context.Context, *PhoneRegisterRequest, *common.Empty) error
+	PhoneLogin(context.Context, *PhoneLoginRequest, *LoginResponse) error
+	PhoneResetPassword(context.Context, *PhoneResetPasswordRequest, *common.Empty) error
+	PhoneChange(context.Context, *PhoneChangeRequest, *common.Empty) error
 }
 
 func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server.HandlerOption) error {
 	type userMgr interface {
 		Register(ctx context.Context, in *RegisterRequest, out *common.Empty) error
 		Login(ctx context.Context, in *LoginRequest, out *LoginResponse) error
-		PhoneLogin(ctx context.Context, in *PhoneLoginRequest, out *LoginResponse) error
 		Logout(ctx context.Context, in *RefreshToken, out *common.Empty) error
 		RefreshSession(ctx context.Context, in *RefreshToken, out *AuthenticationResult) error
 		ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, out *common.Empty) error
-		ConfirmPhoneRegistration(ctx context.Context, in *ConfirmPhoneRegistrationRequest, out *common.Empty) error
 		ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, out *common.Empty) error
 		ConfirmPassword(ctx context.Context, in *ConfirmPasswordRequest, out *common.Empty) error
 		ChangePassword(ctx context.Context, in *ChangePasswordRequest, out *common.Empty) error
@@ -348,6 +380,11 @@ func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server
 		Fetch(ctx context.Context, in *FetchAccountsRequest, out *FetchAccountsResponse) error
 		ApplyBecomeClusterProvider(ctx context.Context, in *ClusterProviderApplyRequest, out *common.Empty) error
 		FakeToken(ctx context.Context, in *FakeTokenRequest, out *FakeTokenResponse) error
+		PhoneVerify(ctx context.Context, in *PhoneVerifyRequest, out *common.Empty) error
+		PhoneRegister(ctx context.Context, in *PhoneRegisterRequest, out *common.Empty) error
+		PhoneLogin(ctx context.Context, in *PhoneLoginRequest, out *LoginResponse) error
+		PhoneResetPassword(ctx context.Context, in *PhoneResetPasswordRequest, out *common.Empty) error
+		PhoneChange(ctx context.Context, in *PhoneChangeRequest, out *common.Empty) error
 	}
 	type UserMgr struct {
 		userMgr
@@ -368,10 +405,6 @@ func (h *userMgrHandler) Login(ctx context.Context, in *LoginRequest, out *Login
 	return h.UserMgrHandler.Login(ctx, in, out)
 }
 
-func (h *userMgrHandler) PhoneLogin(ctx context.Context, in *PhoneLoginRequest, out *LoginResponse) error {
-	return h.UserMgrHandler.PhoneLogin(ctx, in, out)
-}
-
 func (h *userMgrHandler) Logout(ctx context.Context, in *RefreshToken, out *common.Empty) error {
 	return h.UserMgrHandler.Logout(ctx, in, out)
 }
@@ -382,10 +415,6 @@ func (h *userMgrHandler) RefreshSession(ctx context.Context, in *RefreshToken, o
 
 func (h *userMgrHandler) ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, out *common.Empty) error {
 	return h.UserMgrHandler.ConfirmRegistration(ctx, in, out)
-}
-
-func (h *userMgrHandler) ConfirmPhoneRegistration(ctx context.Context, in *ConfirmPhoneRegistrationRequest, out *common.Empty) error {
-	return h.UserMgrHandler.ConfirmPhoneRegistration(ctx, in, out)
 }
 
 func (h *userMgrHandler) ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, out *common.Empty) error {
@@ -442,4 +471,24 @@ func (h *userMgrHandler) ApplyBecomeClusterProvider(ctx context.Context, in *Clu
 
 func (h *userMgrHandler) FakeToken(ctx context.Context, in *FakeTokenRequest, out *FakeTokenResponse) error {
 	return h.UserMgrHandler.FakeToken(ctx, in, out)
+}
+
+func (h *userMgrHandler) PhoneVerify(ctx context.Context, in *PhoneVerifyRequest, out *common.Empty) error {
+	return h.UserMgrHandler.PhoneVerify(ctx, in, out)
+}
+
+func (h *userMgrHandler) PhoneRegister(ctx context.Context, in *PhoneRegisterRequest, out *common.Empty) error {
+	return h.UserMgrHandler.PhoneRegister(ctx, in, out)
+}
+
+func (h *userMgrHandler) PhoneLogin(ctx context.Context, in *PhoneLoginRequest, out *LoginResponse) error {
+	return h.UserMgrHandler.PhoneLogin(ctx, in, out)
+}
+
+func (h *userMgrHandler) PhoneResetPassword(ctx context.Context, in *PhoneResetPasswordRequest, out *common.Empty) error {
+	return h.UserMgrHandler.PhoneResetPassword(ctx, in, out)
+}
+
+func (h *userMgrHandler) PhoneChange(ctx context.Context, in *PhoneChangeRequest, out *common.Empty) error {
+	return h.UserMgrHandler.PhoneChange(ctx, in, out)
 }
