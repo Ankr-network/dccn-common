@@ -25,7 +25,7 @@ const (
 	AnkrMicroError     = "AnkrMicroError:"
 	ScheduleError      = "ScheduleError:"
 	RateLimitError     = "RateLimitError:"
-	VerfiyError        = "VerifyError:"
+	VerifyError        = "VerifyError:"
 )
 
 var (
