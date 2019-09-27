@@ -108,9 +108,65 @@ service UserMgr {
             body: "*"
         };
     }
-//    rpc UserCount (common.proto.Empty) returns (UserCountResponse) {
-//        option (google.api.http).get = "/user/count";
-//    }
+
+    // mobile app api
+    rpc PhoneVerify(PhoneVerifyRequest) returns (common.proto.Empty) {
+        option (google.api.http) = {
+            post: "/phone_verify"
+            body: "*"
+        };
+    }
+    rpc PhoneRegister(PhoneRegisterRequest) returns (common.proto.Empty){
+        option (google.api.http) = {
+            post: "/phone_signup"
+            body: "*"
+        };
+    }
+    rpc PhoneLogin(PhoneLoginRequest) returns (LoginResponse) {
+        option (google.api.http) = {
+            post: "/phone_login"
+            body: "*"
+        };
+    }
+    rpc PhoneResetPassword(PhoneResetPasswordRequest) returns (common.proto.Empty){
+        option (google.api.http) = {
+            post: "/phone_reset_password"
+            body: "*"
+        };
+    }
+    rpc PhoneChange(PhoneChangeRequest) returns (common.proto.Empty) {
+        option (google.api.http) = {
+            post: "/phone_change"
+            body: "*"
+        };
+    }
+}
+
+message PhoneRegisterRequest {
+    string name = 1;
+    string phone = 2;
+    string password = 3;
+    string code = 4;
+}
+
+message PhoneVerifyRequest {
+    string phone = 1;
+}
+
+message PhoneResetPasswordRequest {
+    string phone = 1;
+    string code = 2;
+    string new_password = 3;
+} 
+
+message PhoneLoginRequest {
+    string phone = 1;
+    string password = 2;
+}
+
+message PhoneChangeRequest {
+    string new_phone = 1;
+    string code = 2;
 }
 
 //message UserCountResponse {
@@ -164,6 +220,7 @@ message User {
     string email = 2;
     UserStatus status = 3;
     UserAttributes attributes = 4;
+    string phone = 5;
 }
 
 enum UserStatus {
