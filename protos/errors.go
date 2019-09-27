@@ -24,6 +24,8 @@ const (
 	ClusterError       = "DcMgrError:"
 	AnkrMicroError     = "AnkrMicroError:"
 	ScheduleError      = "ScheduleError:"
+	RateLimitError     = "RateLimitError:"
+	VerfiyError        = "VerifyError:"
 )
 
 var (
@@ -74,16 +76,14 @@ var (
 	ErrNoAvailableDataCenter     = errors.New(NotFoundError + "No available data center")
 	ErrNotEnoughResource         = errors.New(ScheduleError + "Not enough resource")
 	ErrEmailFormat               = errors.New(ArgumentError + "Email invalid format")
-	ErrPhoneFormat               = errors.New(ArgumentError + "Phone invalid format")
 	ErrEmailShouldNotSame        = errors.New(ArgumentError + "Email should not same as before")
-	ErrPasswordFormat            = errors.New(AuthError + "Password invalid format")
-	ErrUserNameFormat            = errors.New(AuthError + "User name invalid format")
+	ErrPasswordFormat            = errors.New(ArgumentError + "Password invalid format")
+	ErrUserNameFormat            = errors.New(ArgumentError + "User name invalid format")
 	ErrPasswordLength            = errors.New(AuthError + "Password must be at least 6 characters long")
 	ErrCronJobScheduleFormat     = errors.New(ArgumentError + "Cronjob schedule invalid format")
 	ErrPassword                  = errors.New(AuthError + "Invalid password")
 	ErrPasswordShouldNotSame     = errors.New(AuthError + "Password should not same as before")
 	ErrEmailExit                 = errors.New(AuthError + "This email address is already associated with an existing account")
-	ErrPhoneExist                = errors.New(AuthError + "This phone is already associated with an existing account")
 	ErrTokenNeedRefresh          = errors.New(TokenError + "Token is unavailable, need call refresh token")
 	ErrTokenPassedMax            = errors.New(TokenError + "Tokens number reaches max limit(10)")
 	ErrTokenParseFailed          = errors.New(TokenError + "Tokens parse failed")
@@ -101,7 +101,6 @@ var (
 	ErrUserNotVariyPhone         = errors.New(ArgumentError + "User's phone has not been varified, please verify phone first")
 	ErrUserDeactive              = errors.New(AuthError + "Login failed, account has been locked, please contact admin")
 	ErrEmailNoExit               = errors.New(ArgumentError + "Login/Register get something wrong")
-	ErrPhoneNotExist             = errors.New(ArgumentError + "Phone not found")
 	ErrEmailNoMatch              = errors.New(ArgumentError + "Login/Register get something wrong")
 	ErrCanNotApplyAsProvider     = errors.New(LogicError + "User already has applied as a cluster provider")
 	ErrElasticsearchPing         = errors.New(LogMgrError + "Elasticsearch can not connect")
@@ -113,4 +112,7 @@ var (
 	ErrRabbitMQConnection        = errors.New(AnkrMicroError + "RabbitMQ connection error")
 	ErrRabbitMQChannel           = errors.New(AnkrMicroError + "RabbitMQ channel error")
 	ErrRabbitMQPublishFailed     = errors.New(AnkrMicroError + "RabbitMQ failed to publish a message")
+	ErrPhoneFormat               = errors.New(ArgumentError + "Phone invalid format")
+	ErrPhoneNotExist             = errors.New(ArgumentError + "Phone not found")
+	ErrPhoneExist                = errors.New(ArgumentError + "This phone is already associated with an existing account")
 )
