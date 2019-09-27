@@ -61,6 +61,7 @@ type UserMgrService interface {
 	FakeToken(ctx context.Context, in *FakeTokenRequest, opts ...client.CallOption) (*FakeTokenResponse, error)
 	// mobile app api
 	PhoneVerify(ctx context.Context, in *PhoneVerifyRequest, opts ...client.CallOption) (*common.Empty, error)
+	PhoneVerifyCheck(ctx context.Context, in *PhoneVerifyCheckRequest, opts ...client.CallOption) (*common.Empty, error)
 	PhoneRegister(ctx context.Context, in *PhoneRegisterRequest, opts ...client.CallOption) (*common.Empty, error)
 	PhoneLogin(ctx context.Context, in *PhoneLoginRequest, opts ...client.CallOption) (*LoginResponse, error)
 	PhoneResetPassword(ctx context.Context, in *PhoneResetPasswordRequest, opts ...client.CallOption) (*common.Empty, error)
@@ -285,6 +286,16 @@ func (c *userMgrService) PhoneVerify(ctx context.Context, in *PhoneVerifyRequest
 	return out, nil
 }
 
+func (c *userMgrService) PhoneVerifyCheck(ctx context.Context, in *PhoneVerifyCheckRequest, opts ...client.CallOption) (*common.Empty, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.PhoneVerifyCheck", in)
+	out := new(common.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userMgrService) PhoneRegister(ctx context.Context, in *PhoneRegisterRequest, opts ...client.CallOption) (*common.Empty, error) {
 	req := c.c.NewRequest(c.name, "UserMgr.PhoneRegister", in)
 	out := new(common.Empty)
@@ -353,6 +364,7 @@ type UserMgrHandler interface {
 	FakeToken(context.Context, *FakeTokenRequest, *FakeTokenResponse) error
 	// mobile app api
 	PhoneVerify(context.Context, *PhoneVerifyRequest, *common.Empty) error
+	PhoneVerifyCheck(context.Context, *PhoneVerifyCheckRequest, *common.Empty) error
 	PhoneRegister(context.Context, *PhoneRegisterRequest, *common.Empty) error
 	PhoneLogin(context.Context, *PhoneLoginRequest, *LoginResponse) error
 	PhoneResetPassword(context.Context, *PhoneResetPasswordRequest, *common.Empty) error
@@ -381,6 +393,7 @@ func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server
 		ApplyBecomeClusterProvider(ctx context.Context, in *ClusterProviderApplyRequest, out *common.Empty) error
 		FakeToken(ctx context.Context, in *FakeTokenRequest, out *FakeTokenResponse) error
 		PhoneVerify(ctx context.Context, in *PhoneVerifyRequest, out *common.Empty) error
+		PhoneVerifyCheck(ctx context.Context, in *PhoneVerifyCheckRequest, out *common.Empty) error
 		PhoneRegister(ctx context.Context, in *PhoneRegisterRequest, out *common.Empty) error
 		PhoneLogin(ctx context.Context, in *PhoneLoginRequest, out *LoginResponse) error
 		PhoneResetPassword(ctx context.Context, in *PhoneResetPasswordRequest, out *common.Empty) error
@@ -475,6 +488,10 @@ func (h *userMgrHandler) FakeToken(ctx context.Context, in *FakeTokenRequest, ou
 
 func (h *userMgrHandler) PhoneVerify(ctx context.Context, in *PhoneVerifyRequest, out *common.Empty) error {
 	return h.UserMgrHandler.PhoneVerify(ctx, in, out)
+}
+
+func (h *userMgrHandler) PhoneVerifyCheck(ctx context.Context, in *PhoneVerifyCheckRequest, out *common.Empty) error {
+	return h.UserMgrHandler.PhoneVerifyCheck(ctx, in, out)
 }
 
 func (h *userMgrHandler) PhoneRegister(ctx context.Context, in *PhoneRegisterRequest, out *common.Empty) error {

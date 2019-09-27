@@ -58,6 +58,7 @@ service UserMgr {
 
     // mobile app api
     rpc PhoneVerify(PhoneVerifyRequest) returns (common.proto.Empty) {}
+    rpc PhoneVerifyCheck(PhoneVerifyCheckRequest) returns (common.proto.Empty) {}
     rpc PhoneRegister(PhoneRegisterRequest) returns (common.proto.Empty){}
     rpc PhoneLogin(PhoneLoginRequest) returns (LoginResponse) {}
     rpc PhoneResetPassword(PhoneResetPasswordRequest) returns (common.proto.Empty){}
@@ -73,6 +74,11 @@ message PhoneRegisterRequest {
 
 message PhoneVerifyRequest {
     string phone = 1;
+}
+
+message PhoneVerifyCheckRequest {
+    string phone = 1;
+    string code = 2;
 }
 
 message PhoneResetPasswordRequest {
