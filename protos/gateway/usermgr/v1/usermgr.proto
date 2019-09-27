@@ -116,6 +116,13 @@ service UserMgr {
             body: "*"
         };
     }
+    rpc PhoneVerifyCheck(PhoneVerifyCheckRequest) returns (common.proto.Empty) {
+        option (google.api.http) = {
+            post: "/phone_verify_check"
+            body: "*"
+        };
+    }
+
     rpc PhoneRegister(PhoneRegisterRequest) returns (common.proto.Empty){
         option (google.api.http) = {
             post: "/phone_signup"
@@ -151,6 +158,11 @@ message PhoneRegisterRequest {
 
 message PhoneVerifyRequest {
     string phone = 1;
+}
+
+message PhoneVerifyCheckRequest {
+    string phone = 1;
+    string code = 2;
 }
 
 message PhoneResetPasswordRequest {

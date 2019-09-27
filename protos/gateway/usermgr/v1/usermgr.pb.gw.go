@@ -574,6 +574,40 @@ func local_request_UserMgr_PhoneVerify_0(ctx context.Context, marshaler runtime.
 
 }
 
+func request_UserMgr_PhoneVerifyCheck_0(ctx context.Context, marshaler runtime.Marshaler, client UserMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq PhoneVerifyCheckRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.PhoneVerifyCheck(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_UserMgr_PhoneVerifyCheck_0(ctx context.Context, marshaler runtime.Marshaler, server UserMgrServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq PhoneVerifyCheckRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.PhoneVerifyCheck(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 func request_UserMgr_PhoneRegister_0(ctx context.Context, marshaler runtime.Marshaler, client UserMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq PhoneRegisterRequest
 	var metadata runtime.ServerMetadata
@@ -1055,6 +1089,26 @@ func RegisterUserMgrHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 
 	})
 
+	mux.Handle("POST", pattern_UserMgr_PhoneVerifyCheck_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_UserMgr_PhoneVerifyCheck_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_UserMgr_PhoneVerifyCheck_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("POST", pattern_UserMgr_PhoneRegister_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1516,6 +1570,26 @@ func RegisterUserMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 
 	})
 
+	mux.Handle("POST", pattern_UserMgr_PhoneVerifyCheck_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_UserMgr_PhoneVerifyCheck_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_UserMgr_PhoneVerifyCheck_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("POST", pattern_UserMgr_PhoneRegister_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -1634,6 +1708,8 @@ var (
 
 	pattern_UserMgr_PhoneVerify_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"phone_verify"}, "", runtime.AssumeColonVerbOpt(true)))
 
+	pattern_UserMgr_PhoneVerifyCheck_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"phone_verify_check"}, "", runtime.AssumeColonVerbOpt(true)))
+
 	pattern_UserMgr_PhoneRegister_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"phone_signup"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_UserMgr_PhoneLogin_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"phone_login"}, "", runtime.AssumeColonVerbOpt(true)))
@@ -1677,6 +1753,8 @@ var (
 	forward_UserMgr_ApplyBecomeClusterProvider_0 = runtime.ForwardResponseMessage
 
 	forward_UserMgr_PhoneVerify_0 = runtime.ForwardResponseMessage
+
+	forward_UserMgr_PhoneVerifyCheck_0 = runtime.ForwardResponseMessage
 
 	forward_UserMgr_PhoneRegister_0 = runtime.ForwardResponseMessage
 
