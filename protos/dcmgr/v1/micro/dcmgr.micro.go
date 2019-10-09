@@ -219,7 +219,7 @@ type DCAPIService interface {
 	NetworkInfo(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*NetworkInfoResponse, error)
 	RegisterDataCenter(ctx context.Context, in *RegisterDataCenterRequest, opts ...client.CallOption) (*RegisterDataCenterResponse, error)
 	ResetDataCenter(ctx context.Context, in *RegisterDataCenterRequest, opts ...client.CallOption) (*RegisterDataCenterResponse, error)
-	MyDataCenter(ctx context.Context, in *MyDataCenterRequest, opts ...client.CallOption) (*common.DataCenterStatus, error)
+	MyDataCenter(ctx context.Context, in *MyDataCenterRequest, opts ...client.CallOption) (*common.DataCenterStatuses, error)
 	GetClusterCertificate(ctx context.Context, in *GetClusterCertificateRequest, opts ...client.CallOption) (*GetClusterCertificateResponse, error)
 }
 
@@ -291,9 +291,9 @@ func (c *dCAPIService) ResetDataCenter(ctx context.Context, in *RegisterDataCent
 	return out, nil
 }
 
-func (c *dCAPIService) MyDataCenter(ctx context.Context, in *MyDataCenterRequest, opts ...client.CallOption) (*common.DataCenterStatus, error) {
+func (c *dCAPIService) MyDataCenter(ctx context.Context, in *MyDataCenterRequest, opts ...client.CallOption) (*common.DataCenterStatuses, error) {
 	req := c.c.NewRequest(c.name, "DCAPI.MyDataCenter", in)
-	out := new(common.DataCenterStatus)
+	out := new(common.DataCenterStatuses)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -319,7 +319,7 @@ type DCAPIHandler interface {
 	NetworkInfo(context.Context, *common.Empty, *NetworkInfoResponse) error
 	RegisterDataCenter(context.Context, *RegisterDataCenterRequest, *RegisterDataCenterResponse) error
 	ResetDataCenter(context.Context, *RegisterDataCenterRequest, *RegisterDataCenterResponse) error
-	MyDataCenter(context.Context, *MyDataCenterRequest, *common.DataCenterStatus) error
+	MyDataCenter(context.Context, *MyDataCenterRequest, *common.DataCenterStatuses) error
 	GetClusterCertificate(context.Context, *GetClusterCertificateRequest, *GetClusterCertificateResponse) error
 }
 
@@ -330,7 +330,7 @@ func RegisterDCAPIHandler(s server.Server, hdlr DCAPIHandler, opts ...server.Han
 		NetworkInfo(ctx context.Context, in *common.Empty, out *NetworkInfoResponse) error
 		RegisterDataCenter(ctx context.Context, in *RegisterDataCenterRequest, out *RegisterDataCenterResponse) error
 		ResetDataCenter(ctx context.Context, in *RegisterDataCenterRequest, out *RegisterDataCenterResponse) error
-		MyDataCenter(ctx context.Context, in *MyDataCenterRequest, out *common.DataCenterStatus) error
+		MyDataCenter(ctx context.Context, in *MyDataCenterRequest, out *common.DataCenterStatuses) error
 		GetClusterCertificate(ctx context.Context, in *GetClusterCertificateRequest, out *GetClusterCertificateResponse) error
 	}
 	type DCAPI struct {
@@ -364,7 +364,7 @@ func (h *dCAPIHandler) ResetDataCenter(ctx context.Context, in *RegisterDataCent
 	return h.DCAPIHandler.ResetDataCenter(ctx, in, out)
 }
 
-func (h *dCAPIHandler) MyDataCenter(ctx context.Context, in *MyDataCenterRequest, out *common.DataCenterStatus) error {
+func (h *dCAPIHandler) MyDataCenter(ctx context.Context, in *MyDataCenterRequest, out *common.DataCenterStatuses) error {
 	return h.DCAPIHandler.MyDataCenter(ctx, in, out)
 }
 

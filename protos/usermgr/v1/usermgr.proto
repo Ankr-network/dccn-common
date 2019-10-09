@@ -249,6 +249,8 @@ enum FetchAccountsType {
     FetchAccountsEthereum = 1;
   	FetchAccountsDCCNTendermint = 2;
   	FetchAccountsBinance = 3;
+    FetchAccountsUSDT = 4;
+    FetchAccountsETH = 5;
 }
 
 message FetchAccountsRequest {
