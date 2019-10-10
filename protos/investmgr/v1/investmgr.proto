@@ -17,7 +17,78 @@ service InvestMgr {
     rpc StoreDailyProfit(StoreDailyAssetProfitRequest) returns (StoreDailyAssetProfitResponse) {}
     rpc GetAccumulatedProfit(AccumulatedProfitRequest) returns (AccumulatedProfitResponse) {}
     rpc PayProfit(PayProfitRequest) returns (PayProfitResponse) {}
+    rpc ListFinancialRecord(FinancialRecordRequest) returns (FinancialRecordResponse) {}
+    rpc ListTransactionRecord(TransactionRecordRequest) returns (TransactionRecordResponse) {}
+    rpc ListProfitRecord(ProfitRecordRequest) returns (ProfitRecordResponse) {}
     rpc Withdraw(WithdrawRequest) returns (WithdrawResponse) {}
+}
+
+message ProfitRecordRequest {
+    string req_id = 1;
+    string uid    = 2;
+    int32  page   = 3;
+    int32  limit  = 4;
+}
+
+message ProfitRecord {
+    string uid           = 1;
+    string currency_type = 2;
+    string token_addr    = 3;
+    double amount        = 4;
+    string create_time   = 5;
+}
+
+message ProfitRecordResponse {
+    string req_id  = 1;
+    int32  code    = 2;
+    string msg     = 3;
+    repeated ProfitRecord profit_records = 4;
+}
+
+message FinancialRecordRequest {
+    string req_id = 1;
+    string uid    = 2;
+    int32  page   = 3;
+    int32  limit  = 4;
+}
+
+message FinancialRecord {
+    string uid  = 1;
+    string type = 2;
+    string detail = 3;
+    int32  status = 4;
+    string create_time = 5;
+}
+
+message FinancialRecordResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    repeated FinancialRecord financial_records = 4;
+}
+
+message TransactionRecordRequest {
+    string req_id = 1;
+    string uid    = 2;
+    int32  page   = 3;
+    int32  limit  = 4;
+}
+
+message TransactionRecord {
+    string uid        = 1;
+    string product_id = 2;
+    int32  action     = 3;
+    int32  amount     = 4;
+    string detail     = 5;
+    int32  transaction_state = 6;
+    string transaction_time  = 7;
+}
+
+message TransactionRecordResponse {
+    string  req_id = 1;
+    int32   code   = 2;
+    string  msg    = 3;
+    repeated TransactionRecord transaction_records = 4;
 }
 
 message RewardCurrencyRequest {
