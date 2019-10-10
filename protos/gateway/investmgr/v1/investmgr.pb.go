@@ -27,7 +27,7 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type RewardCurrencyRequest struct {
 	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	AccountId            string   `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -65,9 +65,9 @@ func (m *RewardCurrencyRequest) GetReqId() string {
 	return ""
 }
 
-func (m *RewardCurrencyRequest) GetAccountId() string {
+func (m *RewardCurrencyRequest) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
 	}
 	return ""
 }
@@ -137,7 +137,7 @@ func (m *RewardCurrencyResponse) GetCurrencyType() string {
 
 type UpdateRewardCurrencyRequest struct {
 	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	AccountId            string   `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	CurrencyType         string   `protobuf:"bytes,3,opt,name=currency_type,json=currencyType,proto3" json:"currency_type,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -176,9 +176,9 @@ func (m *UpdateRewardCurrencyRequest) GetReqId() string {
 	return ""
 }
 
-func (m *UpdateRewardCurrencyRequest) GetAccountId() string {
+func (m *UpdateRewardCurrencyRequest) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
 	}
 	return ""
 }
@@ -680,7 +680,7 @@ func (m *UpdateFinancialProductResponse) GetMsg() string {
 
 type DepositRequest struct {
 	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	AccountId            string   `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	CurrencyType         string   `protobuf:"bytes,3,opt,name=currency_type,json=currencyType,proto3" json:"currency_type,omitempty"`
 	Amount               float64  `protobuf:"fixed64,4,opt,name=amount,proto3" json:"amount,omitempty"`
 	TokenAddr            string   `protobuf:"bytes,5,opt,name=token_addr,json=tokenAddr,proto3" json:"token_addr,omitempty"`
@@ -721,9 +721,9 @@ func (m *DepositRequest) GetReqId() string {
 	return ""
 }
 
-func (m *DepositRequest) GetAccountId() string {
+func (m *DepositRequest) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
 	}
 	return ""
 }
@@ -806,7 +806,7 @@ func (m *DepositResponse) GetMsg() string {
 
 type AccountBalanceRequest struct {
 	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	AccountId            string   `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -844,29 +844,99 @@ func (m *AccountBalanceRequest) GetReqId() string {
 	return ""
 }
 
-func (m *AccountBalanceRequest) GetAccountId() string {
+func (m *AccountBalanceRequest) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
+	}
+	return ""
+}
+
+type AccountBalance struct {
+	Uid                  string   `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	AnkrBalance          float64  `protobuf:"fixed64,2,opt,name=ankr_balance,json=ankrBalance,proto3" json:"ankr_balance,omitempty"`
+	UsdtBalance          float64  `protobuf:"fixed64,3,opt,name=usdt_balance,json=usdtBalance,proto3" json:"usdt_balance,omitempty"`
+	AnkrAddress          string   `protobuf:"bytes,4,opt,name=ankr_address,json=ankrAddress,proto3" json:"ankr_address,omitempty"`
+	UsdtAddress          string   `protobuf:"bytes,5,opt,name=usdt_address,json=usdtAddress,proto3" json:"usdt_address,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AccountBalance) Reset()         { *m = AccountBalance{} }
+func (m *AccountBalance) String() string { return proto.CompactTextString(m) }
+func (*AccountBalance) ProtoMessage()    {}
+func (*AccountBalance) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f33c0583f49eb00c, []int{14}
+}
+
+func (m *AccountBalance) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AccountBalance.Unmarshal(m, b)
+}
+func (m *AccountBalance) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AccountBalance.Marshal(b, m, deterministic)
+}
+func (m *AccountBalance) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AccountBalance.Merge(m, src)
+}
+func (m *AccountBalance) XXX_Size() int {
+	return xxx_messageInfo_AccountBalance.Size(m)
+}
+func (m *AccountBalance) XXX_DiscardUnknown() {
+	xxx_messageInfo_AccountBalance.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AccountBalance proto.InternalMessageInfo
+
+func (m *AccountBalance) GetUid() string {
+	if m != nil {
+		return m.Uid
+	}
+	return ""
+}
+
+func (m *AccountBalance) GetAnkrBalance() float64 {
+	if m != nil {
+		return m.AnkrBalance
+	}
+	return 0
+}
+
+func (m *AccountBalance) GetUsdtBalance() float64 {
+	if m != nil {
+		return m.UsdtBalance
+	}
+	return 0
+}
+
+func (m *AccountBalance) GetAnkrAddress() string {
+	if m != nil {
+		return m.AnkrAddress
+	}
+	return ""
+}
+
+func (m *AccountBalance) GetUsdtAddress() string {
+	if m != nil {
+		return m.UsdtAddress
 	}
 	return ""
 }
 
 type AccountBalanceResponse struct {
-	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	Code                 int32    `protobuf:"varint,2,opt,name=code,proto3" json:"code,omitempty"`
-	Msg                  string   `protobuf:"bytes,3,opt,name=msg,proto3" json:"msg,omitempty"`
-	AnkrBalance          float64  `protobuf:"fixed64,4,opt,name=ankr_balance,json=ankrBalance,proto3" json:"ankr_balance,omitempty"`
-	UsdtBalance          float64  `protobuf:"fixed64,5,opt,name=usdt_balance,json=usdtBalance,proto3" json:"usdt_balance,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
+	ReqId                string          `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
+	Code                 int32           `protobuf:"varint,2,opt,name=code,proto3" json:"code,omitempty"`
+	Msg                  string          `protobuf:"bytes,3,opt,name=msg,proto3" json:"msg,omitempty"`
+	AccountBalance       *AccountBalance `protobuf:"bytes,4,opt,name=account_balance,json=accountBalance,proto3" json:"account_balance,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
+	XXX_unrecognized     []byte          `json:"-"`
+	XXX_sizecache        int32           `json:"-"`
 }
 
 func (m *AccountBalanceResponse) Reset()         { *m = AccountBalanceResponse{} }
 func (m *AccountBalanceResponse) String() string { return proto.CompactTextString(m) }
 func (*AccountBalanceResponse) ProtoMessage()    {}
 func (*AccountBalanceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{14}
+	return fileDescriptor_f33c0583f49eb00c, []int{15}
 }
 
 func (m *AccountBalanceResponse) XXX_Unmarshal(b []byte) error {
@@ -908,23 +978,16 @@ func (m *AccountBalanceResponse) GetMsg() string {
 	return ""
 }
 
-func (m *AccountBalanceResponse) GetAnkrBalance() float64 {
+func (m *AccountBalanceResponse) GetAccountBalance() *AccountBalance {
 	if m != nil {
-		return m.AnkrBalance
+		return m.AccountBalance
 	}
-	return 0
-}
-
-func (m *AccountBalanceResponse) GetUsdtBalance() float64 {
-	if m != nil {
-		return m.UsdtBalance
-	}
-	return 0
+	return nil
 }
 
 type BuyAssetRequest struct {
 	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	AccountId            string   `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	ProductId            string   `protobuf:"bytes,3,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	ProductName          string   `protobuf:"bytes,4,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	Amount               int32    `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`
@@ -937,7 +1000,7 @@ func (m *BuyAssetRequest) Reset()         { *m = BuyAssetRequest{} }
 func (m *BuyAssetRequest) String() string { return proto.CompactTextString(m) }
 func (*BuyAssetRequest) ProtoMessage()    {}
 func (*BuyAssetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{15}
+	return fileDescriptor_f33c0583f49eb00c, []int{16}
 }
 
 func (m *BuyAssetRequest) XXX_Unmarshal(b []byte) error {
@@ -965,9 +1028,9 @@ func (m *BuyAssetRequest) GetReqId() string {
 	return ""
 }
 
-func (m *BuyAssetRequest) GetAccountId() string {
+func (m *BuyAssetRequest) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
 	}
 	return ""
 }
@@ -1006,7 +1069,7 @@ func (m *BuyAssetResponse) Reset()         { *m = BuyAssetResponse{} }
 func (m *BuyAssetResponse) String() string { return proto.CompactTextString(m) }
 func (*BuyAssetResponse) ProtoMessage()    {}
 func (*BuyAssetResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{16}
+	return fileDescriptor_f33c0583f49eb00c, []int{17}
 }
 
 func (m *BuyAssetResponse) XXX_Unmarshal(b []byte) error {
@@ -1050,7 +1113,7 @@ func (m *BuyAssetResponse) GetMsg() string {
 
 type InvestItemRequest struct {
 	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	AccountId            string   `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	ProductId            string   `protobuf:"bytes,3,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	AssetIds             []int32  `protobuf:"varint,4,rep,packed,name=asset_ids,json=assetIds,proto3" json:"asset_ids,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1062,7 +1125,7 @@ func (m *InvestItemRequest) Reset()         { *m = InvestItemRequest{} }
 func (m *InvestItemRequest) String() string { return proto.CompactTextString(m) }
 func (*InvestItemRequest) ProtoMessage()    {}
 func (*InvestItemRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{17}
+	return fileDescriptor_f33c0583f49eb00c, []int{18}
 }
 
 func (m *InvestItemRequest) XXX_Unmarshal(b []byte) error {
@@ -1090,9 +1153,9 @@ func (m *InvestItemRequest) GetReqId() string {
 	return ""
 }
 
-func (m *InvestItemRequest) GetAccountId() string {
+func (m *InvestItemRequest) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
 	}
 	return ""
 }
@@ -1113,7 +1176,7 @@ func (m *InvestItemRequest) GetAssetIds() []int32 {
 
 type InvestItem struct {
 	AssetId              int32    `protobuf:"varint,1,opt,name=asset_id,json=assetId,proto3" json:"asset_id,omitempty"`
-	AccountId            string   `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	ProductId            string   `protobuf:"bytes,3,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	ProductName          string   `protobuf:"bytes,4,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	TotalCost            int32    `protobuf:"varint,5,opt,name=total_cost,json=totalCost,proto3" json:"total_cost,omitempty"`
@@ -1128,7 +1191,7 @@ func (m *InvestItem) Reset()         { *m = InvestItem{} }
 func (m *InvestItem) String() string { return proto.CompactTextString(m) }
 func (*InvestItem) ProtoMessage()    {}
 func (*InvestItem) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{18}
+	return fileDescriptor_f33c0583f49eb00c, []int{19}
 }
 
 func (m *InvestItem) XXX_Unmarshal(b []byte) error {
@@ -1156,9 +1219,9 @@ func (m *InvestItem) GetAssetId() int32 {
 	return 0
 }
 
-func (m *InvestItem) GetAccountId() string {
+func (m *InvestItem) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
 	}
 	return ""
 }
@@ -1212,7 +1275,7 @@ func (m *InvestItemResponse) Reset()         { *m = InvestItemResponse{} }
 func (m *InvestItemResponse) String() string { return proto.CompactTextString(m) }
 func (*InvestItemResponse) ProtoMessage()    {}
 func (*InvestItemResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{19}
+	return fileDescriptor_f33c0583f49eb00c, []int{20}
 }
 
 func (m *InvestItemResponse) XXX_Unmarshal(b []byte) error {
@@ -1263,7 +1326,7 @@ func (m *InvestItemResponse) GetInvestItems() []*InvestItem {
 
 type SellAssetRequest struct {
 	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	AccountId            string   `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	ProductId            string   `protobuf:"bytes,3,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	ProductName          string   `protobuf:"bytes,4,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
 	Amount               int32    `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`
@@ -1276,7 +1339,7 @@ func (m *SellAssetRequest) Reset()         { *m = SellAssetRequest{} }
 func (m *SellAssetRequest) String() string { return proto.CompactTextString(m) }
 func (*SellAssetRequest) ProtoMessage()    {}
 func (*SellAssetRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{20}
+	return fileDescriptor_f33c0583f49eb00c, []int{21}
 }
 
 func (m *SellAssetRequest) XXX_Unmarshal(b []byte) error {
@@ -1304,9 +1367,9 @@ func (m *SellAssetRequest) GetReqId() string {
 	return ""
 }
 
-func (m *SellAssetRequest) GetAccountId() string {
+func (m *SellAssetRequest) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
 	}
 	return ""
 }
@@ -1345,7 +1408,7 @@ func (m *SellAssetResponse) Reset()         { *m = SellAssetResponse{} }
 func (m *SellAssetResponse) String() string { return proto.CompactTextString(m) }
 func (*SellAssetResponse) ProtoMessage()    {}
 func (*SellAssetResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{21}
+	return fileDescriptor_f33c0583f49eb00c, []int{22}
 }
 
 func (m *SellAssetResponse) XXX_Unmarshal(b []byte) error {
@@ -1389,9 +1452,10 @@ func (m *SellAssetResponse) GetMsg() string {
 
 type DailyAssetProfitRequest struct {
 	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	AssetIds             []int32  `protobuf:"varint,2,rep,packed,name=asset_ids,json=assetIds,proto3" json:"asset_ids,omitempty"`
-	StartTime            int64    `protobuf:"varint,3,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime              int64    `protobuf:"varint,4,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
+	AssetIds             []int32  `protobuf:"varint,3,rep,packed,name=asset_ids,json=assetIds,proto3" json:"asset_ids,omitempty"`
+	StartTime            int64    `protobuf:"varint,4,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              int64    `protobuf:"varint,5,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1401,7 +1465,7 @@ func (m *DailyAssetProfitRequest) Reset()         { *m = DailyAssetProfitRequest
 func (m *DailyAssetProfitRequest) String() string { return proto.CompactTextString(m) }
 func (*DailyAssetProfitRequest) ProtoMessage()    {}
 func (*DailyAssetProfitRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{22}
+	return fileDescriptor_f33c0583f49eb00c, []int{23}
 }
 
 func (m *DailyAssetProfitRequest) XXX_Unmarshal(b []byte) error {
@@ -1429,6 +1493,13 @@ func (m *DailyAssetProfitRequest) GetReqId() string {
 	return ""
 }
 
+func (m *DailyAssetProfitRequest) GetUid() string {
+	if m != nil {
+		return m.Uid
+	}
+	return ""
+}
+
 func (m *DailyAssetProfitRequest) GetAssetIds() []int32 {
 	if m != nil {
 		return m.AssetIds
@@ -1451,7 +1522,7 @@ func (m *DailyAssetProfitRequest) GetEndTime() int64 {
 }
 
 type AssetProfitDetail struct {
-	AccountId            string   `protobuf:"bytes,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
 	AssetId              int32    `protobuf:"varint,2,opt,name=asset_id,json=assetId,proto3" json:"asset_id,omitempty"`
 	ProductId            string   `protobuf:"bytes,3,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	ProductName          string   `protobuf:"bytes,4,opt,name=product_name,json=productName,proto3" json:"product_name,omitempty"`
@@ -1466,7 +1537,7 @@ func (m *AssetProfitDetail) Reset()         { *m = AssetProfitDetail{} }
 func (m *AssetProfitDetail) String() string { return proto.CompactTextString(m) }
 func (*AssetProfitDetail) ProtoMessage()    {}
 func (*AssetProfitDetail) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{23}
+	return fileDescriptor_f33c0583f49eb00c, []int{24}
 }
 
 func (m *AssetProfitDetail) XXX_Unmarshal(b []byte) error {
@@ -1487,9 +1558,9 @@ func (m *AssetProfitDetail) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_AssetProfitDetail proto.InternalMessageInfo
 
-func (m *AssetProfitDetail) GetAccountId() string {
+func (m *AssetProfitDetail) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
 	}
 	return ""
 }
@@ -1543,7 +1614,7 @@ func (m *DailyAssetProfitResponse) Reset()         { *m = DailyAssetProfitRespon
 func (m *DailyAssetProfitResponse) String() string { return proto.CompactTextString(m) }
 func (*DailyAssetProfitResponse) ProtoMessage()    {}
 func (*DailyAssetProfitResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{24}
+	return fileDescriptor_f33c0583f49eb00c, []int{25}
 }
 
 func (m *DailyAssetProfitResponse) XXX_Unmarshal(b []byte) error {
@@ -1593,7 +1664,7 @@ func (m *DailyAssetProfitResponse) GetAssetProfitDetails() []*AssetProfitDetail 
 }
 
 type AccumulatedProfit struct {
-	AccountId            string   `protobuf:"bytes,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
 	ProductId            string   `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
 	AssetId              int32    `protobuf:"varint,3,opt,name=asset_id,json=assetId,proto3" json:"asset_id,omitempty"`
 	AccumulatedProfit    float64  `protobuf:"fixed64,4,opt,name=accumulated_profit,json=accumulatedProfit,proto3" json:"accumulated_profit,omitempty"`
@@ -1606,7 +1677,7 @@ func (m *AccumulatedProfit) Reset()         { *m = AccumulatedProfit{} }
 func (m *AccumulatedProfit) String() string { return proto.CompactTextString(m) }
 func (*AccumulatedProfit) ProtoMessage()    {}
 func (*AccumulatedProfit) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{25}
+	return fileDescriptor_f33c0583f49eb00c, []int{26}
 }
 
 func (m *AccumulatedProfit) XXX_Unmarshal(b []byte) error {
@@ -1627,9 +1698,9 @@ func (m *AccumulatedProfit) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_AccumulatedProfit proto.InternalMessageInfo
 
-func (m *AccumulatedProfit) GetAccountId() string {
+func (m *AccumulatedProfit) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
 	}
 	return ""
 }
@@ -1657,8 +1728,8 @@ func (m *AccumulatedProfit) GetAccumulatedProfit() float64 {
 
 type AccumulatedProfitRequest struct {
 	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	AccountId            string   `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
-	ProductId            string   `protobuf:"bytes,3,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
+	AssetIds             []int32  `protobuf:"varint,3,rep,packed,name=asset_ids,json=assetIds,proto3" json:"asset_ids,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1668,7 +1739,7 @@ func (m *AccumulatedProfitRequest) Reset()         { *m = AccumulatedProfitReque
 func (m *AccumulatedProfitRequest) String() string { return proto.CompactTextString(m) }
 func (*AccumulatedProfitRequest) ProtoMessage()    {}
 func (*AccumulatedProfitRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{26}
+	return fileDescriptor_f33c0583f49eb00c, []int{27}
 }
 
 func (m *AccumulatedProfitRequest) XXX_Unmarshal(b []byte) error {
@@ -1696,18 +1767,18 @@ func (m *AccumulatedProfitRequest) GetReqId() string {
 	return ""
 }
 
-func (m *AccumulatedProfitRequest) GetAccountId() string {
+func (m *AccumulatedProfitRequest) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
 	}
 	return ""
 }
 
-func (m *AccumulatedProfitRequest) GetProductId() string {
+func (m *AccumulatedProfitRequest) GetAssetIds() []int32 {
 	if m != nil {
-		return m.ProductId
+		return m.AssetIds
 	}
-	return ""
+	return nil
 }
 
 type AccumulatedProfitResponse struct {
@@ -1724,7 +1795,7 @@ func (m *AccumulatedProfitResponse) Reset()         { *m = AccumulatedProfitResp
 func (m *AccumulatedProfitResponse) String() string { return proto.CompactTextString(m) }
 func (*AccumulatedProfitResponse) ProtoMessage()    {}
 func (*AccumulatedProfitResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{27}
+	return fileDescriptor_f33c0583f49eb00c, []int{28}
 }
 
 func (m *AccumulatedProfitResponse) XXX_Unmarshal(b []byte) error {
@@ -1785,7 +1856,7 @@ func (m *StoreDailyAssetProfitRequest) Reset()         { *m = StoreDailyAssetPro
 func (m *StoreDailyAssetProfitRequest) String() string { return proto.CompactTextString(m) }
 func (*StoreDailyAssetProfitRequest) ProtoMessage()    {}
 func (*StoreDailyAssetProfitRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{28}
+	return fileDescriptor_f33c0583f49eb00c, []int{29}
 }
 
 func (m *StoreDailyAssetProfitRequest) XXX_Unmarshal(b []byte) error {
@@ -1833,7 +1904,7 @@ func (m *StoreDailyAssetProfitResponse) Reset()         { *m = StoreDailyAssetPr
 func (m *StoreDailyAssetProfitResponse) String() string { return proto.CompactTextString(m) }
 func (*StoreDailyAssetProfitResponse) ProtoMessage()    {}
 func (*StoreDailyAssetProfitResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{29}
+	return fileDescriptor_f33c0583f49eb00c, []int{30}
 }
 
 func (m *StoreDailyAssetProfitResponse) XXX_Unmarshal(b []byte) error {
@@ -1877,7 +1948,7 @@ func (m *StoreDailyAssetProfitResponse) GetMsg() string {
 
 type PayProfitRequest struct {
 	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	AccountId            string   `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	CurrencyType         string   `protobuf:"bytes,3,opt,name=currency_type,json=currencyType,proto3" json:"currency_type,omitempty"`
 	TokenAddr            string   `protobuf:"bytes,4,opt,name=token_addr,json=tokenAddr,proto3" json:"token_addr,omitempty"`
 	Amount               float64  `protobuf:"fixed64,5,opt,name=amount,proto3" json:"amount,omitempty"`
@@ -1890,7 +1961,7 @@ func (m *PayProfitRequest) Reset()         { *m = PayProfitRequest{} }
 func (m *PayProfitRequest) String() string { return proto.CompactTextString(m) }
 func (*PayProfitRequest) ProtoMessage()    {}
 func (*PayProfitRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{30}
+	return fileDescriptor_f33c0583f49eb00c, []int{31}
 }
 
 func (m *PayProfitRequest) XXX_Unmarshal(b []byte) error {
@@ -1918,9 +1989,9 @@ func (m *PayProfitRequest) GetReqId() string {
 	return ""
 }
 
-func (m *PayProfitRequest) GetAccountId() string {
+func (m *PayProfitRequest) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
 	}
 	return ""
 }
@@ -1959,7 +2030,7 @@ func (m *PayProfitResponse) Reset()         { *m = PayProfitResponse{} }
 func (m *PayProfitResponse) String() string { return proto.CompactTextString(m) }
 func (*PayProfitResponse) ProtoMessage()    {}
 func (*PayProfitResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{31}
+	return fileDescriptor_f33c0583f49eb00c, []int{32}
 }
 
 func (m *PayProfitResponse) XXX_Unmarshal(b []byte) error {
@@ -2003,7 +2074,7 @@ func (m *PayProfitResponse) GetMsg() string {
 
 type WithdrawRequest struct {
 	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
-	AccountId            string   `protobuf:"bytes,2,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
 	CurrencyType         string   `protobuf:"bytes,3,opt,name=currency_type,json=currencyType,proto3" json:"currency_type,omitempty"`
 	FromAddr             string   `protobuf:"bytes,4,opt,name=from_addr,json=fromAddr,proto3" json:"from_addr,omitempty"`
 	ToAddr               string   `protobuf:"bytes,5,opt,name=to_addr,json=toAddr,proto3" json:"to_addr,omitempty"`
@@ -2017,7 +2088,7 @@ func (m *WithdrawRequest) Reset()         { *m = WithdrawRequest{} }
 func (m *WithdrawRequest) String() string { return proto.CompactTextString(m) }
 func (*WithdrawRequest) ProtoMessage()    {}
 func (*WithdrawRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{32}
+	return fileDescriptor_f33c0583f49eb00c, []int{33}
 }
 
 func (m *WithdrawRequest) XXX_Unmarshal(b []byte) error {
@@ -2045,9 +2116,9 @@ func (m *WithdrawRequest) GetReqId() string {
 	return ""
 }
 
-func (m *WithdrawRequest) GetAccountId() string {
+func (m *WithdrawRequest) GetUid() string {
 	if m != nil {
-		return m.AccountId
+		return m.Uid
 	}
 	return ""
 }
@@ -2093,7 +2164,7 @@ func (m *WithdrawResponse) Reset()         { *m = WithdrawResponse{} }
 func (m *WithdrawResponse) String() string { return proto.CompactTextString(m) }
 func (*WithdrawResponse) ProtoMessage()    {}
 func (*WithdrawResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f33c0583f49eb00c, []int{33}
+	return fileDescriptor_f33c0583f49eb00c, []int{34}
 }
 
 func (m *WithdrawResponse) XXX_Unmarshal(b []byte) error {
@@ -2135,6 +2206,613 @@ func (m *WithdrawResponse) GetMsg() string {
 	return ""
 }
 
+type ProfitRecordRequest struct {
+	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
+	Page                 int32    `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
+	Limit                int32    `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ProfitRecordRequest) Reset()         { *m = ProfitRecordRequest{} }
+func (m *ProfitRecordRequest) String() string { return proto.CompactTextString(m) }
+func (*ProfitRecordRequest) ProtoMessage()    {}
+func (*ProfitRecordRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f33c0583f49eb00c, []int{35}
+}
+
+func (m *ProfitRecordRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ProfitRecordRequest.Unmarshal(m, b)
+}
+func (m *ProfitRecordRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ProfitRecordRequest.Marshal(b, m, deterministic)
+}
+func (m *ProfitRecordRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ProfitRecordRequest.Merge(m, src)
+}
+func (m *ProfitRecordRequest) XXX_Size() int {
+	return xxx_messageInfo_ProfitRecordRequest.Size(m)
+}
+func (m *ProfitRecordRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ProfitRecordRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ProfitRecordRequest proto.InternalMessageInfo
+
+func (m *ProfitRecordRequest) GetReqId() string {
+	if m != nil {
+		return m.ReqId
+	}
+	return ""
+}
+
+func (m *ProfitRecordRequest) GetUid() string {
+	if m != nil {
+		return m.Uid
+	}
+	return ""
+}
+
+func (m *ProfitRecordRequest) GetPage() int32 {
+	if m != nil {
+		return m.Page
+	}
+	return 0
+}
+
+func (m *ProfitRecordRequest) GetLimit() int32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+type ProfitRecord struct {
+	Uid                  string   `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	CurrencyType         string   `protobuf:"bytes,2,opt,name=currency_type,json=currencyType,proto3" json:"currency_type,omitempty"`
+	TokenAddr            string   `protobuf:"bytes,3,opt,name=token_addr,json=tokenAddr,proto3" json:"token_addr,omitempty"`
+	Amount               float64  `protobuf:"fixed64,4,opt,name=amount,proto3" json:"amount,omitempty"`
+	CreateTime           string   `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ProfitRecord) Reset()         { *m = ProfitRecord{} }
+func (m *ProfitRecord) String() string { return proto.CompactTextString(m) }
+func (*ProfitRecord) ProtoMessage()    {}
+func (*ProfitRecord) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f33c0583f49eb00c, []int{36}
+}
+
+func (m *ProfitRecord) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ProfitRecord.Unmarshal(m, b)
+}
+func (m *ProfitRecord) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ProfitRecord.Marshal(b, m, deterministic)
+}
+func (m *ProfitRecord) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ProfitRecord.Merge(m, src)
+}
+func (m *ProfitRecord) XXX_Size() int {
+	return xxx_messageInfo_ProfitRecord.Size(m)
+}
+func (m *ProfitRecord) XXX_DiscardUnknown() {
+	xxx_messageInfo_ProfitRecord.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ProfitRecord proto.InternalMessageInfo
+
+func (m *ProfitRecord) GetUid() string {
+	if m != nil {
+		return m.Uid
+	}
+	return ""
+}
+
+func (m *ProfitRecord) GetCurrencyType() string {
+	if m != nil {
+		return m.CurrencyType
+	}
+	return ""
+}
+
+func (m *ProfitRecord) GetTokenAddr() string {
+	if m != nil {
+		return m.TokenAddr
+	}
+	return ""
+}
+
+func (m *ProfitRecord) GetAmount() float64 {
+	if m != nil {
+		return m.Amount
+	}
+	return 0
+}
+
+func (m *ProfitRecord) GetCreateTime() string {
+	if m != nil {
+		return m.CreateTime
+	}
+	return ""
+}
+
+type ProfitRecordResponse struct {
+	ReqId                string          `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
+	Code                 int32           `protobuf:"varint,2,opt,name=code,proto3" json:"code,omitempty"`
+	Msg                  string          `protobuf:"bytes,3,opt,name=msg,proto3" json:"msg,omitempty"`
+	ProfitRecords        []*ProfitRecord `protobuf:"bytes,4,rep,name=profit_records,json=profitRecords,proto3" json:"profit_records,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
+	XXX_unrecognized     []byte          `json:"-"`
+	XXX_sizecache        int32           `json:"-"`
+}
+
+func (m *ProfitRecordResponse) Reset()         { *m = ProfitRecordResponse{} }
+func (m *ProfitRecordResponse) String() string { return proto.CompactTextString(m) }
+func (*ProfitRecordResponse) ProtoMessage()    {}
+func (*ProfitRecordResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f33c0583f49eb00c, []int{37}
+}
+
+func (m *ProfitRecordResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ProfitRecordResponse.Unmarshal(m, b)
+}
+func (m *ProfitRecordResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ProfitRecordResponse.Marshal(b, m, deterministic)
+}
+func (m *ProfitRecordResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ProfitRecordResponse.Merge(m, src)
+}
+func (m *ProfitRecordResponse) XXX_Size() int {
+	return xxx_messageInfo_ProfitRecordResponse.Size(m)
+}
+func (m *ProfitRecordResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ProfitRecordResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ProfitRecordResponse proto.InternalMessageInfo
+
+func (m *ProfitRecordResponse) GetReqId() string {
+	if m != nil {
+		return m.ReqId
+	}
+	return ""
+}
+
+func (m *ProfitRecordResponse) GetCode() int32 {
+	if m != nil {
+		return m.Code
+	}
+	return 0
+}
+
+func (m *ProfitRecordResponse) GetMsg() string {
+	if m != nil {
+		return m.Msg
+	}
+	return ""
+}
+
+func (m *ProfitRecordResponse) GetProfitRecords() []*ProfitRecord {
+	if m != nil {
+		return m.ProfitRecords
+	}
+	return nil
+}
+
+type FinancialRecordRequest struct {
+	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
+	Page                 int32    `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
+	Limit                int32    `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *FinancialRecordRequest) Reset()         { *m = FinancialRecordRequest{} }
+func (m *FinancialRecordRequest) String() string { return proto.CompactTextString(m) }
+func (*FinancialRecordRequest) ProtoMessage()    {}
+func (*FinancialRecordRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f33c0583f49eb00c, []int{38}
+}
+
+func (m *FinancialRecordRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_FinancialRecordRequest.Unmarshal(m, b)
+}
+func (m *FinancialRecordRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_FinancialRecordRequest.Marshal(b, m, deterministic)
+}
+func (m *FinancialRecordRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FinancialRecordRequest.Merge(m, src)
+}
+func (m *FinancialRecordRequest) XXX_Size() int {
+	return xxx_messageInfo_FinancialRecordRequest.Size(m)
+}
+func (m *FinancialRecordRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_FinancialRecordRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FinancialRecordRequest proto.InternalMessageInfo
+
+func (m *FinancialRecordRequest) GetReqId() string {
+	if m != nil {
+		return m.ReqId
+	}
+	return ""
+}
+
+func (m *FinancialRecordRequest) GetUid() string {
+	if m != nil {
+		return m.Uid
+	}
+	return ""
+}
+
+func (m *FinancialRecordRequest) GetPage() int32 {
+	if m != nil {
+		return m.Page
+	}
+	return 0
+}
+
+func (m *FinancialRecordRequest) GetLimit() int32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+type FinancialRecord struct {
+	Uid                  string   `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	Type                 string   `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Detail               string   `protobuf:"bytes,3,opt,name=detail,proto3" json:"detail,omitempty"`
+	Status               int32    `protobuf:"varint,4,opt,name=status,proto3" json:"status,omitempty"`
+	CreateTime           string   `protobuf:"bytes,5,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *FinancialRecord) Reset()         { *m = FinancialRecord{} }
+func (m *FinancialRecord) String() string { return proto.CompactTextString(m) }
+func (*FinancialRecord) ProtoMessage()    {}
+func (*FinancialRecord) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f33c0583f49eb00c, []int{39}
+}
+
+func (m *FinancialRecord) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_FinancialRecord.Unmarshal(m, b)
+}
+func (m *FinancialRecord) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_FinancialRecord.Marshal(b, m, deterministic)
+}
+func (m *FinancialRecord) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FinancialRecord.Merge(m, src)
+}
+func (m *FinancialRecord) XXX_Size() int {
+	return xxx_messageInfo_FinancialRecord.Size(m)
+}
+func (m *FinancialRecord) XXX_DiscardUnknown() {
+	xxx_messageInfo_FinancialRecord.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FinancialRecord proto.InternalMessageInfo
+
+func (m *FinancialRecord) GetUid() string {
+	if m != nil {
+		return m.Uid
+	}
+	return ""
+}
+
+func (m *FinancialRecord) GetType() string {
+	if m != nil {
+		return m.Type
+	}
+	return ""
+}
+
+func (m *FinancialRecord) GetDetail() string {
+	if m != nil {
+		return m.Detail
+	}
+	return ""
+}
+
+func (m *FinancialRecord) GetStatus() int32 {
+	if m != nil {
+		return m.Status
+	}
+	return 0
+}
+
+func (m *FinancialRecord) GetCreateTime() string {
+	if m != nil {
+		return m.CreateTime
+	}
+	return ""
+}
+
+type FinancialRecordResponse struct {
+	ReqId                string             `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
+	Code                 int32              `protobuf:"varint,2,opt,name=code,proto3" json:"code,omitempty"`
+	Msg                  string             `protobuf:"bytes,3,opt,name=msg,proto3" json:"msg,omitempty"`
+	FinancialRecords     []*FinancialRecord `protobuf:"bytes,4,rep,name=financial_records,json=financialRecords,proto3" json:"financial_records,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}           `json:"-"`
+	XXX_unrecognized     []byte             `json:"-"`
+	XXX_sizecache        int32              `json:"-"`
+}
+
+func (m *FinancialRecordResponse) Reset()         { *m = FinancialRecordResponse{} }
+func (m *FinancialRecordResponse) String() string { return proto.CompactTextString(m) }
+func (*FinancialRecordResponse) ProtoMessage()    {}
+func (*FinancialRecordResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f33c0583f49eb00c, []int{40}
+}
+
+func (m *FinancialRecordResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_FinancialRecordResponse.Unmarshal(m, b)
+}
+func (m *FinancialRecordResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_FinancialRecordResponse.Marshal(b, m, deterministic)
+}
+func (m *FinancialRecordResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_FinancialRecordResponse.Merge(m, src)
+}
+func (m *FinancialRecordResponse) XXX_Size() int {
+	return xxx_messageInfo_FinancialRecordResponse.Size(m)
+}
+func (m *FinancialRecordResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_FinancialRecordResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_FinancialRecordResponse proto.InternalMessageInfo
+
+func (m *FinancialRecordResponse) GetReqId() string {
+	if m != nil {
+		return m.ReqId
+	}
+	return ""
+}
+
+func (m *FinancialRecordResponse) GetCode() int32 {
+	if m != nil {
+		return m.Code
+	}
+	return 0
+}
+
+func (m *FinancialRecordResponse) GetMsg() string {
+	if m != nil {
+		return m.Msg
+	}
+	return ""
+}
+
+func (m *FinancialRecordResponse) GetFinancialRecords() []*FinancialRecord {
+	if m != nil {
+		return m.FinancialRecords
+	}
+	return nil
+}
+
+type TransactionRecordRequest struct {
+	ReqId                string   `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
+	Uid                  string   `protobuf:"bytes,2,opt,name=uid,proto3" json:"uid,omitempty"`
+	Page                 int32    `protobuf:"varint,3,opt,name=page,proto3" json:"page,omitempty"`
+	Limit                int32    `protobuf:"varint,4,opt,name=limit,proto3" json:"limit,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TransactionRecordRequest) Reset()         { *m = TransactionRecordRequest{} }
+func (m *TransactionRecordRequest) String() string { return proto.CompactTextString(m) }
+func (*TransactionRecordRequest) ProtoMessage()    {}
+func (*TransactionRecordRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f33c0583f49eb00c, []int{41}
+}
+
+func (m *TransactionRecordRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TransactionRecordRequest.Unmarshal(m, b)
+}
+func (m *TransactionRecordRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TransactionRecordRequest.Marshal(b, m, deterministic)
+}
+func (m *TransactionRecordRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TransactionRecordRequest.Merge(m, src)
+}
+func (m *TransactionRecordRequest) XXX_Size() int {
+	return xxx_messageInfo_TransactionRecordRequest.Size(m)
+}
+func (m *TransactionRecordRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_TransactionRecordRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TransactionRecordRequest proto.InternalMessageInfo
+
+func (m *TransactionRecordRequest) GetReqId() string {
+	if m != nil {
+		return m.ReqId
+	}
+	return ""
+}
+
+func (m *TransactionRecordRequest) GetUid() string {
+	if m != nil {
+		return m.Uid
+	}
+	return ""
+}
+
+func (m *TransactionRecordRequest) GetPage() int32 {
+	if m != nil {
+		return m.Page
+	}
+	return 0
+}
+
+func (m *TransactionRecordRequest) GetLimit() int32 {
+	if m != nil {
+		return m.Limit
+	}
+	return 0
+}
+
+type TransactionRecord struct {
+	Uid                  string   `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	ProductId            string   `protobuf:"bytes,2,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Action               int32    `protobuf:"varint,3,opt,name=action,proto3" json:"action,omitempty"`
+	Amount               int32    `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`
+	Detail               string   `protobuf:"bytes,5,opt,name=detail,proto3" json:"detail,omitempty"`
+	TransactionState     int32    `protobuf:"varint,6,opt,name=transaction_state,json=transactionState,proto3" json:"transaction_state,omitempty"`
+	TransactionTime      string   `protobuf:"bytes,7,opt,name=transaction_time,json=transactionTime,proto3" json:"transaction_time,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *TransactionRecord) Reset()         { *m = TransactionRecord{} }
+func (m *TransactionRecord) String() string { return proto.CompactTextString(m) }
+func (*TransactionRecord) ProtoMessage()    {}
+func (*TransactionRecord) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f33c0583f49eb00c, []int{42}
+}
+
+func (m *TransactionRecord) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TransactionRecord.Unmarshal(m, b)
+}
+func (m *TransactionRecord) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TransactionRecord.Marshal(b, m, deterministic)
+}
+func (m *TransactionRecord) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TransactionRecord.Merge(m, src)
+}
+func (m *TransactionRecord) XXX_Size() int {
+	return xxx_messageInfo_TransactionRecord.Size(m)
+}
+func (m *TransactionRecord) XXX_DiscardUnknown() {
+	xxx_messageInfo_TransactionRecord.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TransactionRecord proto.InternalMessageInfo
+
+func (m *TransactionRecord) GetUid() string {
+	if m != nil {
+		return m.Uid
+	}
+	return ""
+}
+
+func (m *TransactionRecord) GetProductId() string {
+	if m != nil {
+		return m.ProductId
+	}
+	return ""
+}
+
+func (m *TransactionRecord) GetAction() int32 {
+	if m != nil {
+		return m.Action
+	}
+	return 0
+}
+
+func (m *TransactionRecord) GetAmount() int32 {
+	if m != nil {
+		return m.Amount
+	}
+	return 0
+}
+
+func (m *TransactionRecord) GetDetail() string {
+	if m != nil {
+		return m.Detail
+	}
+	return ""
+}
+
+func (m *TransactionRecord) GetTransactionState() int32 {
+	if m != nil {
+		return m.TransactionState
+	}
+	return 0
+}
+
+func (m *TransactionRecord) GetTransactionTime() string {
+	if m != nil {
+		return m.TransactionTime
+	}
+	return ""
+}
+
+type TransactionRecordResponse struct {
+	ReqId                string               `protobuf:"bytes,1,opt,name=req_id,json=reqId,proto3" json:"req_id,omitempty"`
+	Code                 int32                `protobuf:"varint,2,opt,name=code,proto3" json:"code,omitempty"`
+	Msg                  string               `protobuf:"bytes,3,opt,name=msg,proto3" json:"msg,omitempty"`
+	TransactionRecords   []*TransactionRecord `protobuf:"bytes,4,rep,name=transaction_records,json=transactionRecords,proto3" json:"transaction_records,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
+	XXX_unrecognized     []byte               `json:"-"`
+	XXX_sizecache        int32                `json:"-"`
+}
+
+func (m *TransactionRecordResponse) Reset()         { *m = TransactionRecordResponse{} }
+func (m *TransactionRecordResponse) String() string { return proto.CompactTextString(m) }
+func (*TransactionRecordResponse) ProtoMessage()    {}
+func (*TransactionRecordResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f33c0583f49eb00c, []int{43}
+}
+
+func (m *TransactionRecordResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_TransactionRecordResponse.Unmarshal(m, b)
+}
+func (m *TransactionRecordResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_TransactionRecordResponse.Marshal(b, m, deterministic)
+}
+func (m *TransactionRecordResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TransactionRecordResponse.Merge(m, src)
+}
+func (m *TransactionRecordResponse) XXX_Size() int {
+	return xxx_messageInfo_TransactionRecordResponse.Size(m)
+}
+func (m *TransactionRecordResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_TransactionRecordResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TransactionRecordResponse proto.InternalMessageInfo
+
+func (m *TransactionRecordResponse) GetReqId() string {
+	if m != nil {
+		return m.ReqId
+	}
+	return ""
+}
+
+func (m *TransactionRecordResponse) GetCode() int32 {
+	if m != nil {
+		return m.Code
+	}
+	return 0
+}
+
+func (m *TransactionRecordResponse) GetMsg() string {
+	if m != nil {
+		return m.Msg
+	}
+	return ""
+}
+
+func (m *TransactionRecordResponse) GetTransactionRecords() []*TransactionRecord {
+	if m != nil {
+		return m.TransactionRecords
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*RewardCurrencyRequest)(nil), "gwinvestmgr.RewardCurrencyRequest")
 	proto.RegisterType((*RewardCurrencyResponse)(nil), "gwinvestmgr.RewardCurrencyResponse")
@@ -2150,6 +2828,7 @@ func init() {
 	proto.RegisterType((*DepositRequest)(nil), "gwinvestmgr.DepositRequest")
 	proto.RegisterType((*DepositResponse)(nil), "gwinvestmgr.DepositResponse")
 	proto.RegisterType((*AccountBalanceRequest)(nil), "gwinvestmgr.AccountBalanceRequest")
+	proto.RegisterType((*AccountBalance)(nil), "gwinvestmgr.AccountBalance")
 	proto.RegisterType((*AccountBalanceResponse)(nil), "gwinvestmgr.AccountBalanceResponse")
 	proto.RegisterType((*BuyAssetRequest)(nil), "gwinvestmgr.BuyAssetRequest")
 	proto.RegisterType((*BuyAssetResponse)(nil), "gwinvestmgr.BuyAssetResponse")
@@ -2170,107 +2849,138 @@ func init() {
 	proto.RegisterType((*PayProfitResponse)(nil), "gwinvestmgr.PayProfitResponse")
 	proto.RegisterType((*WithdrawRequest)(nil), "gwinvestmgr.WithdrawRequest")
 	proto.RegisterType((*WithdrawResponse)(nil), "gwinvestmgr.WithdrawResponse")
+	proto.RegisterType((*ProfitRecordRequest)(nil), "gwinvestmgr.ProfitRecordRequest")
+	proto.RegisterType((*ProfitRecord)(nil), "gwinvestmgr.ProfitRecord")
+	proto.RegisterType((*ProfitRecordResponse)(nil), "gwinvestmgr.ProfitRecordResponse")
+	proto.RegisterType((*FinancialRecordRequest)(nil), "gwinvestmgr.FinancialRecordRequest")
+	proto.RegisterType((*FinancialRecord)(nil), "gwinvestmgr.FinancialRecord")
+	proto.RegisterType((*FinancialRecordResponse)(nil), "gwinvestmgr.FinancialRecordResponse")
+	proto.RegisterType((*TransactionRecordRequest)(nil), "gwinvestmgr.TransactionRecordRequest")
+	proto.RegisterType((*TransactionRecord)(nil), "gwinvestmgr.TransactionRecord")
+	proto.RegisterType((*TransactionRecordResponse)(nil), "gwinvestmgr.TransactionRecordResponse")
 }
 
 func init() { proto.RegisterFile("investmgr/v1/investmgr.proto", fileDescriptor_f33c0583f49eb00c) }
 
 var fileDescriptor_f33c0583f49eb00c = []byte{
-	// 1510 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x59, 0x3b, 0x6f, 0x1b, 0xc7,
-	0x16, 0xc6, 0xf0, 0x25, 0xf2, 0x50, 0xb2, 0xc8, 0xb1, 0x28, 0x51, 0x14, 0x25, 0xcb, 0xeb, 0xeb,
-	0x0b, 0x5d, 0x1b, 0xd7, 0x8b, 0x38, 0x9d, 0x3b, 0xc9, 0x46, 0x04, 0x02, 0x7e, 0x08, 0xb4, 0x83,
-	0x14, 0x79, 0x10, 0x23, 0xee, 0x88, 0x59, 0x98, 0xdc, 0xa5, 0x77, 0x86, 0x56, 0x68, 0x20, 0x8d,
-	0xed, 0x24, 0x45, 0x90, 0x34, 0x29, 0x53, 0x25, 0x48, 0xe3, 0x3e, 0x55, 0x7e, 0x41, 0xfa, 0xfc,
-	0x85, 0x34, 0xa9, 0xf2, 0x17, 0x82, 0x79, 0x2c, 0xb9, 0x2f, 0x92, 0xb2, 0xbd, 0x4a, 0xd2, 0xed,
-	0x9c, 0x39, 0x9a, 0xf3, 0x9d, 0xf7, 0x39, 0x14, 0x34, 0x6d, 0xe7, 0x29, 0x65, 0x7c, 0xd0, 0xf3,
-	0xcc, 0xa7, 0xef, 0x98, 0x93, 0xc3, 0x8d, 0xa1, 0xe7, 0x72, 0x17, 0x97, 0x7b, 0xa7, 0x13, 0x52,
-	0xa3, 0xd9, 0x73, 0xdd, 0x5e, 0x9f, 0x9a, 0x64, 0x68, 0x9b, 0xc4, 0x71, 0x5c, 0x4e, 0xb8, 0xed,
-	0x3a, 0x4c, 0xb1, 0x1a, 0xf7, 0xa0, 0xd6, 0xa6, 0xa7, 0xc4, 0xb3, 0x6e, 0x8f, 0x3c, 0x8f, 0x3a,
-	0xdd, 0x71, 0x9b, 0x3e, 0x19, 0x51, 0xc6, 0x71, 0x0d, 0x0a, 0x1e, 0x7d, 0xd2, 0xb1, 0xad, 0x3a,
-	0xda, 0x45, 0x7b, 0xa5, 0x76, 0xde, 0xa3, 0x4f, 0x5a, 0x16, 0xde, 0x06, 0x20, 0xdd, 0xae, 0x3b,
-	0x72, 0xb8, 0xb8, 0xca, 0xc8, 0xab, 0x92, 0xa6, 0xb4, 0x2c, 0xe3, 0x19, 0xac, 0x47, 0x9f, 0x63,
-	0x43, 0xd7, 0x61, 0x74, 0xd6, 0x7b, 0x18, 0x72, 0x5d, 0xd7, 0xa2, 0xf2, 0xa5, 0x7c, 0x5b, 0x7e,
-	0xe3, 0x0a, 0x64, 0x07, 0xac, 0x57, 0xcf, 0x4a, 0x3e, 0xf1, 0x89, 0xaf, 0xc0, 0x4a, 0x57, 0x3f,
-	0xd8, 0xe1, 0xe3, 0x21, 0xad, 0xe7, 0xe4, 0xdd, 0xb2, 0x4f, 0x7c, 0x34, 0x1e, 0x52, 0xe3, 0x33,
-	0xd8, 0x7a, 0x7f, 0x68, 0x11, 0x4e, 0x53, 0x54, 0x28, 0x2e, 0x39, 0x9b, 0x20, 0xf9, 0x43, 0x68,
-	0x26, 0x4b, 0x4e, 0x41, 0x77, 0xe3, 0xcf, 0x0c, 0x54, 0xde, 0xb3, 0x1d, 0xe2, 0x74, 0x6d, 0xd2,
-	0x3f, 0xf2, 0x5c, 0x6b, 0xd4, 0xe5, 0x02, 0xf5, 0x50, 0x7d, 0x4e, 0x5f, 0x2d, 0x69, 0x4a, 0xcb,
-	0xc2, 0x97, 0x61, 0xd9, 0xbf, 0x76, 0xc8, 0x80, 0x6a, 0xb5, 0xca, 0x9a, 0x76, 0x9f, 0x0c, 0x28,
-	0xbe, 0x04, 0x65, 0xee, 0x72, 0xd2, 0xef, 0x48, 0x4d, 0xa5, 0xc0, 0x7c, 0x1b, 0x24, 0xe9, 0xb6,
-	0xa0, 0xe0, 0x75, 0x28, 0xb8, 0x9e, 0xdd, 0xb3, 0x1d, 0x6d, 0x6c, 0x7d, 0x12, 0x74, 0x8b, 0x72,
-	0x62, 0xf7, 0xeb, 0x79, 0x45, 0x57, 0x27, 0x6c, 0xc0, 0xf2, 0x90, 0x78, 0xdc, 0xee, 0xda, 0x43,
-	0xe2, 0x70, 0x56, 0x2f, 0xc8, 0x17, 0x43, 0x34, 0xf1, 0xb7, 0x8c, 0x13, 0x3e, 0x62, 0xf5, 0x25,
-	0x79, 0xab, 0x4f, 0x42, 0x9d, 0x81, 0xed, 0x74, 0x54, 0xd0, 0xd6, 0x8b, 0xf2, 0xae, 0x34, 0xb0,
-	0x9d, 0x96, 0x24, 0xe0, 0xeb, 0x50, 0x25, 0x8e, 0x33, 0x22, 0x7d, 0xfb, 0x19, 0xb5, 0x3a, 0x1e,
-	0xe5, 0x23, 0xcf, 0xa9, 0x97, 0x76, 0xd1, 0x1e, 0x6a, 0x57, 0xa6, 0x17, 0x6d, 0x49, 0x17, 0x8a,
-	0x75, 0x3d, 0x4a, 0x38, 0xed, 0x70, 0x7b, 0x40, 0xeb, 0xb0, 0x8b, 0xf6, 0xb2, 0x6d, 0x50, 0xa4,
-	0x47, 0xb6, 0xd2, 0x7c, 0x24, 0xbd, 0xa5, 0x18, 0xca, 0x8a, 0x41, 0x91, 0x04, 0x83, 0xf1, 0x10,
-	0xb6, 0xee, 0xda, 0x8c, 0x47, 0x8d, 0xbe, 0x38, 0x90, 0x02, 0x2e, 0xc9, 0x44, 0x5c, 0x62, 0xbc,
-	0x42, 0xd0, 0x4c, 0x7e, 0x35, 0x8d, 0x04, 0xb9, 0x0b, 0xf8, 0xc4, 0x7f, 0xb8, 0xa3, 0x85, 0xb2,
-	0x7a, 0x6e, 0x37, 0xbb, 0x57, 0xbe, 0xb9, 0x7d, 0x23, 0x50, 0x0e, 0x6e, 0xc4, 0xe4, 0x57, 0x4f,
-	0x22, 0x14, 0x66, 0xbc, 0x40, 0xd0, 0x7c, 0xc8, 0x5d, 0x8f, 0xbe, 0xa6, 0x09, 0x92, 0x51, 0x64,
-	0xde, 0x10, 0xc5, 0x47, 0xb0, 0x3d, 0x03, 0x44, 0x1a, 0x69, 0xf5, 0x12, 0xc1, 0xb6, 0x4a, 0xda,
-	0x7f, 0x54, 0xc9, 0x8f, 0x61, 0x67, 0x16, 0x8a, 0x34, 0xb4, 0xfc, 0x11, 0xc1, 0x85, 0x3b, 0x74,
-	0xe8, 0x32, 0x9b, 0x9f, 0x7f, 0x1d, 0x14, 0xe9, 0x4d, 0x06, 0xb2, 0x9c, 0xe4, 0x64, 0x72, 0xea,
-	0x93, 0x78, 0x9b, 0xbb, 0x8f, 0xa9, 0xd3, 0x21, 0x96, 0xe5, 0xe9, 0xb2, 0x51, 0x92, 0x94, 0x7d,
-	0xcb, 0xf2, 0x8c, 0xfb, 0xb0, 0x3a, 0xc1, 0x98, 0x86, 0xd2, 0xf7, 0xa0, 0xb6, 0xaf, 0x80, 0x1f,
-	0x90, 0x3e, 0x71, 0xba, 0xf4, 0xed, 0x7a, 0xda, 0xf7, 0x08, 0xd6, 0xa3, 0xef, 0xa5, 0x91, 0xb3,
-	0x97, 0x61, 0x99, 0x38, 0x8f, 0xbd, 0xce, 0xb1, 0x7a, 0x54, 0xdb, 0xac, 0x2c, 0x68, 0x5a, 0x8e,
-	0x60, 0x19, 0x31, 0x8b, 0x4f, 0x58, 0xf2, 0x8a, 0x45, 0xd0, 0x34, 0x8b, 0xf1, 0x03, 0x82, 0xd5,
-	0x83, 0xd1, 0x78, 0x9f, 0x31, 0xfa, 0x96, 0x2e, 0x0e, 0x17, 0xb0, 0xec, 0xa2, 0x9e, 0x92, 0x8b,
-	0xf7, 0x94, 0xa9, 0xff, 0xf3, 0xaa, 0xbc, 0xab, 0x93, 0xf1, 0x00, 0x2a, 0x53, 0x88, 0x69, 0x78,
-	0xf8, 0x0b, 0x04, 0x55, 0xd5, 0x1b, 0x5a, 0x9c, 0x0e, 0xce, 0x55, 0xed, 0x2d, 0x28, 0x11, 0x01,
-	0xbc, 0x63, 0x5b, 0xaa, 0xa0, 0xe6, 0xdb, 0x45, 0x49, 0x68, 0x59, 0xcc, 0xf8, 0x03, 0x01, 0x4c,
-	0x71, 0xe0, 0x4d, 0x28, 0xfa, 0xbc, 0x12, 0x42, 0xbe, 0xbd, 0xa4, 0x59, 0xcf, 0xdf, 0xf6, 0x32,
-	0xc7, 0x54, 0x3f, 0x67, 0xbe, 0xfd, 0x4b, 0xba, 0x9d, 0x33, 0x1e, 0xed, 0x8a, 0x85, 0x45, 0x5d,
-	0x71, 0x29, 0xd6, 0x15, 0xbf, 0x41, 0x80, 0x83, 0x36, 0x4f, 0x23, 0x05, 0x6e, 0xc1, 0xb2, 0x2a,
-	0x97, 0x1d, 0x9b, 0xd3, 0x81, 0xdf, 0xb0, 0x36, 0x42, 0x55, 0x34, 0x20, 0xb3, 0x6c, 0x4f, 0xbe,
-	0x99, 0x28, 0x6d, 0x95, 0x87, 0xb4, 0xdf, 0xff, 0x57, 0x47, 0xfe, 0x11, 0x54, 0x03, 0x18, 0xd3,
-	0x08, 0xfd, 0xaf, 0x10, 0x6c, 0xdc, 0x21, 0x76, 0x5f, 0xa5, 0xd3, 0x91, 0xe7, 0x9e, 0x2c, 0x2c,
-	0xed, 0xa1, 0x10, 0xce, 0x84, 0x43, 0x58, 0xe8, 0xce, 0x38, 0xf1, 0xb8, 0x72, 0x7b, 0x56, 0xba,
-	0xbd, 0x24, 0x29, 0x32, 0x2c, 0x36, 0xa1, 0x48, 0x1d, 0x4b, 0x5d, 0xe6, 0xe4, 0xe5, 0x12, 0x75,
-	0x2c, 0x19, 0x10, 0xbf, 0x22, 0xa8, 0x06, 0x40, 0xdc, 0x51, 0x63, 0x60, 0xd8, 0xd4, 0x28, 0x6a,
-	0xea, 0x60, 0x8a, 0x64, 0x62, 0x29, 0xf2, 0xf6, 0x5e, 0x18, 0x4a, 0x2c, 0xba, 0x50, 0xea, 0x93,
-	0x88, 0x6d, 0xf5, 0x15, 0x0a, 0x7e, 0x45, 0x92, 0xaa, 0xbc, 0x42, 0x50, 0x8f, 0x1b, 0x35, 0x8d,
-	0x08, 0x3f, 0x82, 0x35, 0xa5, 0xaf, 0x06, 0xa0, 0x86, 0x65, 0x3f, 0xd2, 0x77, 0x42, 0x91, 0x1e,
-	0x33, 0x66, 0x1b, 0x93, 0x28, 0x89, 0x89, 0x76, 0x54, 0xdd, 0xef, 0x76, 0x47, 0x83, 0x51, 0x9f,
-	0x70, 0x6a, 0xa9, 0xcb, 0x45, 0x66, 0x9f, 0x3f, 0x9c, 0x86, 0xbc, 0x92, 0x0d, 0x7b, 0xe5, 0xff,
-	0x80, 0xc9, 0x54, 0x9a, 0x56, 0x43, 0xf7, 0xaa, 0x2a, 0x89, 0xe2, 0x30, 0x5c, 0xa8, 0xc7, 0xc0,
-	0x9d, 0x67, 0x72, 0x0a, 0xd7, 0x6d, 0x26, 0x48, 0x4c, 0xc3, 0x77, 0x0f, 0xe0, 0x62, 0x5c, 0xf5,
-	0x19, 0xae, 0x8b, 0x21, 0xc0, 0x31, 0xdb, 0x30, 0x91, 0xbb, 0x6a, 0xae, 0x7e, 0xcd, 0x04, 0x9e,
-	0x15, 0x44, 0x99, 0x37, 0x0e, 0x22, 0x7f, 0xb6, 0x3e, 0x97, 0xa0, 0x37, 0x7e, 0x42, 0x50, 0x39,
-	0x22, 0xe3, 0x34, 0xbc, 0x7f, 0xa6, 0xb9, 0x33, 0x3c, 0x5f, 0xe6, 0x22, 0xf3, 0x65, 0xa4, 0x38,
-	0xa3, 0x60, 0x71, 0x0e, 0xa0, 0x4c, 0x43, 0xf1, 0x5f, 0x10, 0xac, 0x7e, 0x60, 0xf3, 0x4f, 0x2d,
-	0x8f, 0x9c, 0xfe, 0x0d, 0x7a, 0x6f, 0x41, 0xe9, 0xc4, 0x73, 0x07, 0x41, 0xb5, 0x8b, 0x82, 0x20,
-	0xb5, 0xde, 0x80, 0x25, 0xee, 0x06, 0x27, 0xee, 0x02, 0x77, 0x23, 0xe6, 0x28, 0x84, 0xcc, 0xf1,
-	0x00, 0x2a, 0x53, 0xec, 0x29, 0x58, 0xe3, 0xe6, 0xcf, 0x2b, 0x50, 0x52, 0xdd, 0xfb, 0x5e, 0xcf,
-	0xc3, 0x2f, 0x11, 0xac, 0x25, 0x2d, 0xc0, 0x78, 0x2f, 0x14, 0xbf, 0x73, 0x36, 0xef, 0xc6, 0xff,
-	0xce, 0xc0, 0xa9, 0x80, 0x1b, 0x1b, 0xcf, 0x7f, 0xfb, 0xfd, 0xbb, 0x4c, 0x15, 0xaf, 0x9a, 0x93,
-	0x9d, 0xcb, 0xec, 0xdb, 0x8c, 0xe3, 0xaf, 0x11, 0xd4, 0x12, 0xd7, 0x4a, 0x1c, 0x7e, 0x7d, 0xde,
-	0xfe, 0xdb, 0xb8, 0x76, 0x16, 0x56, 0x8d, 0x64, 0x4b, 0x22, 0xa9, 0x19, 0x95, 0x00, 0x12, 0x26,
-	0xfe, 0xe2, 0x16, 0xba, 0x86, 0xbf, 0x45, 0xb0, 0x9e, 0xbc, 0xff, 0xe1, 0xb0, 0x8c, 0xb9, 0xab,
-	0x6a, 0xe3, 0xfa, 0x99, 0x78, 0xcf, 0x02, 0xa8, 0x07, 0x15, 0xbd, 0x8b, 0x3d, 0x72, 0xf5, 0xd2,
-	0x83, 0xb7, 0x42, 0xaf, 0x87, 0xd7, 0xc9, 0x46, 0x33, 0xf9, 0x52, 0xcb, 0xaa, 0x4b, 0x59, 0x18,
-	0x57, 0x4c, 0x1d, 0xda, 0xa6, 0xa5, 0x38, 0xf0, 0x33, 0xa8, 0x1d, 0x52, 0x7f, 0x8b, 0x39, 0x18,
-	0xef, 0x4f, 0x22, 0xdf, 0x88, 0x16, 0xd6, 0xf8, 0x22, 0xd7, 0xb8, 0x32, 0x97, 0x67, 0xa6, 0x6c,
-	0xbd, 0x46, 0xe1, 0x4f, 0xa0, 0xe8, 0xef, 0x23, 0x38, 0x8c, 0x3f, 0xb2, 0x49, 0x35, 0xb6, 0x67,
-	0xdc, 0x6a, 0x11, 0x35, 0x29, 0x62, 0xd5, 0x00, 0x53, 0xd6, 0x58, 0xf3, 0x78, 0x34, 0x16, 0x46,
-	0x3c, 0x81, 0x95, 0x43, 0xca, 0x03, 0x8b, 0xc1, 0xce, 0xac, 0x89, 0x56, 0x8b, 0xb9, 0x34, 0xf3,
-	0x5e, 0x0b, 0x5a, 0x93, 0x82, 0x2e, 0xe0, 0x65, 0xfd, 0x5b, 0xaf, 0x8a, 0xe5, 0x63, 0x28, 0x4d,
-	0xa6, 0x4b, 0x1c, 0x86, 0x1a, 0x9d, 0x8c, 0x1b, 0x3b, 0xb3, 0xae, 0xb5, 0x84, 0x75, 0x29, 0xa1,
-	0x62, 0x94, 0xb5, 0x2a, 0x8c, 0xf6, 0xfb, 0x42, 0x97, 0xcf, 0x61, 0xe3, 0x90, 0x72, 0xd9, 0x27,
-	0x54, 0xa5, 0x3c, 0x50, 0x36, 0x68, 0x59, 0xf8, 0x3f, 0x61, 0xd7, 0x27, 0xf7, 0xb4, 0xc6, 0xd5,
-	0x05, 0x5c, 0x61, 0x53, 0xe2, 0x15, 0x53, 0x35, 0x39, 0xd3, 0x12, 0x9c, 0xf8, 0x85, 0x98, 0xf2,
-	0x27, 0x9d, 0x4a, 0x0f, 0x3b, 0x09, 0x99, 0x3a, 0x4b, 0xfa, 0xb5, 0xb3, 0xb0, 0x86, 0x03, 0xc6,
-	0x98, 0x40, 0x98, 0x64, 0xc5, 0x73, 0x04, 0x6b, 0x87, 0x94, 0xc7, 0xc7, 0xae, 0xab, 0x0b, 0xa6,
-	0x00, 0x8d, 0xe2, 0xbf, 0x8b, 0xd8, 0xc2, 0xa9, 0x89, 0x2f, 0xfa, 0x08, 0x02, 0x43, 0x04, 0xa6,
-	0x50, 0xf4, 0xeb, 0x73, 0x24, 0x6a, 0x23, 0x2d, 0x27, 0x12, 0xb5, 0xd1, 0xa2, 0x6e, 0x34, 0xa5,
-	0x94, 0x75, 0xa3, 0x3a, 0x49, 0x8c, 0x53, 0xcd, 0x22, 0x74, 0xfd, 0x12, 0xc1, 0x5a, 0xd2, 0xaf,
-	0xd9, 0x91, 0x3a, 0x3d, 0xe7, 0xa7, 0xf6, 0x48, 0x9d, 0x9e, 0xf7, 0xd3, 0xb8, 0xb1, 0x29, 0xb1,
-	0x5c, 0x34, 0x2e, 0x98, 0x9e, 0x64, 0x30, 0xd5, 0xc6, 0x29, 0x80, 0x3c, 0x85, 0xea, 0xa1, 0x08,
-	0xd0, 0x10, 0x88, 0x70, 0x75, 0x48, 0x16, 0x7f, 0x65, 0x2e, 0x4f, 0xac, 0x3a, 0x68, 0xc1, 0x7e,
-	0x67, 0x3d, 0x2e, 0xc8, 0xff, 0x8c, 0xbc, 0xfb, 0x57, 0x00, 0x00, 0x00, 0xff, 0xff, 0x49, 0xe3,
-	0xd4, 0x0a, 0x64, 0x19, 0x00, 0x00,
+	// 1860 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x59, 0xcd, 0x6f, 0x23, 0x49,
+	0x15, 0x57, 0xf9, 0x23, 0x89, 0x9f, 0x1d, 0x7f, 0x54, 0xbe, 0x1c, 0xc7, 0xc9, 0x26, 0x9d, 0x1d,
+	0x94, 0x9d, 0x11, 0x63, 0x31, 0xdc, 0xf6, 0x34, 0xd9, 0x8d, 0x88, 0x22, 0x2d, 0x3b, 0x91, 0x33,
+	0x88, 0x03, 0xb0, 0xa6, 0xe2, 0xae, 0x78, 0x5b, 0xb1, 0xbb, 0x3d, 0x5d, 0xe5, 0x09, 0x19, 0x6e,
+	0x33, 0x23, 0x40, 0x1a, 0x31, 0x17, 0x40, 0x08, 0x21, 0x0e, 0x1c, 0xe7, 0x00, 0xff, 0x00, 0x7f,
+	0x06, 0x57, 0x8e, 0x73, 0xe7, 0x5f, 0x40, 0xf5, 0xd1, 0x76, 0x57, 0x77, 0xdb, 0x4e, 0x42, 0x47,
+	0x70, 0xeb, 0x7a, 0xf5, 0xfc, 0x7e, 0xef, 0xab, 0x5e, 0xbd, 0x7a, 0x86, 0xa6, 0xe3, 0xbe, 0xa4,
+	0x8c, 0x0f, 0x7a, 0x7e, 0xeb, 0xe5, 0xf7, 0x5a, 0xe3, 0xc5, 0xe3, 0xa1, 0xef, 0x71, 0x0f, 0x17,
+	0x7b, 0x57, 0x63, 0x52, 0xa3, 0xd9, 0xf3, 0xbc, 0x5e, 0x9f, 0xb6, 0xc8, 0xd0, 0x69, 0x11, 0xd7,
+	0xf5, 0x38, 0xe1, 0x8e, 0xe7, 0x32, 0xc5, 0x6a, 0x3d, 0x85, 0xb5, 0x36, 0xbd, 0x22, 0xbe, 0xfd,
+	0xe5, 0xc8, 0xf7, 0xa9, 0xdb, 0xbd, 0x6e, 0xd3, 0x17, 0x23, 0xca, 0x38, 0x5e, 0x83, 0x05, 0x9f,
+	0xbe, 0xe8, 0x38, 0x76, 0x1d, 0xed, 0xa2, 0x83, 0x42, 0x3b, 0xef, 0xd3, 0x17, 0x27, 0x36, 0xae,
+	0x42, 0x76, 0xe4, 0xd8, 0xf5, 0x8c, 0xa4, 0x89, 0x4f, 0xeb, 0x15, 0xac, 0x47, 0x25, 0xb0, 0xa1,
+	0xe7, 0x32, 0x3a, 0x4d, 0x04, 0x86, 0x5c, 0xd7, 0xb3, 0xa9, 0x94, 0x91, 0x6f, 0xcb, 0x6f, 0x21,
+	0x76, 0xc0, 0x7a, 0xf5, 0xac, 0x12, 0x3b, 0x60, 0x3d, 0xbc, 0x0f, 0xcb, 0x5d, 0x2d, 0xb0, 0xc3,
+	0xaf, 0x87, 0xb4, 0x9e, 0x93, 0x7b, 0xa5, 0x80, 0xf8, 0xfc, 0x7a, 0x48, 0xad, 0x4b, 0xd8, 0xfa,
+	0xd1, 0xd0, 0x26, 0x9c, 0xfe, 0x77, 0x36, 0xc4, 0xc1, 0xb2, 0x09, 0x60, 0x3f, 0x81, 0x66, 0x32,
+	0x58, 0x0a, 0xe6, 0x5a, 0xff, 0xce, 0x40, 0xf5, 0x07, 0x8e, 0x4b, 0xdc, 0xae, 0x43, 0xfa, 0xa7,
+	0xbe, 0x67, 0x8f, 0xba, 0x1c, 0x6f, 0x03, 0x0c, 0xd5, 0xe7, 0x44, 0x6a, 0x41, 0x53, 0x4e, 0x6c,
+	0xbc, 0x07, 0xa5, 0x60, 0xdb, 0x25, 0x03, 0xaa, 0x0d, 0x2a, 0x6a, 0xda, 0xd7, 0x64, 0x40, 0xf1,
+	0x27, 0x50, 0xe4, 0x1e, 0x27, 0xfd, 0x4e, 0xd7, 0x1b, 0xb9, 0x5c, 0x02, 0xe6, 0xdb, 0x20, 0x49,
+	0x5f, 0x0a, 0x0a, 0x5e, 0x87, 0x05, 0xcf, 0x77, 0x7a, 0x8e, 0xab, 0xfd, 0xab, 0x57, 0x82, 0x6e,
+	0x53, 0x4e, 0x9c, 0x7e, 0x3d, 0xaf, 0xe8, 0x6a, 0x85, 0x2d, 0x28, 0x0d, 0x89, 0xcf, 0x9d, 0xae,
+	0x33, 0x24, 0x2e, 0x67, 0xf5, 0x05, 0x29, 0xd1, 0xa0, 0x89, 0xdf, 0x32, 0x4e, 0xf8, 0x88, 0xd5,
+	0x17, 0xe5, 0xae, 0x5e, 0x09, 0x73, 0x06, 0x8e, 0xdb, 0x51, 0xa9, 0x59, 0x5f, 0x92, 0x7b, 0x85,
+	0x81, 0xe3, 0x9e, 0x48, 0x02, 0x7e, 0x04, 0x35, 0xe2, 0xba, 0x23, 0xd2, 0x77, 0x5e, 0x51, 0xbb,
+	0xe3, 0x53, 0x3e, 0xf2, 0xdd, 0x7a, 0x61, 0x17, 0x1d, 0xa0, 0x76, 0x75, 0xb2, 0xd1, 0x96, 0x74,
+	0x61, 0x58, 0xd7, 0xa7, 0x84, 0xd3, 0x0e, 0x77, 0x06, 0xb4, 0x0e, 0xbb, 0xe8, 0x20, 0xdb, 0x06,
+	0x45, 0x7a, 0xee, 0x28, 0xcb, 0x47, 0x32, 0x5a, 0x8a, 0xa1, 0xa8, 0x18, 0x14, 0x49, 0x30, 0x58,
+	0x67, 0xb0, 0xf5, 0x95, 0xc3, 0x78, 0xd4, 0xe9, 0x73, 0x72, 0xc7, 0x0c, 0x49, 0x26, 0x12, 0x12,
+	0xeb, 0x03, 0x82, 0x66, 0xb2, 0xd4, 0x34, 0xce, 0xc4, 0x57, 0x80, 0x2f, 0x02, 0xc1, 0x1d, 0x0d,
+	0xca, 0xea, 0xb9, 0xdd, 0xec, 0x41, 0xf1, 0xc9, 0xf6, 0xe3, 0xd0, 0xa1, 0x7f, 0x1c, 0xc3, 0xaf,
+	0x5d, 0x44, 0x28, 0xcc, 0x7a, 0x83, 0xa0, 0x79, 0xc6, 0x3d, 0x9f, 0xde, 0xd2, 0x05, 0xc9, 0x5a,
+	0x64, 0xee, 0xa8, 0xc5, 0x4f, 0x61, 0x7b, 0x8a, 0x12, 0x69, 0x1c, 0xab, 0xb7, 0x08, 0xb6, 0xd5,
+	0xa1, 0xfd, 0x9f, 0x1a, 0xf9, 0x33, 0xd8, 0x99, 0xa6, 0x45, 0x1a, 0x56, 0xfe, 0x01, 0x41, 0xf9,
+	0x88, 0x0e, 0x3d, 0xe6, 0xf0, 0x7b, 0x29, 0x7d, 0xe2, 0x44, 0x93, 0x81, 0xac, 0x20, 0x39, 0x79,
+	0x1e, 0xf5, 0x4a, 0x9c, 0x06, 0xee, 0x5d, 0x52, 0xb7, 0x43, 0x6c, 0xdb, 0xd7, 0x95, 0xa2, 0x20,
+	0x29, 0x87, 0xb6, 0xed, 0x5b, 0x5f, 0x43, 0x65, 0xac, 0x56, 0x1a, 0x76, 0x3e, 0x85, 0xb5, 0xc3,
+	0xae, 0xac, 0x64, 0x5f, 0x90, 0x3e, 0x71, 0xbb, 0xf4, 0xd6, 0x97, 0xd5, 0xdf, 0x11, 0x94, 0x4d,
+	0x11, 0x01, 0x13, 0x9a, 0xb8, 0x64, 0x0f, 0x4a, 0xc4, 0xbd, 0xf4, 0x3b, 0xe7, 0x8a, 0x43, 0xfe,
+	0x1e, 0xb5, 0x8b, 0x82, 0x16, 0xfc, 0x68, 0x0f, 0x4a, 0x23, 0x66, 0xf3, 0x31, 0x4b, 0x56, 0xb1,
+	0x08, 0x5a, 0x88, 0x45, 0x4a, 0x11, 0xae, 0xa1, 0x8c, 0xe9, 0xfa, 0x2a, 0xa5, 0x1c, 0x2a, 0xd2,
+	0x58, 0x4a, 0xc0, 0xa2, 0x1c, 0x28, 0xa5, 0x68, 0x16, 0xeb, 0xcf, 0x08, 0xd6, 0xa3, 0x36, 0xa7,
+	0x51, 0x4a, 0x8e, 0xa0, 0x42, 0x94, 0xd8, 0xb1, 0x0d, 0x42, 0xc1, 0xe2, 0x93, 0x2d, 0x23, 0xb9,
+	0x23, 0xd0, 0x65, 0x62, 0xac, 0xad, 0xdf, 0x23, 0xa8, 0x7c, 0x31, 0xba, 0x3e, 0x64, 0x8c, 0xde,
+	0x3e, 0xf3, 0xcc, 0x52, 0x9a, 0x9d, 0x77, 0xbb, 0xe5, 0xe2, 0xb7, 0xdb, 0x24, 0x2d, 0xf3, 0xea,
+	0xa2, 0x51, 0x2b, 0xeb, 0x19, 0x54, 0x27, 0x5a, 0xa5, 0x91, 0x78, 0xbf, 0x80, 0x9a, 0xba, 0xa4,
+	0x4e, 0x38, 0x1d, 0xa4, 0x6d, 0xe8, 0x16, 0x14, 0x88, 0x50, 0xb5, 0xe3, 0xd8, 0xaa, 0x98, 0xe7,
+	0xdb, 0x4b, 0x92, 0x70, 0x62, 0x33, 0xeb, 0x5f, 0x08, 0x60, 0x02, 0x8d, 0x37, 0x61, 0x29, 0xe0,
+	0x95, 0xa8, 0xf9, 0xf6, 0xa2, 0x66, 0xbd, 0x17, 0x07, 0xcb, 0xf3, 0xad, 0xda, 0x07, 0x16, 0x38,
+	0xb9, 0xa0, 0xbb, 0x07, 0xc6, 0xa3, 0x97, 0xf0, 0xc2, 0xbc, 0x4b, 0x78, 0x31, 0x76, 0x09, 0xff,
+	0x16, 0x01, 0x0e, 0x7b, 0x36, 0x8d, 0xd4, 0xfe, 0x1c, 0x4a, 0x2a, 0x81, 0x3b, 0x0e, 0xa7, 0x83,
+	0xe0, 0x7e, 0xdc, 0x30, 0xf2, 0x3a, 0x84, 0x59, 0x74, 0xc6, 0xdf, 0x4c, 0x54, 0xd2, 0xea, 0x19,
+	0xed, 0xf7, 0xff, 0xdf, 0x32, 0xfa, 0x14, 0x6a, 0x21, 0xb5, 0xd2, 0x48, 0xe9, 0x3f, 0x21, 0xd8,
+	0x38, 0x22, 0x4e, 0x5f, 0x1d, 0x93, 0x53, 0xdf, 0xbb, 0xb8, 0xc3, 0xe5, 0x61, 0xa4, 0x6e, 0xd6,
+	0x4c, 0x5d, 0xe1, 0x0d, 0xc6, 0x89, 0xcf, 0x55, 0xec, 0x73, 0x32, 0xf6, 0x05, 0x49, 0x91, 0xb9,
+	0xb1, 0x09, 0x4b, 0xd4, 0xb5, 0xd5, 0x66, 0x5e, 0x6e, 0x2e, 0x52, 0xd7, 0x96, 0x59, 0xf1, 0x0f,
+	0x04, 0xb5, 0x90, 0x5a, 0x47, 0xaa, 0xf5, 0x8c, 0x17, 0xea, 0xf0, 0x69, 0xc8, 0x98, 0xa7, 0x21,
+	0x95, 0x50, 0x0c, 0x25, 0xbc, 0xd4, 0x0e, 0xb5, 0xf5, 0x4a, 0xe4, 0xb4, 0xfa, 0x32, 0x92, 0x5e,
+	0x91, 0xa4, 0xf6, 0x1f, 0x10, 0xd4, 0xe3, 0x9e, 0x4d, 0x23, 0xb3, 0x4f, 0x61, 0x55, 0xd9, 0xab,
+	0x15, 0x50, 0x3d, 0x79, 0x90, 0xe1, 0x3b, 0x66, 0xe5, 0x8e, 0xfa, 0xaf, 0x8d, 0x49, 0x94, 0xc4,
+	0xac, 0xf7, 0xc2, 0xd3, 0xdd, 0xee, 0x68, 0x30, 0xea, 0x13, 0x4e, 0x6d, 0xb5, 0x99, 0xe0, 0xe9,
+	0xd9, 0x6d, 0xaf, 0x11, 0x88, 0xac, 0x19, 0x88, 0xef, 0x02, 0x26, 0x13, 0x00, 0xad, 0xb9, 0x6e,
+	0x23, 0x6a, 0x24, 0x0a, 0x6d, 0xfd, 0x1c, 0xea, 0x31, 0x7d, 0x52, 0x4d, 0x4b, 0x11, 0x9e, 0xcd,
+	0x04, 0x88, 0x34, 0xe2, 0xf3, 0x0c, 0x56, 0xe2, 0xb6, 0x4e, 0x09, 0x4f, 0x4c, 0x03, 0x1c, 0x73,
+	0x06, 0xb3, 0x7e, 0x1d, 0xb4, 0xe8, 0xb7, 0x3c, 0xa9, 0xd3, 0x12, 0x25, 0x73, 0xe7, 0x44, 0x09,
+	0xda, 0xf4, 0x7b, 0x49, 0x6c, 0xeb, 0x8f, 0x08, 0xaa, 0xa7, 0xe4, 0xfa, 0x8e, 0xe1, 0xbe, 0x51,
+	0x0b, 0x6b, 0xb6, 0xaa, 0xb9, 0x48, 0xab, 0x1a, 0x29, 0xbc, 0x28, 0x5c, 0x78, 0x43, 0x8a, 0xa5,
+	0x61, 0xeb, 0xdf, 0x10, 0x54, 0x7e, 0xec, 0xf0, 0x6f, 0x6d, 0x9f, 0x5c, 0xdd, 0x8f, 0xa9, 0x5b,
+	0x50, 0xb8, 0xf0, 0xbd, 0x41, 0xd8, 0xd2, 0x25, 0x41, 0x90, 0x86, 0x6e, 0xc0, 0x22, 0xf7, 0xc2,
+	0xfd, 0xfa, 0x02, 0xf7, 0x22, 0x1e, 0x58, 0x30, 0x3c, 0xf0, 0x0c, 0xaa, 0x13, 0x75, 0xd3, 0x70,
+	0xc0, 0xb7, 0xb0, 0x12, 0xf8, 0xb3, 0xeb, 0xf9, 0xf6, 0xad, 0x7d, 0x80, 0x21, 0x37, 0x24, 0x3d,
+	0xaa, 0x0b, 0x8d, 0xfc, 0xc6, 0xab, 0x90, 0xef, 0x3b, 0x03, 0x5d, 0x58, 0xf2, 0x6d, 0xb5, 0xb0,
+	0xfe, 0x82, 0xa0, 0x14, 0x86, 0x4a, 0x28, 0x6c, 0x31, 0x87, 0x66, 0xe6, 0xe6, 0x4e, 0x76, 0x7a,
+	0xee, 0x98, 0xaf, 0xa3, 0x48, 0x7b, 0xa4, 0xdc, 0x1d, 0x6a, 0x8f, 0x44, 0xb7, 0xb1, 0x6a, 0xba,
+	0x22, 0x8d, 0x2a, 0xf4, 0x14, 0xca, 0xfa, 0xd8, 0xfb, 0x52, 0x6a, 0x50, 0x80, 0x36, 0x8d, 0x63,
+	0x6f, 0xe0, 0x2e, 0x0f, 0x43, 0x2b, 0x66, 0x5d, 0xc2, 0xfa, 0xf8, 0xa1, 0x7a, 0xef, 0x41, 0xfa,
+	0x0d, 0x82, 0x4a, 0x04, 0x2d, 0x21, 0x4e, 0x18, 0x72, 0xa1, 0xf0, 0xc8, 0xef, 0xd0, 0x8c, 0x2a,
+	0x6b, 0xcc, 0xa8, 0x26, 0xf3, 0xa7, 0x9c, 0x31, 0x7f, 0x9a, 0x1b, 0x8f, 0xbf, 0x22, 0xd8, 0x88,
+	0x19, 0x9e, 0x46, 0x48, 0x4e, 0x60, 0x32, 0x14, 0x88, 0x44, 0xa5, 0x99, 0x3c, 0x4c, 0xd0, 0xe8,
+	0xd5, 0x0b, 0x93, 0xc0, 0xac, 0x01, 0xd4, 0x9f, 0xfb, 0xc4, 0x65, 0xa4, 0xcb, 0x1d, 0xcf, 0xbd,
+	0xf7, 0xe8, 0x7c, 0x44, 0x50, 0x8b, 0xe1, 0xdd, 0xbe, 0x41, 0x10, 0x47, 0x44, 0x0a, 0xd0, 0x90,
+	0x7a, 0x15, 0x39, 0x3a, 0xe3, 0x7e, 0x77, 0xea, 0xf8, 0xf1, 0x11, 0xd4, 0xf8, 0x44, 0x9b, 0x8e,
+	0x08, 0x2c, 0xd5, 0x33, 0xc8, 0x6a, 0x68, 0xe3, 0x4c, 0xd0, 0xf1, 0x67, 0x10, 0xa6, 0x4d, 0x9e,
+	0x20, 0x85, 0x76, 0x25, 0x44, 0x0f, 0x7a, 0xb6, 0xcd, 0x04, 0xb7, 0xa6, 0xd4, 0x14, 0x84, 0xb5,
+	0x30, 0xa3, 0x6f, 0x5e, 0xc5, 0x71, 0x0d, 0x30, 0x8f, 0x92, 0xd8, 0x93, 0x77, 0x55, 0x28, 0xa8,
+	0xf7, 0xcb, 0x0f, 0x7b, 0x3e, 0x7e, 0x8b, 0x60, 0x35, 0x69, 0xe2, 0x88, 0x0f, 0x0c, 0xd1, 0x33,
+	0x46, 0x9d, 0x8d, 0xcf, 0x6e, 0xc0, 0xa9, 0x3c, 0x61, 0x6d, 0xbc, 0xfe, 0xe7, 0xc7, 0xdf, 0x65,
+	0x6a, 0xb8, 0xd2, 0x1a, 0x27, 0x66, 0xab, 0xef, 0x30, 0x8e, 0xdf, 0x21, 0x58, 0x4b, 0x9c, 0xe3,
+	0x61, 0x53, 0xfa, 0xac, 0x81, 0x63, 0xe3, 0xe1, 0x4d, 0x58, 0xb5, 0x26, 0x5b, 0x52, 0x93, 0x35,
+	0xab, 0x1a, 0xd2, 0x84, 0x89, 0x5f, 0x7c, 0x8e, 0x1e, 0xe2, 0xf7, 0x08, 0xd6, 0x93, 0x07, 0x6e,
+	0xd8, 0xc4, 0x98, 0x39, 0x1b, 0x6c, 0x3c, 0xba, 0x11, 0xef, 0x4d, 0x14, 0xfa, 0x06, 0x16, 0xf5,
+	0x24, 0x0c, 0x9b, 0x03, 0x16, 0x73, 0x6c, 0xd7, 0x68, 0x26, 0x6f, 0x6a, 0x88, 0xba, 0x84, 0xc0,
+	0xb8, 0xda, 0xd2, 0x73, 0x98, 0x96, 0xad, 0x85, 0x7a, 0x00, 0xc7, 0x74, 0x3c, 0x7a, 0xb2, 0x66,
+	0xcd, 0x70, 0x34, 0xd2, 0xfe, 0x4c, 0x9e, 0xa9, 0x80, 0x7a, 0x58, 0x84, 0xbf, 0x81, 0xa5, 0x60,
+	0xc4, 0x82, 0x4d, 0xa5, 0x23, 0xf3, 0xa0, 0xc6, 0xf6, 0x94, 0x5d, 0x0d, 0xb1, 0x26, 0x21, 0x2a,
+	0x16, 0xb4, 0x64, 0xd7, 0xd9, 0x3a, 0x1f, 0x5d, 0x0b, 0x87, 0x5d, 0xc0, 0xf2, 0x31, 0xe5, 0xa1,
+	0xc9, 0xc7, 0xce, 0xb4, 0xf7, 0xbb, 0x86, 0xf9, 0x64, 0xea, 0xbe, 0x06, 0x5a, 0x95, 0x40, 0x65,
+	0x5c, 0xd2, 0x7f, 0x97, 0xa9, 0xbc, 0x3d, 0x87, 0xc2, 0xf8, 0x61, 0x8d, 0x4d, 0x55, 0xa3, 0x73,
+	0x80, 0xc6, 0xce, 0xb4, 0x6d, 0x8d, 0xb0, 0x2e, 0x11, 0xaa, 0x56, 0x51, 0x9b, 0xc2, 0x68, 0xbf,
+	0x2f, 0x6c, 0xe1, 0x50, 0x3e, 0xa6, 0x5c, 0x76, 0xce, 0xfa, 0x81, 0xf5, 0xa9, 0x19, 0xe6, 0xe4,
+	0xe6, 0xbe, 0xf1, 0x60, 0x0e, 0x97, 0xe9, 0x41, 0xbc, 0xdc, 0x52, 0xb7, 0x78, 0xcb, 0x16, 0x9c,
+	0xf8, 0x0d, 0x82, 0xea, 0xa4, 0x65, 0xd7, 0xc0, 0x09, 0x87, 0x71, 0x1a, 0xfa, 0xc3, 0x9b, 0xb0,
+	0x9a, 0x79, 0x62, 0x8d, 0x55, 0x18, 0x27, 0xfe, 0x6b, 0x04, 0xab, 0xc7, 0x94, 0xc7, 0xdf, 0x98,
+	0x0f, 0xe6, 0x3c, 0x87, 0xb4, 0x16, 0xdf, 0x99, 0xc7, 0x66, 0x9e, 0x3e, 0xbc, 0x12, 0x68, 0x10,
+	0x7a, 0x4d, 0x61, 0x0a, 0x4b, 0x41, 0x0b, 0x1b, 0x49, 0xd6, 0x48, 0x23, 0x1e, 0x49, 0xd6, 0x68,
+	0xdf, 0x6b, 0x35, 0x25, 0xca, 0xba, 0x55, 0x1b, 0x9f, 0x87, 0x2b, 0xcd, 0x22, 0x6c, 0xfd, 0x15,
+	0x82, 0xd5, 0xa4, 0x7f, 0x08, 0x23, 0xa5, 0x78, 0xc6, 0x3f, 0x96, 0x91, 0x52, 0x3c, 0xeb, 0xef,
+	0x46, 0x6b, 0x53, 0xea, 0xb2, 0x62, 0x95, 0x5b, 0xbe, 0x64, 0x68, 0xa9, 0xb1, 0x9a, 0x50, 0xe4,
+	0x25, 0xd4, 0x8e, 0x45, 0x5e, 0x1a, 0x4a, 0x98, 0x45, 0x21, 0x19, 0x7e, 0x7f, 0x26, 0x4f, 0xac,
+	0x28, 0x68, 0xe0, 0xa0, 0x57, 0xc6, 0xbf, 0x84, 0x15, 0xe3, 0xf6, 0xd0, 0xdd, 0xc2, 0xfe, 0xcc,
+	0x16, 0x47, 0x43, 0x7f, 0x3a, 0x9b, 0xc9, 0x34, 0x1a, 0xd7, 0x5a, 0xea, 0x1e, 0x9d, 0xd4, 0x5a,
+	0x91, 0xef, 0x6b, 0x02, 0x3d, 0xde, 0xad, 0x3c, 0x98, 0x73, 0xc9, 0x26, 0xa6, 0xda, 0xd4, 0x6e,
+	0x20, 0x94, 0x6a, 0x5a, 0x87, 0xd0, 0x1d, 0x8d, 0x3d, 0xa8, 0x0a, 0x25, 0x8c, 0x57, 0xc7, 0xee,
+	0xf4, 0xc6, 0x5b, 0x43, 0xef, 0xcd, 0xe0, 0x30, 0x8b, 0x0b, 0x2e, 0x07, 0xa8, 0x2a, 0xcf, 0xcf,
+	0x17, 0xe4, 0xff, 0xf8, 0xdf, 0xff, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x10, 0xe4, 0x39, 0x7a,
+	0x12, 0x20, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -2288,17 +2998,20 @@ type InvestMgrClient interface {
 	ListFinancialProduct(ctx context.Context, in *ListFinancialProductRequest, opts ...grpc.CallOption) (*ListFinancialProductResponse, error)
 	StoreFinancialProduct(ctx context.Context, in *StoreFinancialProductRequest, opts ...grpc.CallOption) (*StoreFinancialProductResponse, error)
 	UpdateFinancialProduct(ctx context.Context, in *UpdateFinancialProductRequest, opts ...grpc.CallOption) (*UpdateFinancialProductResponse, error)
-	DepositToAccount(ctx context.Context, in *DepositRequest, opts ...grpc.CallOption) (*DepositResponse, error)
-	GetBalanceByAccountId(ctx context.Context, in *AccountBalanceRequest, opts ...grpc.CallOption) (*AccountBalanceResponse, error)
+	Deposit(ctx context.Context, in *DepositRequest, opts ...grpc.CallOption) (*DepositResponse, error)
+	GetBalance(ctx context.Context, in *AccountBalanceRequest, opts ...grpc.CallOption) (*AccountBalanceResponse, error)
 	BuyAsset(ctx context.Context, in *BuyAssetRequest, opts ...grpc.CallOption) (*BuyAssetResponse, error)
 	GetInvestItem(ctx context.Context, in *InvestItemRequest, opts ...grpc.CallOption) (*InvestItemResponse, error)
 	SellAsset(ctx context.Context, in *SellAssetRequest, opts ...grpc.CallOption) (*SellAssetResponse, error)
-	GetDailyProfitByAssetId(ctx context.Context, in *DailyAssetProfitRequest, opts ...grpc.CallOption) (*DailyAssetProfitResponse, error)
+	GetDailyProfit(ctx context.Context, in *DailyAssetProfitRequest, opts ...grpc.CallOption) (*DailyAssetProfitResponse, error)
 	StoreDailyProfit(ctx context.Context, in *StoreDailyAssetProfitRequest, opts ...grpc.CallOption) (*StoreDailyAssetProfitResponse, error)
 	GetAccumulatedProfit(ctx context.Context, in *AccumulatedProfitRequest, opts ...grpc.CallOption) (*AccumulatedProfitResponse, error)
 	Withdraw(ctx context.Context, in *WithdrawRequest, opts ...grpc.CallOption) (*WithdrawResponse, error)
 	UpdateRewardCurrency(ctx context.Context, in *UpdateRewardCurrencyRequest, opts ...grpc.CallOption) (*UpdateRewardCurrencyResponse, error)
 	GetRewardCurrency(ctx context.Context, in *RewardCurrencyRequest, opts ...grpc.CallOption) (*RewardCurrencyResponse, error)
+	ListFinancialRecord(ctx context.Context, in *FinancialRecordRequest, opts ...grpc.CallOption) (*FinancialRecordResponse, error)
+	ListTransactionRecord(ctx context.Context, in *TransactionRecordRequest, opts ...grpc.CallOption) (*TransactionRecordResponse, error)
+	ListProfitRecord(ctx context.Context, in *ProfitRecordRequest, opts ...grpc.CallOption) (*ProfitRecordResponse, error)
 }
 
 type investMgrClient struct {
@@ -2336,18 +3049,18 @@ func (c *investMgrClient) UpdateFinancialProduct(ctx context.Context, in *Update
 	return out, nil
 }
 
-func (c *investMgrClient) DepositToAccount(ctx context.Context, in *DepositRequest, opts ...grpc.CallOption) (*DepositResponse, error) {
+func (c *investMgrClient) Deposit(ctx context.Context, in *DepositRequest, opts ...grpc.CallOption) (*DepositResponse, error) {
 	out := new(DepositResponse)
-	err := c.cc.Invoke(ctx, "/gwinvestmgr.InvestMgr/DepositToAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gwinvestmgr.InvestMgr/Deposit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *investMgrClient) GetBalanceByAccountId(ctx context.Context, in *AccountBalanceRequest, opts ...grpc.CallOption) (*AccountBalanceResponse, error) {
+func (c *investMgrClient) GetBalance(ctx context.Context, in *AccountBalanceRequest, opts ...grpc.CallOption) (*AccountBalanceResponse, error) {
 	out := new(AccountBalanceResponse)
-	err := c.cc.Invoke(ctx, "/gwinvestmgr.InvestMgr/GetBalanceByAccountId", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gwinvestmgr.InvestMgr/GetBalance", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2381,9 +3094,9 @@ func (c *investMgrClient) SellAsset(ctx context.Context, in *SellAssetRequest, o
 	return out, nil
 }
 
-func (c *investMgrClient) GetDailyProfitByAssetId(ctx context.Context, in *DailyAssetProfitRequest, opts ...grpc.CallOption) (*DailyAssetProfitResponse, error) {
+func (c *investMgrClient) GetDailyProfit(ctx context.Context, in *DailyAssetProfitRequest, opts ...grpc.CallOption) (*DailyAssetProfitResponse, error) {
 	out := new(DailyAssetProfitResponse)
-	err := c.cc.Invoke(ctx, "/gwinvestmgr.InvestMgr/GetDailyProfitByAssetId", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/gwinvestmgr.InvestMgr/GetDailyProfit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2435,22 +3148,52 @@ func (c *investMgrClient) GetRewardCurrency(ctx context.Context, in *RewardCurre
 	return out, nil
 }
 
+func (c *investMgrClient) ListFinancialRecord(ctx context.Context, in *FinancialRecordRequest, opts ...grpc.CallOption) (*FinancialRecordResponse, error) {
+	out := new(FinancialRecordResponse)
+	err := c.cc.Invoke(ctx, "/gwinvestmgr.InvestMgr/ListFinancialRecord", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *investMgrClient) ListTransactionRecord(ctx context.Context, in *TransactionRecordRequest, opts ...grpc.CallOption) (*TransactionRecordResponse, error) {
+	out := new(TransactionRecordResponse)
+	err := c.cc.Invoke(ctx, "/gwinvestmgr.InvestMgr/ListTransactionRecord", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *investMgrClient) ListProfitRecord(ctx context.Context, in *ProfitRecordRequest, opts ...grpc.CallOption) (*ProfitRecordResponse, error) {
+	out := new(ProfitRecordResponse)
+	err := c.cc.Invoke(ctx, "/gwinvestmgr.InvestMgr/ListProfitRecord", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InvestMgrServer is the server API for InvestMgr service.
 type InvestMgrServer interface {
 	ListFinancialProduct(context.Context, *ListFinancialProductRequest) (*ListFinancialProductResponse, error)
 	StoreFinancialProduct(context.Context, *StoreFinancialProductRequest) (*StoreFinancialProductResponse, error)
 	UpdateFinancialProduct(context.Context, *UpdateFinancialProductRequest) (*UpdateFinancialProductResponse, error)
-	DepositToAccount(context.Context, *DepositRequest) (*DepositResponse, error)
-	GetBalanceByAccountId(context.Context, *AccountBalanceRequest) (*AccountBalanceResponse, error)
+	Deposit(context.Context, *DepositRequest) (*DepositResponse, error)
+	GetBalance(context.Context, *AccountBalanceRequest) (*AccountBalanceResponse, error)
 	BuyAsset(context.Context, *BuyAssetRequest) (*BuyAssetResponse, error)
 	GetInvestItem(context.Context, *InvestItemRequest) (*InvestItemResponse, error)
 	SellAsset(context.Context, *SellAssetRequest) (*SellAssetResponse, error)
-	GetDailyProfitByAssetId(context.Context, *DailyAssetProfitRequest) (*DailyAssetProfitResponse, error)
+	GetDailyProfit(context.Context, *DailyAssetProfitRequest) (*DailyAssetProfitResponse, error)
 	StoreDailyProfit(context.Context, *StoreDailyAssetProfitRequest) (*StoreDailyAssetProfitResponse, error)
 	GetAccumulatedProfit(context.Context, *AccumulatedProfitRequest) (*AccumulatedProfitResponse, error)
 	Withdraw(context.Context, *WithdrawRequest) (*WithdrawResponse, error)
 	UpdateRewardCurrency(context.Context, *UpdateRewardCurrencyRequest) (*UpdateRewardCurrencyResponse, error)
 	GetRewardCurrency(context.Context, *RewardCurrencyRequest) (*RewardCurrencyResponse, error)
+	ListFinancialRecord(context.Context, *FinancialRecordRequest) (*FinancialRecordResponse, error)
+	ListTransactionRecord(context.Context, *TransactionRecordRequest) (*TransactionRecordResponse, error)
+	ListProfitRecord(context.Context, *ProfitRecordRequest) (*ProfitRecordResponse, error)
 }
 
 // UnimplementedInvestMgrServer can be embedded to have forward compatible implementations.
@@ -2466,11 +3209,11 @@ func (*UnimplementedInvestMgrServer) StoreFinancialProduct(ctx context.Context, 
 func (*UnimplementedInvestMgrServer) UpdateFinancialProduct(ctx context.Context, req *UpdateFinancialProductRequest) (*UpdateFinancialProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateFinancialProduct not implemented")
 }
-func (*UnimplementedInvestMgrServer) DepositToAccount(ctx context.Context, req *DepositRequest) (*DepositResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DepositToAccount not implemented")
+func (*UnimplementedInvestMgrServer) Deposit(ctx context.Context, req *DepositRequest) (*DepositResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Deposit not implemented")
 }
-func (*UnimplementedInvestMgrServer) GetBalanceByAccountId(ctx context.Context, req *AccountBalanceRequest) (*AccountBalanceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBalanceByAccountId not implemented")
+func (*UnimplementedInvestMgrServer) GetBalance(ctx context.Context, req *AccountBalanceRequest) (*AccountBalanceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBalance not implemented")
 }
 func (*UnimplementedInvestMgrServer) BuyAsset(ctx context.Context, req *BuyAssetRequest) (*BuyAssetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BuyAsset not implemented")
@@ -2481,8 +3224,8 @@ func (*UnimplementedInvestMgrServer) GetInvestItem(ctx context.Context, req *Inv
 func (*UnimplementedInvestMgrServer) SellAsset(ctx context.Context, req *SellAssetRequest) (*SellAssetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SellAsset not implemented")
 }
-func (*UnimplementedInvestMgrServer) GetDailyProfitByAssetId(ctx context.Context, req *DailyAssetProfitRequest) (*DailyAssetProfitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDailyProfitByAssetId not implemented")
+func (*UnimplementedInvestMgrServer) GetDailyProfit(ctx context.Context, req *DailyAssetProfitRequest) (*DailyAssetProfitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDailyProfit not implemented")
 }
 func (*UnimplementedInvestMgrServer) StoreDailyProfit(ctx context.Context, req *StoreDailyAssetProfitRequest) (*StoreDailyAssetProfitResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StoreDailyProfit not implemented")
@@ -2498,6 +3241,15 @@ func (*UnimplementedInvestMgrServer) UpdateRewardCurrency(ctx context.Context, r
 }
 func (*UnimplementedInvestMgrServer) GetRewardCurrency(ctx context.Context, req *RewardCurrencyRequest) (*RewardCurrencyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRewardCurrency not implemented")
+}
+func (*UnimplementedInvestMgrServer) ListFinancialRecord(ctx context.Context, req *FinancialRecordRequest) (*FinancialRecordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListFinancialRecord not implemented")
+}
+func (*UnimplementedInvestMgrServer) ListTransactionRecord(ctx context.Context, req *TransactionRecordRequest) (*TransactionRecordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTransactionRecord not implemented")
+}
+func (*UnimplementedInvestMgrServer) ListProfitRecord(ctx context.Context, req *ProfitRecordRequest) (*ProfitRecordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListProfitRecord not implemented")
 }
 
 func RegisterInvestMgrServer(s *grpc.Server, srv InvestMgrServer) {
@@ -2558,38 +3310,38 @@ func _InvestMgr_UpdateFinancialProduct_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InvestMgr_DepositToAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InvestMgr_Deposit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DepositRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InvestMgrServer).DepositToAccount(ctx, in)
+		return srv.(InvestMgrServer).Deposit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gwinvestmgr.InvestMgr/DepositToAccount",
+		FullMethod: "/gwinvestmgr.InvestMgr/Deposit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InvestMgrServer).DepositToAccount(ctx, req.(*DepositRequest))
+		return srv.(InvestMgrServer).Deposit(ctx, req.(*DepositRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InvestMgr_GetBalanceByAccountId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InvestMgr_GetBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AccountBalanceRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InvestMgrServer).GetBalanceByAccountId(ctx, in)
+		return srv.(InvestMgrServer).GetBalance(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gwinvestmgr.InvestMgr/GetBalanceByAccountId",
+		FullMethod: "/gwinvestmgr.InvestMgr/GetBalance",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InvestMgrServer).GetBalanceByAccountId(ctx, req.(*AccountBalanceRequest))
+		return srv.(InvestMgrServer).GetBalance(ctx, req.(*AccountBalanceRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2648,20 +3400,20 @@ func _InvestMgr_SellAsset_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InvestMgr_GetDailyProfitByAssetId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _InvestMgr_GetDailyProfit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DailyAssetProfitRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InvestMgrServer).GetDailyProfitByAssetId(ctx, in)
+		return srv.(InvestMgrServer).GetDailyProfit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gwinvestmgr.InvestMgr/GetDailyProfitByAssetId",
+		FullMethod: "/gwinvestmgr.InvestMgr/GetDailyProfit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InvestMgrServer).GetDailyProfitByAssetId(ctx, req.(*DailyAssetProfitRequest))
+		return srv.(InvestMgrServer).GetDailyProfit(ctx, req.(*DailyAssetProfitRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2756,6 +3508,60 @@ func _InvestMgr_GetRewardCurrency_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InvestMgr_ListFinancialRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FinancialRecordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InvestMgrServer).ListFinancialRecord(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gwinvestmgr.InvestMgr/ListFinancialRecord",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InvestMgrServer).ListFinancialRecord(ctx, req.(*FinancialRecordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InvestMgr_ListTransactionRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TransactionRecordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InvestMgrServer).ListTransactionRecord(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gwinvestmgr.InvestMgr/ListTransactionRecord",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InvestMgrServer).ListTransactionRecord(ctx, req.(*TransactionRecordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InvestMgr_ListProfitRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ProfitRecordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InvestMgrServer).ListProfitRecord(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/gwinvestmgr.InvestMgr/ListProfitRecord",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InvestMgrServer).ListProfitRecord(ctx, req.(*ProfitRecordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _InvestMgr_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "gwinvestmgr.InvestMgr",
 	HandlerType: (*InvestMgrServer)(nil),
@@ -2773,12 +3579,12 @@ var _InvestMgr_serviceDesc = grpc.ServiceDesc{
 			Handler:    _InvestMgr_UpdateFinancialProduct_Handler,
 		},
 		{
-			MethodName: "DepositToAccount",
-			Handler:    _InvestMgr_DepositToAccount_Handler,
+			MethodName: "Deposit",
+			Handler:    _InvestMgr_Deposit_Handler,
 		},
 		{
-			MethodName: "GetBalanceByAccountId",
-			Handler:    _InvestMgr_GetBalanceByAccountId_Handler,
+			MethodName: "GetBalance",
+			Handler:    _InvestMgr_GetBalance_Handler,
 		},
 		{
 			MethodName: "BuyAsset",
@@ -2793,8 +3599,8 @@ var _InvestMgr_serviceDesc = grpc.ServiceDesc{
 			Handler:    _InvestMgr_SellAsset_Handler,
 		},
 		{
-			MethodName: "GetDailyProfitByAssetId",
-			Handler:    _InvestMgr_GetDailyProfitByAssetId_Handler,
+			MethodName: "GetDailyProfit",
+			Handler:    _InvestMgr_GetDailyProfit_Handler,
 		},
 		{
 			MethodName: "StoreDailyProfit",
@@ -2815,6 +3621,18 @@ var _InvestMgr_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRewardCurrency",
 			Handler:    _InvestMgr_GetRewardCurrency_Handler,
+		},
+		{
+			MethodName: "ListFinancialRecord",
+			Handler:    _InvestMgr_ListFinancialRecord_Handler,
+		},
+		{
+			MethodName: "ListTransactionRecord",
+			Handler:    _InvestMgr_ListTransactionRecord_Handler,
+		},
+		{
+			MethodName: "ListProfitRecord",
+			Handler:    _InvestMgr_ListProfitRecord_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

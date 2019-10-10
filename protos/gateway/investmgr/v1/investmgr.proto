@@ -18,10 +18,10 @@ service InvestMgr {
             body: "*"
     };
     }
-    rpc DepositToAccount(DepositRequest) returns (DepositResponse) {
+    rpc Deposit(DepositRequest) returns (DepositResponse) {
         option (google.api.http).get = "/account/deposit";
     }
-    rpc GetBalanceByAccountId(AccountBalanceRequest) returns (AccountBalanceResponse) {
+    rpc GetBalance(AccountBalanceRequest) returns (AccountBalanceResponse) {
         option (google.api.http).get = "/account/balance";
     }
     rpc BuyAsset(BuyAssetRequest) returns (BuyAssetResponse) {
@@ -39,7 +39,7 @@ service InvestMgr {
             body: "*"
     };
     }
-    rpc GetDailyProfitByAssetId(DailyAssetProfitRequest) returns (DailyAssetProfitResponse) {
+    rpc GetDailyProfit(DailyAssetProfitRequest) returns (DailyAssetProfitResponse) {
         option (google.api.http).get = "/profit/daily";
     }
     rpc StoreDailyProfit(StoreDailyAssetProfitRequest) returns (StoreDailyAssetProfitResponse) {
@@ -66,11 +66,21 @@ service InvestMgr {
     rpc GetRewardCurrency(RewardCurrencyRequest) returns (RewardCurrencyResponse) {
         option (google.api.http).get = "/reward/currency";
     }
+    rpc ListFinancialRecord(FinancialRecordRequest) returns (FinancialRecordResponse) {
+        option (google.api.http).get = "/record/financial";
+    }
+    rpc ListTransactionRecord(TransactionRecordRequest) returns (TransactionRecordResponse) {
+        option (google.api.http).get = "/record/transaction";
+    }
+    rpc ListProfitRecord(ProfitRecordRequest) returns (ProfitRecordResponse) {
+        option (google.api.http).get = "/record/profit";
+    }
 }
 
 message RewardCurrencyRequest {
     string req_id     = 1;
-    string account_id = 2;
+    string uid = 2;
+
 }
 
 message RewardCurrencyResponse {
@@ -82,7 +92,7 @@ message RewardCurrencyResponse {
 
 message UpdateRewardCurrencyRequest {
     string req_id        = 1;
-    string account_id    = 2;
+    string uid    = 2;
     string currency_type = 3; //USDT or ANKR
 }
 
@@ -142,10 +152,10 @@ message UpdateFinancialProductResponse {
 
 message DepositRequest {
     string req_id     = 1;
-    string account_id = 2;
+    string uid = 2;
     string currency_type = 3;
     double amount        = 4;
-    string token_addr     = 5;
+    string token_addr    = 5;
 }
 
 message DepositResponse {
@@ -156,20 +166,27 @@ message DepositResponse {
 
 message AccountBalanceRequest {
     string req_id     = 1;
-    string account_id = 2;
+    string uid = 2;
 }
+
+message AccountBalance {
+     string uid          = 1;
+     double ankr_balance = 2;
+     double usdt_balance = 3;
+     string ankr_address = 4;
+     string usdt_address = 5;
+ }
 
 message AccountBalanceResponse {
     string req_id  = 1;
     int32  code    = 2;
     string msg     = 3;
-    double ankr_balance = 4;
-    double usdt_balance = 5;
+    AccountBalance account_balance = 4;
 }
 
 message BuyAssetRequest {
     string req_id     = 1;
-    string account_id = 2;
+    string uid = 2;
     string product_id = 3;
     string product_name = 4;
     int32  amount       = 5;
@@ -183,14 +200,14 @@ message BuyAssetResponse {
 
 message InvestItemRequest {
     string req_id     = 1;
-    string account_id = 2;
+    string uid = 2;
     string product_id = 3;
     repeated int32 asset_ids = 4;
 }
 
 message InvestItem {
     int32  asset_id     = 1;
-    string account_id   = 2;
+    string uid   = 2;
     string product_id   = 3;
     string product_name = 4;
     int32  total_cost   = 5;
@@ -207,7 +224,7 @@ message InvestItemResponse {
 
 message SellAssetRequest {
     string req_id     = 1;
-    string account_id = 2;
+    string uid = 2;
     string product_id = 3;
     string product_name = 4;
     int32  amount       = 5;
@@ -221,13 +238,14 @@ message SellAssetResponse {
 
 message DailyAssetProfitRequest {
     string          req_id    = 1;
-    repeated int32  asset_ids = 2;
-    int64           start_time  = 3;
-    int64           end_time    = 4;
+    string          uid       = 2;
+    repeated int32  asset_ids = 3;
+    int64           start_time  = 4;
+    int64           end_time    = 5;
 }
 
 message AssetProfitDetail {
-    string account_id   = 1;
+    string uid   = 1;
     int32  asset_id     = 2;
     string product_id   = 3;
     string product_name = 4;
@@ -243,7 +261,7 @@ message DailyAssetProfitResponse {
 }
 
 message AccumulatedProfit {
-    string account_id = 1;
+    string uid = 1;
     string product_id = 2;
     int32  asset_id   = 3;
     double accumulated_profit = 4;
@@ -251,8 +269,8 @@ message AccumulatedProfit {
 
 message AccumulatedProfitRequest {
     string req_id = 1;
-    string account_id = 2;
-    string product_id = 3;
+    string uid = 2;
+    repeated int32 asset_ids = 3;
 }
 
 message AccumulatedProfitResponse {
@@ -275,7 +293,7 @@ message StoreDailyAssetProfitResponse {
 
 message PayProfitRequest {
     string req_id        = 1;
-    string account_id    = 2;
+    string uid    = 2;
     string currency_type = 3;
     string token_addr    = 4;
     double amount        = 5;
@@ -289,7 +307,7 @@ message PayProfitResponse {
 
 message WithdrawRequest {
     string  req_id        = 1;
-    string  account_id    = 2;
+    string  uid    = 2;
     string  currency_type = 3;
     string  from_addr     = 4;
     string  to_addr       = 5;
@@ -301,3 +319,71 @@ message WithdrawResponse {
     int32   code      = 2;
     string  msg       = 3;
 }
+
+message ProfitRecordRequest {
+     string req_id = 1;
+     string uid    = 2;
+     int32  page   = 3;
+     int32  limit  = 4;
+ }
+
+ message ProfitRecord {
+     string uid           = 1;
+     string currency_type = 2;
+     string token_addr    = 3;
+     double amount        = 4;
+     string create_time   = 5;
+ }
+
+ message ProfitRecordResponse {
+     string req_id  = 1;
+     int32  code    = 2;
+     string msg     = 3;
+     repeated ProfitRecord profit_records = 4;
+ }
+
+ message FinancialRecordRequest {
+     string req_id = 1;
+     string uid    = 2;
+     int32  page   = 3;
+     int32  limit  = 4;
+ }
+
+ message FinancialRecord {
+     string uid  = 1;
+     string type = 2;
+     string detail = 3;
+     int32  status = 4;
+     string create_time = 5;
+ }
+
+ message FinancialRecordResponse {
+     string req_id = 1;
+     int32  code   = 2;
+     string msg    = 3;
+     repeated FinancialRecord financial_records = 4;
+ }
+
+ message TransactionRecordRequest {
+     string req_id = 1;
+     string uid    = 2;
+     int32  page   = 3;
+     int32  limit  = 4;
+ }
+
+ message TransactionRecord {
+     string uid        = 1;
+     string product_id = 2;
+     int32  action     = 3;
+     int32  amount     = 4;
+     string detail     = 5;
+     int32  transaction_state = 6;
+     string transaction_time  = 7;
+ }
+
+ message TransactionRecordResponse {
+     string  req_id = 1;
+     int32   code   = 2;
+     string  msg    = 3;
+     repeated TransactionRecord transaction_records = 4;
+ }
