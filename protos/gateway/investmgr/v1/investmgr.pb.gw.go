@@ -80,35 +80,35 @@ func request_InvestMgr_UpdateFinancialProduct_0(ctx context.Context, marshaler r
 }
 
 var (
-	filter_InvestMgr_DepositToAccount_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	filter_InvestMgr_Deposit_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_InvestMgr_DepositToAccount_0(ctx context.Context, marshaler runtime.Marshaler, client InvestMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_InvestMgr_Deposit_0(ctx context.Context, marshaler runtime.Marshaler, client InvestMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq DepositRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_InvestMgr_DepositToAccount_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_InvestMgr_Deposit_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.DepositToAccount(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.Deposit(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
 var (
-	filter_InvestMgr_GetBalanceByAccountId_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	filter_InvestMgr_GetBalance_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_InvestMgr_GetBalanceByAccountId_0(ctx context.Context, marshaler runtime.Marshaler, client InvestMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_InvestMgr_GetBalance_0(ctx context.Context, marshaler runtime.Marshaler, client InvestMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq AccountBalanceRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_InvestMgr_GetBalanceByAccountId_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_InvestMgr_GetBalance_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.GetBalanceByAccountId(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.GetBalance(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -165,18 +165,18 @@ func request_InvestMgr_SellAsset_0(ctx context.Context, marshaler runtime.Marsha
 }
 
 var (
-	filter_InvestMgr_GetDailyProfitByAssetId_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+	filter_InvestMgr_GetDailyProfit_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
 )
 
-func request_InvestMgr_GetDailyProfitByAssetId_0(ctx context.Context, marshaler runtime.Marshaler, client InvestMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+func request_InvestMgr_GetDailyProfit_0(ctx context.Context, marshaler runtime.Marshaler, client InvestMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq DailyAssetProfitRequest
 	var metadata runtime.ServerMetadata
 
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_InvestMgr_GetDailyProfitByAssetId_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_InvestMgr_GetDailyProfit_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.GetDailyProfitByAssetId(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.GetDailyProfit(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -262,6 +262,57 @@ func request_InvestMgr_GetRewardCurrency_0(ctx context.Context, marshaler runtim
 	}
 
 	msg, err := client.GetRewardCurrency(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+var (
+	filter_InvestMgr_ListFinancialRecord_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_InvestMgr_ListFinancialRecord_0(ctx context.Context, marshaler runtime.Marshaler, client InvestMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq FinancialRecordRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_InvestMgr_ListFinancialRecord_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.ListFinancialRecord(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+var (
+	filter_InvestMgr_ListTransactionRecord_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_InvestMgr_ListTransactionRecord_0(ctx context.Context, marshaler runtime.Marshaler, client InvestMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq TransactionRecordRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_InvestMgr_ListTransactionRecord_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.ListTransactionRecord(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+var (
+	filter_InvestMgr_ListProfitRecord_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_InvestMgr_ListProfitRecord_0(ctx context.Context, marshaler runtime.Marshaler, client InvestMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ProfitRecordRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_InvestMgr_ListProfitRecord_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.ListProfitRecord(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -364,7 +415,7 @@ func RegisterInvestMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 
 	})
 
-	mux.Handle("GET", pattern_InvestMgr_DepositToAccount_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_InvestMgr_Deposit_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -373,18 +424,18 @@ func RegisterInvestMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_InvestMgr_DepositToAccount_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_InvestMgr_Deposit_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_InvestMgr_DepositToAccount_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_InvestMgr_Deposit_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("GET", pattern_InvestMgr_GetBalanceByAccountId_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_InvestMgr_GetBalance_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -393,14 +444,14 @@ func RegisterInvestMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_InvestMgr_GetBalanceByAccountId_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_InvestMgr_GetBalance_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_InvestMgr_GetBalanceByAccountId_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_InvestMgr_GetBalance_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -464,7 +515,7 @@ func RegisterInvestMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 
 	})
 
-	mux.Handle("GET", pattern_InvestMgr_GetDailyProfitByAssetId_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_InvestMgr_GetDailyProfit_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -473,14 +524,14 @@ func RegisterInvestMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_InvestMgr_GetDailyProfitByAssetId_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_InvestMgr_GetDailyProfit_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_InvestMgr_GetDailyProfitByAssetId_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_InvestMgr_GetDailyProfit_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -584,6 +635,66 @@ func RegisterInvestMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 
 	})
 
+	mux.Handle("GET", pattern_InvestMgr_ListFinancialRecord_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_InvestMgr_ListFinancialRecord_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_InvestMgr_ListFinancialRecord_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_InvestMgr_ListTransactionRecord_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_InvestMgr_ListTransactionRecord_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_InvestMgr_ListTransactionRecord_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("GET", pattern_InvestMgr_ListProfitRecord_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_InvestMgr_ListProfitRecord_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_InvestMgr_ListProfitRecord_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	return nil
 }
 
@@ -594,9 +705,9 @@ var (
 
 	pattern_InvestMgr_UpdateFinancialProduct_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"financial", "store"}, ""))
 
-	pattern_InvestMgr_DepositToAccount_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"account", "deposit"}, ""))
+	pattern_InvestMgr_Deposit_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"account", "deposit"}, ""))
 
-	pattern_InvestMgr_GetBalanceByAccountId_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"account", "balance"}, ""))
+	pattern_InvestMgr_GetBalance_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"account", "balance"}, ""))
 
 	pattern_InvestMgr_BuyAsset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"asset", "buy"}, ""))
 
@@ -604,7 +715,7 @@ var (
 
 	pattern_InvestMgr_SellAsset_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"asset", "sell"}, ""))
 
-	pattern_InvestMgr_GetDailyProfitByAssetId_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"profit", "daily"}, ""))
+	pattern_InvestMgr_GetDailyProfit_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"profit", "daily"}, ""))
 
 	pattern_InvestMgr_StoreDailyProfit_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"profit", "store"}, ""))
 
@@ -615,6 +726,12 @@ var (
 	pattern_InvestMgr_UpdateRewardCurrency_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"reward", "update"}, ""))
 
 	pattern_InvestMgr_GetRewardCurrency_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"reward", "currency"}, ""))
+
+	pattern_InvestMgr_ListFinancialRecord_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"record", "financial"}, ""))
+
+	pattern_InvestMgr_ListTransactionRecord_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"record", "transaction"}, ""))
+
+	pattern_InvestMgr_ListProfitRecord_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"record", "profit"}, ""))
 )
 
 var (
@@ -624,9 +741,9 @@ var (
 
 	forward_InvestMgr_UpdateFinancialProduct_0 = runtime.ForwardResponseMessage
 
-	forward_InvestMgr_DepositToAccount_0 = runtime.ForwardResponseMessage
+	forward_InvestMgr_Deposit_0 = runtime.ForwardResponseMessage
 
-	forward_InvestMgr_GetBalanceByAccountId_0 = runtime.ForwardResponseMessage
+	forward_InvestMgr_GetBalance_0 = runtime.ForwardResponseMessage
 
 	forward_InvestMgr_BuyAsset_0 = runtime.ForwardResponseMessage
 
@@ -634,7 +751,7 @@ var (
 
 	forward_InvestMgr_SellAsset_0 = runtime.ForwardResponseMessage
 
-	forward_InvestMgr_GetDailyProfitByAssetId_0 = runtime.ForwardResponseMessage
+	forward_InvestMgr_GetDailyProfit_0 = runtime.ForwardResponseMessage
 
 	forward_InvestMgr_StoreDailyProfit_0 = runtime.ForwardResponseMessage
 
@@ -645,4 +762,10 @@ var (
 	forward_InvestMgr_UpdateRewardCurrency_0 = runtime.ForwardResponseMessage
 
 	forward_InvestMgr_GetRewardCurrency_0 = runtime.ForwardResponseMessage
+
+	forward_InvestMgr_ListFinancialRecord_0 = runtime.ForwardResponseMessage
+
+	forward_InvestMgr_ListTransactionRecord_0 = runtime.ForwardResponseMessage
+
+	forward_InvestMgr_ListProfitRecord_0 = runtime.ForwardResponseMessage
 )
