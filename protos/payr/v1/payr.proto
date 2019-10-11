@@ -22,6 +22,8 @@ service Payr {
     }
     rpc ListSubs(ListSubsRequest) returns (ListSubsResponse){
     }
+    rpc Withdraw(WithdrawRequest) returns (WithdrawResponse) { 
+    }
 }
 
 message Order {
@@ -116,4 +118,17 @@ message TeamID{
 }
 message OrderStatusResponse{
     Order order = 1;
+}
+
+message WithdrawRequest{
+    string uid = 1;
+    string currency_type = 2;
+    string amount = 3;
+}
+
+message WithdrawResponse{
+    string  req_id = 1;
+    int32   code   = 2;
+    string  msg    = 3;
+    string transanction_hash = 4;
 }
