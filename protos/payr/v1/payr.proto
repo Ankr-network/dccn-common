@@ -124,6 +124,7 @@ message WithdrawRequest{
     string uid = 1;
     string currency_type = 2;
     string amount = 3;
+    string target_address = 4;
 }
 
 message WithdrawResponse{
