@@ -80,7 +80,6 @@ service InvestMgr {
 message RewardCurrencyRequest {
     string req_id   = 1;
     string uid      = 2;
-
 }
 
 message RewardCurrencyResponse {
