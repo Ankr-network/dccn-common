@@ -42,6 +42,7 @@ type PayrService interface {
 	CancelOrder(ctx context.Context, in *TeamID, opts ...client.CallOption) (*common.Empty, error)
 	ListPlan(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*ListPlanResponse, error)
 	ListSubs(ctx context.Context, in *ListSubsRequest, opts ...client.CallOption) (*ListSubsResponse, error)
+	Withdraw(ctx context.Context, in *WithdrawRequest, opts ...client.CallOption) (*WithdrawResponse, error)
 }
 
 type payrService struct {
@@ -132,6 +133,16 @@ func (c *payrService) ListSubs(ctx context.Context, in *ListSubsRequest, opts ..
 	return out, nil
 }
 
+func (c *payrService) Withdraw(ctx context.Context, in *WithdrawRequest, opts ...client.CallOption) (*WithdrawResponse, error) {
+	req := c.c.NewRequest(c.name, "Payr.Withdraw", in)
+	out := new(WithdrawResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Payr service
 
 type PayrHandler interface {
@@ -142,6 +153,7 @@ type PayrHandler interface {
 	CancelOrder(context.Context, *TeamID, *common.Empty) error
 	ListPlan(context.Context, *common.Empty, *ListPlanResponse) error
 	ListSubs(context.Context, *ListSubsRequest, *ListSubsResponse) error
+	Withdraw(context.Context, *WithdrawRequest, *WithdrawResponse) error
 }
 
 func RegisterPayrHandler(s server.Server, hdlr PayrHandler, opts ...server.HandlerOption) error {
@@ -153,6 +165,7 @@ func RegisterPayrHandler(s server.Server, hdlr PayrHandler, opts ...server.Handl
 		CancelOrder(ctx context.Context, in *TeamID, out *common.Empty) error
 		ListPlan(ctx context.Context, in *common.Empty, out *ListPlanResponse) error
 		ListSubs(ctx context.Context, in *ListSubsRequest, out *ListSubsResponse) error
+		Withdraw(ctx context.Context, in *WithdrawRequest, out *WithdrawResponse) error
 	}
 	type Payr struct {
 		payr
@@ -191,4 +204,8 @@ func (h *payrHandler) ListPlan(ctx context.Context, in *common.Empty, out *ListP
 
 func (h *payrHandler) ListSubs(ctx context.Context, in *ListSubsRequest, out *ListSubsResponse) error {
 	return h.PayrHandler.ListSubs(ctx, in, out)
+}
+
+func (h *payrHandler) Withdraw(ctx context.Context, in *WithdrawRequest, out *WithdrawResponse) error {
+	return h.PayrHandler.Withdraw(ctx, in, out)
 }
