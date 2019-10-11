@@ -78,9 +78,8 @@ service InvestMgr {
 }
 
 message RewardCurrencyRequest {
-    string req_id     = 1;
-    string uid = 2;
-
+    string req_id   = 1;
+    string uid      = 2;
 }
 
 message RewardCurrencyResponse {
@@ -155,7 +154,6 @@ message DepositRequest {
     string uid = 2;
     string currency_type = 3;
     double amount        = 4;
-    string token_addr    = 5;
 }
 
 message DepositResponse {
@@ -173,8 +171,6 @@ message AccountBalance {
      string uid          = 1;
      double ankr_balance = 2;
      double usdt_balance = 3;
-     string ankr_address = 4;
-     string usdt_address = 5;
  }
 
 message AccountBalanceResponse {
@@ -250,7 +246,7 @@ message AssetProfitDetail {
     string product_id   = 3;
     string product_name = 4;
     double profit       = 5;
-    int64  profit_time  = 6;
+    int64  create_time  = 6;
 }
 
 message DailyAssetProfitResponse {
@@ -295,8 +291,7 @@ message PayProfitRequest {
     string req_id        = 1;
     string uid    = 2;
     string currency_type = 3;
-    string token_addr    = 4;
-    double amount        = 5;
+    double amount        = 4;
 }
 
 message PayProfitResponse {
@@ -330,9 +325,8 @@ message ProfitRecordRequest {
  message ProfitRecord {
      string uid           = 1;
      string currency_type = 2;
-     string token_addr    = 3;
-     double amount        = 4;
-     string create_time   = 5;
+     double amount        = 3;
+     string create_time   = 4;
  }
 
  message ProfitRecordResponse {
@@ -373,12 +367,13 @@ message ProfitRecordRequest {
 
  message TransactionRecord {
      string uid        = 1;
-     string product_id = 2;
-     int32  action     = 3;
-     int32  amount     = 4;
-     string detail     = 5;
-     int32  transaction_state = 6;
-     string transaction_time  = 7;
+     int32  asset_id   = 2;
+     string product_id = 3;
+     int32  action     = 4;
+     int32  amount     = 5;
+     string detail     = 6;
+     int32  status       = 7;
+     string create_time  = 8;
  }
 
  message TransactionRecordResponse {
