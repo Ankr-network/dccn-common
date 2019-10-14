@@ -63,6 +63,9 @@ service UserMgr {
     rpc PhoneLogin(PhoneLoginRequest) returns (LoginResponse) {}
     rpc PhoneResetPassword(PhoneResetPasswordRequest) returns (common.proto.Empty){}
     rpc PhoneChange(PhoneChangeRequest) returns (common.proto.Empty) {}
+
+    // internal api
+    rpc PasswordVerify(PasswordVerifyRequest) returns (PasswordVerifyResponse);
 }
 
 message PhoneRegisterRequest {
@@ -95,6 +98,15 @@ message PhoneLoginRequest {
 message PhoneChangeRequest {
     string new_phone = 1;
     string code = 2;
+}
+
+message PasswordVerifyRequest {
+    string uid = 1;
+    string password = 2;
+}
+
+message PasswordVerifyResponse {
+    bool success = 1;
 }
 
 message FakeTokenRequest {

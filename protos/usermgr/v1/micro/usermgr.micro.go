@@ -66,6 +66,8 @@ type UserMgrService interface {
 	PhoneLogin(ctx context.Context, in *PhoneLoginRequest, opts ...client.CallOption) (*LoginResponse, error)
 	PhoneResetPassword(ctx context.Context, in *PhoneResetPasswordRequest, opts ...client.CallOption) (*common.Empty, error)
 	PhoneChange(ctx context.Context, in *PhoneChangeRequest, opts ...client.CallOption) (*common.Empty, error)
+	// internal api
+	PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, opts ...client.CallOption) (*PasswordVerifyResponse, error)
 }
 
 type userMgrService struct {
@@ -336,6 +338,16 @@ func (c *userMgrService) PhoneChange(ctx context.Context, in *PhoneChangeRequest
 	return out, nil
 }
 
+func (c *userMgrService) PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, opts ...client.CallOption) (*PasswordVerifyResponse, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.PasswordVerify", in)
+	out := new(PasswordVerifyResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for UserMgr service
 
 type UserMgrHandler interface {
@@ -369,6 +381,8 @@ type UserMgrHandler interface {
 	PhoneLogin(context.Context, *PhoneLoginRequest, *LoginResponse) error
 	PhoneResetPassword(context.Context, *PhoneResetPasswordRequest, *common.Empty) error
 	PhoneChange(context.Context, *PhoneChangeRequest, *common.Empty) error
+	// internal api
+	PasswordVerify(context.Context, *PasswordVerifyRequest, *PasswordVerifyResponse) error
 }
 
 func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server.HandlerOption) error {
@@ -398,6 +412,7 @@ func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server
 		PhoneLogin(ctx context.Context, in *PhoneLoginRequest, out *LoginResponse) error
 		PhoneResetPassword(ctx context.Context, in *PhoneResetPasswordRequest, out *common.Empty) error
 		PhoneChange(ctx context.Context, in *PhoneChangeRequest, out *common.Empty) error
+		PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, out *PasswordVerifyResponse) error
 	}
 	type UserMgr struct {
 		userMgr
@@ -508,4 +523,8 @@ func (h *userMgrHandler) PhoneResetPassword(ctx context.Context, in *PhoneResetP
 
 func (h *userMgrHandler) PhoneChange(ctx context.Context, in *PhoneChangeRequest, out *common.Empty) error {
 	return h.UserMgrHandler.PhoneChange(ctx, in, out)
+}
+
+func (h *userMgrHandler) PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, out *PasswordVerifyResponse) error {
+	return h.UserMgrHandler.PasswordVerify(ctx, in, out)
 }
