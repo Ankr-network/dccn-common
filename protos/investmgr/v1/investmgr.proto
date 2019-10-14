@@ -201,6 +201,9 @@ message BuyAssetRequest {
     string product_id = 3;
     string product_name = 4;
     int32  amount       = 5;
+    string verify_type  = 6;
+    string verify_phone = 7;
+    string verify_code  = 8;
 }
 
 message BuyAssetResponse {
@@ -239,6 +242,9 @@ message SellAssetRequest {
     string product_id = 3;
     string product_name = 4;
     int32  amount       = 5;
+    string verify_type  = 6;
+    string verify_phone = 7;
+    string verify_code  = 8;
 }
 
 message SellAssetResponse {
@@ -274,8 +280,9 @@ message DailyAssetProfitResponse {
 message AccumulatedProfit {
     string uid        = 1;
     string product_id = 2;
-    int32  asset_id   = 3;
-    double accumulated_profit = 4;
+    string product_name  = 3;
+    int32  asset_id      = 4;
+    double accumulated_profit = 5;
 }
 
 message AccumulatedProfitRequest {
@@ -322,6 +329,9 @@ message WithdrawRequest {
     string  from_addr     = 4;
     string  to_addr       = 5;
     double  amount        = 6;
+    string  verify_type   = 7;
+    string  verify_phone  = 8;
+    string  verify_code   = 9;
 }
 
 message WithdrawResponse {
