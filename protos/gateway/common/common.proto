@@ -236,7 +236,7 @@ enum TransactionState {
    TransactionConfirmed = 3;
 }
 
-message TokenSwapRecord {
+message Deposit {
     google.protobuf.Timestamp time = 1;
     string fromAccountAddress = 2;
     string fromAccountAddressType = 3;
