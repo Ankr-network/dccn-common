@@ -353,8 +353,9 @@ message ProfitRecordRequest {
  message TransactionRecordRequest {
      string req_id = 1;
      string uid    = 2;
-     int32  page   = 3;
-     int32  limit  = 4;
+     string product_id = 3;
+     int32  page       = 4;
+     int32  limit      = 5;
  }
 
  message TransactionRecord {
