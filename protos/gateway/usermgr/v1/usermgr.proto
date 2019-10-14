@@ -92,11 +92,11 @@ service UserMgr {
             body: "*"
     };
     }
-    rpc TokenSwapHistory (common.proto.Empty) returns (TokenSwapHistoryResponse){
-        option (google.api.http).get = "/tokenswap/history";
+    rpc DepositHistory (common.proto.Empty) returns (DepositHistoryResponse){
+        option (google.api.http).get = "/deposit/history";
     }
-    rpc SearchTokenSwap (SearchTokenSwapRequest) returns (TokenSwapHistoryResponse){
-        option (google.api.http).get = "/tokenswap/search";
+    rpc SearchDeposit (SearchDepositRequest) returns (DepositHistoryResponse){
+        option (google.api.http).get = "/deposit/search";
     }
     rpc UserDetail (common.proto.Empty) returns (User){
         option (google.api.http).get = "/user/detail";
@@ -203,7 +203,7 @@ message ClusterProviderApplyRequest{
       int32 time_zone = 8;
 }
 
-message SearchTokenSwapRequest {
+message SearchDepositRequest {
     google.protobuf.Timestamp start = 1;
     google.protobuf.Timestamp end = 2;
 }
@@ -217,8 +217,8 @@ message GenerateAddressResponse {
     string typeaddress = 1;
     string purposeaddress = 2;
 }
-message TokenSwapHistoryResponse {
-    repeated common.proto.TokenSwapRecord deposits = 1;
+message DepositHistoryResponse {
+    repeated common.proto.Deposit deposits = 1;
 }
 
 message RegisterResponse{

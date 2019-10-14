@@ -53,8 +53,8 @@ type UserMgrService interface {
 	VerifyAccessToken(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*common.Empty, error)
 	ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, opts ...client.CallOption) (*common.Empty, error)
 	CreateAddress(ctx context.Context, in *GenerateAddressRequest, opts ...client.CallOption) (*GenerateAddressResponse, error)
-	TokenSwapHistory(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*TokenSwapHistoryResponse, error)
-	SearchTokenSwap(ctx context.Context, in *SearchTokenSwapRequest, opts ...client.CallOption) (*TokenSwapHistoryResponse, error)
+	DepositHistory(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*DepositHistoryResponse, error)
+	SearchDeposit(ctx context.Context, in *SearchDepositRequest, opts ...client.CallOption) (*DepositHistoryResponse, error)
 	UserDetail(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*User, error)
 	Fetch(ctx context.Context, in *FetchAccountsRequest, opts ...client.CallOption) (*FetchAccountsResponse, error)
 	ApplyBecomeClusterProvider(ctx context.Context, in *ClusterProviderApplyRequest, opts ...client.CallOption) (*common.Empty, error)
@@ -66,6 +66,8 @@ type UserMgrService interface {
 	PhoneLogin(ctx context.Context, in *PhoneLoginRequest, opts ...client.CallOption) (*LoginResponse, error)
 	PhoneResetPassword(ctx context.Context, in *PhoneResetPasswordRequest, opts ...client.CallOption) (*common.Empty, error)
 	PhoneChange(ctx context.Context, in *PhoneChangeRequest, opts ...client.CallOption) (*common.Empty, error)
+	// internal api
+	PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, opts ...client.CallOption) (*PasswordVerifyResponse, error)
 }
 
 type userMgrService struct {
@@ -216,9 +218,9 @@ func (c *userMgrService) CreateAddress(ctx context.Context, in *GenerateAddressR
 	return out, nil
 }
 
-func (c *userMgrService) TokenSwapHistory(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*TokenSwapHistoryResponse, error) {
-	req := c.c.NewRequest(c.name, "UserMgr.TokenSwapHistory", in)
-	out := new(TokenSwapHistoryResponse)
+func (c *userMgrService) DepositHistory(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*DepositHistoryResponse, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.DepositHistory", in)
+	out := new(DepositHistoryResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -226,9 +228,9 @@ func (c *userMgrService) TokenSwapHistory(ctx context.Context, in *common.Empty,
 	return out, nil
 }
 
-func (c *userMgrService) SearchTokenSwap(ctx context.Context, in *SearchTokenSwapRequest, opts ...client.CallOption) (*TokenSwapHistoryResponse, error) {
-	req := c.c.NewRequest(c.name, "UserMgr.SearchTokenSwap", in)
-	out := new(TokenSwapHistoryResponse)
+func (c *userMgrService) SearchDeposit(ctx context.Context, in *SearchDepositRequest, opts ...client.CallOption) (*DepositHistoryResponse, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.SearchDeposit", in)
+	out := new(DepositHistoryResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -336,6 +338,16 @@ func (c *userMgrService) PhoneChange(ctx context.Context, in *PhoneChangeRequest
 	return out, nil
 }
 
+func (c *userMgrService) PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, opts ...client.CallOption) (*PasswordVerifyResponse, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.PasswordVerify", in)
+	out := new(PasswordVerifyResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for UserMgr service
 
 type UserMgrHandler interface {
@@ -356,8 +368,8 @@ type UserMgrHandler interface {
 	VerifyAccessToken(context.Context, *common.Empty, *common.Empty) error
 	ConfirmEmail(context.Context, *ConfirmEmailRequest, *common.Empty) error
 	CreateAddress(context.Context, *GenerateAddressRequest, *GenerateAddressResponse) error
-	TokenSwapHistory(context.Context, *common.Empty, *TokenSwapHistoryResponse) error
-	SearchTokenSwap(context.Context, *SearchTokenSwapRequest, *TokenSwapHistoryResponse) error
+	DepositHistory(context.Context, *common.Empty, *DepositHistoryResponse) error
+	SearchDeposit(context.Context, *SearchDepositRequest, *DepositHistoryResponse) error
 	UserDetail(context.Context, *common.Empty, *User) error
 	Fetch(context.Context, *FetchAccountsRequest, *FetchAccountsResponse) error
 	ApplyBecomeClusterProvider(context.Context, *ClusterProviderApplyRequest, *common.Empty) error
@@ -369,6 +381,8 @@ type UserMgrHandler interface {
 	PhoneLogin(context.Context, *PhoneLoginRequest, *LoginResponse) error
 	PhoneResetPassword(context.Context, *PhoneResetPasswordRequest, *common.Empty) error
 	PhoneChange(context.Context, *PhoneChangeRequest, *common.Empty) error
+	// internal api
+	PasswordVerify(context.Context, *PasswordVerifyRequest, *PasswordVerifyResponse) error
 }
 
 func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server.HandlerOption) error {
@@ -386,8 +400,8 @@ func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server
 		VerifyAccessToken(ctx context.Context, in *common.Empty, out *common.Empty) error
 		ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, out *common.Empty) error
 		CreateAddress(ctx context.Context, in *GenerateAddressRequest, out *GenerateAddressResponse) error
-		TokenSwapHistory(ctx context.Context, in *common.Empty, out *TokenSwapHistoryResponse) error
-		SearchTokenSwap(ctx context.Context, in *SearchTokenSwapRequest, out *TokenSwapHistoryResponse) error
+		DepositHistory(ctx context.Context, in *common.Empty, out *DepositHistoryResponse) error
+		SearchDeposit(ctx context.Context, in *SearchDepositRequest, out *DepositHistoryResponse) error
 		UserDetail(ctx context.Context, in *common.Empty, out *User) error
 		Fetch(ctx context.Context, in *FetchAccountsRequest, out *FetchAccountsResponse) error
 		ApplyBecomeClusterProvider(ctx context.Context, in *ClusterProviderApplyRequest, out *common.Empty) error
@@ -398,6 +412,7 @@ func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server
 		PhoneLogin(ctx context.Context, in *PhoneLoginRequest, out *LoginResponse) error
 		PhoneResetPassword(ctx context.Context, in *PhoneResetPasswordRequest, out *common.Empty) error
 		PhoneChange(ctx context.Context, in *PhoneChangeRequest, out *common.Empty) error
+		PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, out *PasswordVerifyResponse) error
 	}
 	type UserMgr struct {
 		userMgr
@@ -462,12 +477,12 @@ func (h *userMgrHandler) CreateAddress(ctx context.Context, in *GenerateAddressR
 	return h.UserMgrHandler.CreateAddress(ctx, in, out)
 }
 
-func (h *userMgrHandler) TokenSwapHistory(ctx context.Context, in *common.Empty, out *TokenSwapHistoryResponse) error {
-	return h.UserMgrHandler.TokenSwapHistory(ctx, in, out)
+func (h *userMgrHandler) DepositHistory(ctx context.Context, in *common.Empty, out *DepositHistoryResponse) error {
+	return h.UserMgrHandler.DepositHistory(ctx, in, out)
 }
 
-func (h *userMgrHandler) SearchTokenSwap(ctx context.Context, in *SearchTokenSwapRequest, out *TokenSwapHistoryResponse) error {
-	return h.UserMgrHandler.SearchTokenSwap(ctx, in, out)
+func (h *userMgrHandler) SearchDeposit(ctx context.Context, in *SearchDepositRequest, out *DepositHistoryResponse) error {
+	return h.UserMgrHandler.SearchDeposit(ctx, in, out)
 }
 
 func (h *userMgrHandler) UserDetail(ctx context.Context, in *common.Empty, out *User) error {
@@ -508,4 +523,8 @@ func (h *userMgrHandler) PhoneResetPassword(ctx context.Context, in *PhoneResetP
 
 func (h *userMgrHandler) PhoneChange(ctx context.Context, in *PhoneChangeRequest, out *common.Empty) error {
 	return h.UserMgrHandler.PhoneChange(ctx, in, out)
+}
+
+func (h *userMgrHandler) PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, out *PasswordVerifyResponse) error {
+	return h.UserMgrHandler.PasswordVerify(ctx, in, out)
 }

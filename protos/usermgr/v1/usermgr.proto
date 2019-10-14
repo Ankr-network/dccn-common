@@ -44,10 +44,10 @@ service UserMgr {
     }
     rpc CreateAddress (GenerateAddressRequest) returns (GenerateAddressResponse){
     }
-    rpc TokenSwapHistory (common.proto.Empty) returns (TokenSwapHistoryResponse){
+    rpc DepositHistory (common.proto.Empty) returns (DepositHistoryResponse){
 
     }
-    rpc SearchTokenSwap (SearchTokenSwapRequest) returns (TokenSwapHistoryResponse){
+    rpc SearchDeposit (SearchDepositRequest) returns (DepositHistoryResponse){
     }
     rpc UserDetail (common.proto.Empty) returns (User){
     }
@@ -63,6 +63,9 @@ service UserMgr {
     rpc PhoneLogin(PhoneLoginRequest) returns (LoginResponse) {}
     rpc PhoneResetPassword(PhoneResetPasswordRequest) returns (common.proto.Empty){}
     rpc PhoneChange(PhoneChangeRequest) returns (common.proto.Empty) {}
+
+    // internal api
+    rpc PasswordVerify(PasswordVerifyRequest) returns (PasswordVerifyResponse);
 }
 
 message PhoneRegisterRequest {
@@ -97,6 +100,15 @@ message PhoneChangeRequest {
     string code = 2;
 }
 
+message PasswordVerifyRequest {
+    string uid = 1;
+    string password = 2;
+}
+
+message PasswordVerifyResponse {
+    bool success = 1;
+}
+
 message FakeTokenRequest {
     string email = 1;
 }
@@ -124,7 +136,7 @@ message ClusterProviderApplyRequest{
       int32  time_zone = 8;
 }
 
-message SearchTokenSwapRequest {
+message SearchDepositRequest {
     google.protobuf.Timestamp start = 1;
     google.protobuf.Timestamp end = 2;
 }
@@ -139,8 +151,8 @@ message GenerateAddressResponse {
     string purposeaddress = 2;
 }
 
-message TokenSwapHistoryResponse {
-    repeated common.proto.TokenSwapRecord token_history = 1;
+message DepositHistoryResponse {
+    repeated common.proto.Deposit deposits = 1;
 }
 
 
