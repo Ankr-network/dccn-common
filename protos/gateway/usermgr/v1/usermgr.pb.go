@@ -11,6 +11,8 @@ import (
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -1914,6 +1916,80 @@ type UserMgrServer interface {
 	PhoneLogin(context.Context, *PhoneLoginRequest) (*LoginResponse, error)
 	PhoneResetPassword(context.Context, *PhoneResetPasswordRequest) (*common.Empty, error)
 	PhoneChange(context.Context, *PhoneChangeRequest) (*common.Empty, error)
+}
+
+// UnimplementedUserMgrServer can be embedded to have forward compatible implementations.
+type UnimplementedUserMgrServer struct {
+}
+
+func (*UnimplementedUserMgrServer) Register(ctx context.Context, req *RegisterRequest) (*RegisterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (*UnimplementedUserMgrServer) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (*UnimplementedUserMgrServer) Logout(ctx context.Context, req *RefreshToken) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (*UnimplementedUserMgrServer) RefreshSession(ctx context.Context, req *RefreshToken) (*AuthenticationResult, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshSession not implemented")
+}
+func (*UnimplementedUserMgrServer) ConfirmRegistration(ctx context.Context, req *ConfirmRegistrationRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfirmRegistration not implemented")
+}
+func (*UnimplementedUserMgrServer) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ForgotPassword not implemented")
+}
+func (*UnimplementedUserMgrServer) ConfirmPassword(ctx context.Context, req *ConfirmPasswordRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfirmPassword not implemented")
+}
+func (*UnimplementedUserMgrServer) ChangePassword(ctx context.Context, req *ChangePasswordRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangePassword not implemented")
+}
+func (*UnimplementedUserMgrServer) UpdateAttributes(ctx context.Context, req *UpdateAttributesRequest) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAttributes not implemented")
+}
+func (*UnimplementedUserMgrServer) ChangeEmail(ctx context.Context, req *ChangeEmailRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeEmail not implemented")
+}
+func (*UnimplementedUserMgrServer) VerifyAccessToken(ctx context.Context, req *common.Empty) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyAccessToken not implemented")
+}
+func (*UnimplementedUserMgrServer) ConfirmEmail(ctx context.Context, req *ConfirmEmailRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfirmEmail not implemented")
+}
+func (*UnimplementedUserMgrServer) CreateAddress(ctx context.Context, req *GenerateAddressRequest) (*GenerateAddressResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAddress not implemented")
+}
+func (*UnimplementedUserMgrServer) DepositHistory(ctx context.Context, req *common.Empty) (*DepositHistoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DepositHistory not implemented")
+}
+func (*UnimplementedUserMgrServer) SearchDeposit(ctx context.Context, req *SearchDepositRequest) (*DepositHistoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchDeposit not implemented")
+}
+func (*UnimplementedUserMgrServer) UserDetail(ctx context.Context, req *common.Empty) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserDetail not implemented")
+}
+func (*UnimplementedUserMgrServer) ApplyBecomeClusterProvider(ctx context.Context, req *ClusterProviderApplyRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ApplyBecomeClusterProvider not implemented")
+}
+func (*UnimplementedUserMgrServer) PhoneVerify(ctx context.Context, req *PhoneVerifyRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PhoneVerify not implemented")
+}
+func (*UnimplementedUserMgrServer) PhoneVerifyCheck(ctx context.Context, req *PhoneVerifyCheckRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PhoneVerifyCheck not implemented")
+}
+func (*UnimplementedUserMgrServer) PhoneRegister(ctx context.Context, req *PhoneRegisterRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PhoneRegister not implemented")
+}
+func (*UnimplementedUserMgrServer) PhoneLogin(ctx context.Context, req *PhoneLoginRequest) (*LoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PhoneLogin not implemented")
+}
+func (*UnimplementedUserMgrServer) PhoneResetPassword(ctx context.Context, req *PhoneResetPasswordRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PhoneResetPassword not implemented")
+}
+func (*UnimplementedUserMgrServer) PhoneChange(ctx context.Context, req *PhoneChangeRequest) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PhoneChange not implemented")
 }
 
 func RegisterUserMgrServer(s *grpc.Server, srv UserMgrServer) {
