@@ -171,6 +171,9 @@ message BuyAssetRequest {
     string product_id = 3;
     string product_name = 4;
     int32  amount       = 5;
+    string verify_type  = 6;
+    string verify_phone = 7;
+    string verify_code  = 8;
 }
 
 message BuyAssetResponse {
