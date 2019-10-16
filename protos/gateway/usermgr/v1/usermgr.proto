@@ -165,9 +165,16 @@ message PhoneResetPasswordRequest {
     string new_password = 3;
 } 
 
+enum MFAType {
+    TOTP = 0;
+    SMS = 1;
+}
+
 message PhoneLoginRequest {
     string phone = 1;
     string password = 2;
+    MFAType mfa_type = 3;
+    string code = 4;
 }
 
 message PhoneChangeRequest {

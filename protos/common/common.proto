@@ -61,6 +61,7 @@ message DataCenterStatus {
   DCStatus dc_status = 4; // data center status // 1. online 2. offline
   DataCenterAttributes dc_attributes = 5;
   DCHeartbeatReport dc_heartbeat_report = 6;
+  repeated string dc_instance_type = 7; //data center instance type
 }
 
 message GeoLocation {
@@ -133,6 +134,7 @@ message Namespace {
   uint32 ns_cpu_limit = 7;     // number of mcpu
   uint32 ns_mem_limit = 8;     // number of Mi mem usage
   uint32 ns_storage_limit = 9; // number of Gi storage
+  string ns_dc_instance_type = 10; //data center instance type
 }
 
 // Used by appmgr
@@ -250,3 +252,4 @@ message Deposit {
   string confirmed_block_height = 9;
   TransactionState transaction_state = 10;
 }
+

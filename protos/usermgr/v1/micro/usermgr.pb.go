@@ -22,6 +22,31 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+type MFAType int32
+
+const (
+	MFAType_TOTP MFAType = 0
+	MFAType_SMS  MFAType = 1
+)
+
+var MFAType_name = map[int32]string{
+	0: "TOTP",
+	1: "SMS",
+}
+
+var MFAType_value = map[string]int32{
+	"TOTP": 0,
+	"SMS":  1,
+}
+
+func (x MFAType) String() string {
+	return proto.EnumName(MFAType_name, int32(x))
+}
+
+func (MFAType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_07324a721ebdf9ff, []int{0}
+}
+
 // cluster provider status
 type ClusterProviderStatus int32
 
@@ -48,7 +73,7 @@ func (x ClusterProviderStatus) String() string {
 }
 
 func (ClusterProviderStatus) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_07324a721ebdf9ff, []int{0}
+	return fileDescriptor_07324a721ebdf9ff, []int{1}
 }
 
 type UserStatus int32
@@ -76,7 +101,7 @@ func (x UserStatus) String() string {
 }
 
 func (UserStatus) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_07324a721ebdf9ff, []int{1}
+	return fileDescriptor_07324a721ebdf9ff, []int{2}
 }
 
 type FetchAccountsType int32
@@ -113,7 +138,7 @@ func (x FetchAccountsType) String() string {
 }
 
 func (FetchAccountsType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_07324a721ebdf9ff, []int{2}
+	return fileDescriptor_07324a721ebdf9ff, []int{3}
 }
 
 type PhoneRegisterRequest struct {
@@ -323,6 +348,8 @@ func (m *PhoneResetPasswordRequest) GetNewPassword() string {
 type PhoneLoginRequest struct {
 	Phone                string   `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
 	Password             string   `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	MfaType              MFAType  `protobuf:"varint,3,opt,name=mfa_type,json=mfaType,proto3,enum=usermgr.MFAType" json:"mfa_type,omitempty"`
+	Code                 string   `protobuf:"bytes,4,opt,name=code,proto3" json:"code,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -363,6 +390,20 @@ func (m *PhoneLoginRequest) GetPhone() string {
 func (m *PhoneLoginRequest) GetPassword() string {
 	if m != nil {
 		return m.Password
+	}
+	return ""
+}
+
+func (m *PhoneLoginRequest) GetMfaType() MFAType {
+	if m != nil {
+		return m.MfaType
+	}
+	return MFAType_TOTP
+}
+
+func (m *PhoneLoginRequest) GetCode() string {
+	if m != nil {
+		return m.Code
 	}
 	return ""
 }
@@ -1674,6 +1715,7 @@ func (m *FetchAccountsResponse) GetAddress() []string {
 }
 
 func init() {
+	proto.RegisterEnum("usermgr.MFAType", MFAType_name, MFAType_value)
 	proto.RegisterEnum("usermgr.ClusterProviderStatus", ClusterProviderStatus_name, ClusterProviderStatus_value)
 	proto.RegisterEnum("usermgr.UserStatus", UserStatus_name, UserStatus_value)
 	proto.RegisterEnum("usermgr.FetchAccountsType", FetchAccountsType_name, FetchAccountsType_value)

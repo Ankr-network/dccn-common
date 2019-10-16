@@ -27,6 +27,31 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+type MFAType int32
+
+const (
+	MFAType_TOTP MFAType = 0
+	MFAType_SMS  MFAType = 1
+)
+
+var MFAType_name = map[int32]string{
+	0: "TOTP",
+	1: "SMS",
+}
+
+var MFAType_value = map[string]int32{
+	"TOTP": 0,
+	"SMS":  1,
+}
+
+func (x MFAType) String() string {
+	return proto.EnumName(MFAType_name, int32(x))
+}
+
+func (MFAType) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_00756120c344702c, []int{0}
+}
+
 //message UserCountResponse {
 //    uint64 user = 1;
 //}
@@ -56,7 +81,7 @@ func (x ClusterProviderStatus) String() string {
 }
 
 func (ClusterProviderStatus) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_00756120c344702c, []int{0}
+	return fileDescriptor_00756120c344702c, []int{1}
 }
 
 type UserStatus int32
@@ -84,7 +109,7 @@ func (x UserStatus) String() string {
 }
 
 func (UserStatus) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_00756120c344702c, []int{1}
+	return fileDescriptor_00756120c344702c, []int{2}
 }
 
 type PhoneRegisterRequest struct {
@@ -294,6 +319,8 @@ func (m *PhoneResetPasswordRequest) GetNewPassword() string {
 type PhoneLoginRequest struct {
 	Phone                string   `protobuf:"bytes,1,opt,name=phone,proto3" json:"phone,omitempty"`
 	Password             string   `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	MfaType              MFAType  `protobuf:"varint,3,opt,name=mfa_type,json=mfaType,proto3,enum=gwusermgr.MFAType" json:"mfa_type,omitempty"`
+	Code                 string   `protobuf:"bytes,4,opt,name=code,proto3" json:"code,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -334,6 +361,20 @@ func (m *PhoneLoginRequest) GetPhone() string {
 func (m *PhoneLoginRequest) GetPassword() string {
 	if m != nil {
 		return m.Password
+	}
+	return ""
+}
+
+func (m *PhoneLoginRequest) GetMfaType() MFAType {
+	if m != nil {
+		return m.MfaType
+	}
+	return MFAType_TOTP
+}
+
+func (m *PhoneLoginRequest) GetCode() string {
+	if m != nil {
+		return m.Code
 	}
 	return ""
 }
@@ -1481,6 +1522,7 @@ func (m *ConfirmEmailRequest) GetEmail() string {
 }
 
 func init() {
+	proto.RegisterEnum("gwusermgr.MFAType", MFAType_name, MFAType_value)
 	proto.RegisterEnum("gwusermgr.ClusterProviderStatus", ClusterProviderStatus_name, ClusterProviderStatus_value)
 	proto.RegisterEnum("gwusermgr.UserStatus", UserStatus_name, UserStatus_value)
 	proto.RegisterType((*PhoneRegisterRequest)(nil), "gwusermgr.PhoneRegisterRequest")
@@ -1624,6 +1666,7 @@ var fileDescriptor_00756120c344702c = []byte{
 	0xe6, 0xdf, 0x8f, 0x16, 0x75, 0x0b, 0x61, 0x29, 0x60, 0x9a, 0x09, 0xe2, 0x8b, 0x92, 0x2f, 0xe8,
 	0x67, 0x3e, 0xf9, 0x89, 0xa7, 0x9f, 0xdb, 0x85, 0x4b, 0xf0, 0xd2, 0x8b, 0xdc, 0xfe, 0x60, 0x85,
 	0x8b, 0x3d, 0xff, 0x31, 0x00, 0x00, 0xff, 0xff, 0xc3, 0x7c, 0x28, 0xc0, 0x55, 0x14, 0x00, 0x00,
+
 }
 
 // Reference imports to suppress errors if they are not otherwise used.

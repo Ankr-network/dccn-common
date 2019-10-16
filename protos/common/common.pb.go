@@ -508,6 +508,7 @@ type DataCenterStatus struct {
 	DcStatus             DCStatus              `protobuf:"varint,4,opt,name=dc_status,json=dcStatus,proto3,enum=common.proto.DCStatus" json:"dc_status,omitempty"`
 	DcAttributes         *DataCenterAttributes `protobuf:"bytes,5,opt,name=dc_attributes,json=dcAttributes,proto3" json:"dc_attributes,omitempty"`
 	DcHeartbeatReport    *DCHeartbeatReport    `protobuf:"bytes,6,opt,name=dc_heartbeat_report,json=dcHeartbeatReport,proto3" json:"dc_heartbeat_report,omitempty"`
+	DcInstanceType       []string              `protobuf:"bytes,7,rep,name=dc_instance_type,json=dcInstanceType,proto3" json:"dc_instance_type,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -576,6 +577,13 @@ func (m *DataCenterStatus) GetDcAttributes() *DataCenterAttributes {
 func (m *DataCenterStatus) GetDcHeartbeatReport() *DCHeartbeatReport {
 	if m != nil {
 		return m.DcHeartbeatReport
+	}
+	return nil
+}
+
+func (m *DataCenterStatus) GetDcInstanceType() []string {
+	if m != nil {
+		return m.DcInstanceType
 	}
 	return nil
 }
@@ -1126,6 +1134,7 @@ type Namespace struct {
 	NsCpuLimit           uint32               `protobuf:"varint,7,opt,name=ns_cpu_limit,json=nsCpuLimit,proto3" json:"ns_cpu_limit,omitempty"`
 	NsMemLimit           uint32               `protobuf:"varint,8,opt,name=ns_mem_limit,json=nsMemLimit,proto3" json:"ns_mem_limit,omitempty"`
 	NsStorageLimit       uint32               `protobuf:"varint,9,opt,name=ns_storage_limit,json=nsStorageLimit,proto3" json:"ns_storage_limit,omitempty"`
+	NsDcInstanceType     string               `protobuf:"bytes,10,opt,name=ns_dc_instance_type,json=nsDcInstanceType,proto3" json:"ns_dc_instance_type,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
@@ -1217,6 +1226,13 @@ func (m *Namespace) GetNsStorageLimit() uint32 {
 		return m.NsStorageLimit
 	}
 	return 0
+}
+
+func (m *Namespace) GetNsDcInstanceType() string {
+	if m != nil {
+		return m.NsDcInstanceType
+	}
+	return ""
 }
 
 // Used by appmgr
@@ -2264,4 +2280,5 @@ var fileDescriptor_555bd8c177793206 = []byte{
 	0x96, 0x74, 0x0e, 0x29, 0x8b, 0xc7, 0xec, 0xa4, 0x5d, 0x40, 0x1d, 0xd8, 0x5a, 0xe0, 0xcf, 0x35,
 	0x8a, 0xaf, 0x2a, 0x06, 0xfe, 0x87, 0xff, 0x09, 0x00, 0x00, 0xff, 0xff, 0xb2, 0x37, 0x4c, 0xf5,
 	0x00, 0x1a, 0x00, 0x00,
+
 }
