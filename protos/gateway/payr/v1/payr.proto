@@ -40,6 +40,12 @@ service Payr {
     rpc ListSubs(ListSubsRequest) returns (ListSubsResponse){
         option (google.api.http).get = "/subs/list";
     }
+    rpc CreateAddress (GenerateAddressRequest) returns (GenerateAddressResponse){
+        option (google.api.http) = {
+            post: "/create_address"
+            body: "*"
+    };
+    }
 }
 
 message Order {
@@ -135,4 +141,14 @@ message TeamID{
 }
 message OrderStatusResponse{
     Order order = 1;
+}
+
+message GenerateAddressRequest {
+    string type = 1;
+    string purpose = 2;
+}
+
+message GenerateAddressResponse {
+    string typeaddress = 1;
+    string purposeaddress = 2;
 }

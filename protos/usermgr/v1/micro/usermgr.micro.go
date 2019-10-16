@@ -52,7 +52,6 @@ type UserMgrService interface {
 	ChangeEmail(ctx context.Context, in *ChangeEmailRequest, opts ...client.CallOption) (*common.Empty, error)
 	VerifyAccessToken(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*common.Empty, error)
 	ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, opts ...client.CallOption) (*common.Empty, error)
-	CreateAddress(ctx context.Context, in *GenerateAddressRequest, opts ...client.CallOption) (*GenerateAddressResponse, error)
 	DepositHistory(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*DepositHistoryResponse, error)
 	SearchDeposit(ctx context.Context, in *SearchDepositRequest, opts ...client.CallOption) (*DepositHistoryResponse, error)
 	UserDetail(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*User, error)
@@ -201,16 +200,6 @@ func (c *userMgrService) VerifyAccessToken(ctx context.Context, in *common.Empty
 func (c *userMgrService) ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, opts ...client.CallOption) (*common.Empty, error) {
 	req := c.c.NewRequest(c.name, "UserMgr.ConfirmEmail", in)
 	out := new(common.Empty)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userMgrService) CreateAddress(ctx context.Context, in *GenerateAddressRequest, opts ...client.CallOption) (*GenerateAddressResponse, error) {
-	req := c.c.NewRequest(c.name, "UserMgr.CreateAddress", in)
-	out := new(GenerateAddressResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -367,7 +356,6 @@ type UserMgrHandler interface {
 	ChangeEmail(context.Context, *ChangeEmailRequest, *common.Empty) error
 	VerifyAccessToken(context.Context, *common.Empty, *common.Empty) error
 	ConfirmEmail(context.Context, *ConfirmEmailRequest, *common.Empty) error
-	CreateAddress(context.Context, *GenerateAddressRequest, *GenerateAddressResponse) error
 	DepositHistory(context.Context, *common.Empty, *DepositHistoryResponse) error
 	SearchDeposit(context.Context, *SearchDepositRequest, *DepositHistoryResponse) error
 	UserDetail(context.Context, *common.Empty, *User) error
@@ -399,7 +387,6 @@ func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server
 		ChangeEmail(ctx context.Context, in *ChangeEmailRequest, out *common.Empty) error
 		VerifyAccessToken(ctx context.Context, in *common.Empty, out *common.Empty) error
 		ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, out *common.Empty) error
-		CreateAddress(ctx context.Context, in *GenerateAddressRequest, out *GenerateAddressResponse) error
 		DepositHistory(ctx context.Context, in *common.Empty, out *DepositHistoryResponse) error
 		SearchDeposit(ctx context.Context, in *SearchDepositRequest, out *DepositHistoryResponse) error
 		UserDetail(ctx context.Context, in *common.Empty, out *User) error
@@ -471,10 +458,6 @@ func (h *userMgrHandler) VerifyAccessToken(ctx context.Context, in *common.Empty
 
 func (h *userMgrHandler) ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, out *common.Empty) error {
 	return h.UserMgrHandler.ConfirmEmail(ctx, in, out)
-}
-
-func (h *userMgrHandler) CreateAddress(ctx context.Context, in *GenerateAddressRequest, out *GenerateAddressResponse) error {
-	return h.UserMgrHandler.CreateAddress(ctx, in, out)
 }
 
 func (h *userMgrHandler) DepositHistory(ctx context.Context, in *common.Empty, out *DepositHistoryResponse) error {

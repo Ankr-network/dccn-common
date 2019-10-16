@@ -236,29 +236,42 @@ enum TransactionState {
    TransactionConfirmed = 3;
 }
 
-message Deposit {
-    google.protobuf.Timestamp time = 1;
-    string fromAccountAddress = 2;
-    string fromAccountAddressType = 3;
-    string toAccountAddress = 4;
-    string toAccountAddressType = 5;
-    string txHash = 6;
-    string amount = 7;
-    string confirmedBlockHeight = 8;
-    TransactionState txState = 9;
-    string toTxHash = 10;
-    string toTxHashMemo = 11;
+message TokenSwapRecord {
+  google.protobuf.Timestamp time = 1;
+  string fromAccountAddress = 2;
+  string fromAccountAddressType = 3;
+  string toAccountAddress = 4;
+  string toAccountAddressType = 5;
+  string txHash = 6;
+  string amount = 7;
+  string confirmedBlockHeight = 8;
+  TransactionState txState = 9;
+  string toTxHash = 10;
+  string toTxHashMemo = 11;
 }
 
 message Payment {
-    google.protobuf.Timestamp time = 1;
-    string order_id = 2;
-    string team_id = 3;
-    string from_account_address = 4;
-    string to_account_address = 5;
-    string payment_type = 6;
-    string tx_hash = 7;
-    string amount = 8;
-    string confirmed_block_height = 9;
-    TransactionState transaction_state = 10;
+  google.protobuf.Timestamp time = 1;
+  string order_id = 2;
+  string team_id = 3;
+  string from_account_address = 4;
+  string to_account_address = 5;
+  string payment_type = 6;
+  string tx_hash = 7;
+  string amount = 8;
+  string confirmed_block_height = 9;
+  TransactionState transaction_state = 10;
+}
+
+message Deposit {
+  google.protobuf.Timestamp time = 1;
+  string order_id = 2;
+  string team_id = 3;
+  string from_account_address = 4;
+  string to_account_address = 5;
+  string payment_type = 6;
+  string tx_hash = 7;
+  string amount = 8;
+  string confirmed_block_height = 9;
+  TransactionState transaction_state = 10;
 }
