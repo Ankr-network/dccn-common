@@ -86,12 +86,6 @@ service UserMgr {
             body: "*"
     };
     }
-    rpc CreateAddress (GenerateAddressRequest) returns (GenerateAddressResponse){
-        option (google.api.http) = {
-            post: "/create_address"
-            body: "*"
-    };
-    }
     rpc DepositHistory (common.proto.Empty) returns (DepositHistoryResponse){
         option (google.api.http).get = "/deposit/history";
     }

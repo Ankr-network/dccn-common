@@ -42,8 +42,7 @@ service UserMgr {
 
     rpc ConfirmEmail(ConfirmEmailRequest) returns (common.proto.Empty){
     }
-    rpc CreateAddress (GenerateAddressRequest) returns (GenerateAddressResponse){
-    }
+    
     rpc DepositHistory (common.proto.Empty) returns (DepositHistoryResponse){
 
     }
@@ -139,16 +138,6 @@ message ClusterProviderApplyRequest{
 message SearchDepositRequest {
     google.protobuf.Timestamp start = 1;
     google.protobuf.Timestamp end = 2;
-}
-
-message GenerateAddressRequest {
-    string type = 1;
-    string purpose = 2;
-}
-
-message GenerateAddressResponse {
-    string typeaddress = 1;
-    string purposeaddress = 2;
 }
 
 message DepositHistoryResponse {
