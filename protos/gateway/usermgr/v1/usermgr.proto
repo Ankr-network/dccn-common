@@ -167,7 +167,6 @@ message PhoneResetPasswordRequest {
 
 enum MFAType {
     TOTP = 0;
-    SMS = 1;
 }
 
 message PhoneLoginRequest {
