@@ -62,6 +62,7 @@ message DataCenterStatus {
   DataCenterAttributes dc_attributes = 5;
   DCHeartbeatReport dc_heartbeat_report = 6;
   repeated string dc_instance_type = 7; //data center instance type
+  map<string, int64>  dc_instance_metrics = 8; //data center instance metrics
 }
 
 message GeoLocation {
