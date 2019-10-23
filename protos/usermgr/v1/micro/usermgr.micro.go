@@ -7,6 +7,7 @@ import (
 	fmt "fmt"
 	common "github.com/Ankr-network/dccn-common/protos/common"
 	proto "github.com/golang/protobuf/proto"
+	empty "github.com/golang/protobuf/ptypes/empty"
 	_ "github.com/golang/protobuf/ptypes/timestamp"
 	math "math"
 )
@@ -68,6 +69,9 @@ type UserMgrService interface {
 	// internal api
 	PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, opts ...client.CallOption) (*PasswordVerifyResponse, error)
 	CreateAddress(ctx context.Context, in *GenerateAddressRequest, opts ...client.CallOption) (*GenerateAddressResponse, error)
+	GetUser(ctx context.Context, in *GetUserRequest, opts ...client.CallOption) (*GetUserResponse, error)
+	GetUserByEmail(ctx context.Context, in *GetUserByEmailRequest, opts ...client.CallOption) (*GetUserResponse, error)
+	UpdateCurrentTeamID(ctx context.Context, in *UpdateCurrentTeamIDRequest, opts ...client.CallOption) (*empty.Empty, error)
 }
 
 type userMgrService struct {
@@ -348,6 +352,36 @@ func (c *userMgrService) CreateAddress(ctx context.Context, in *GenerateAddressR
 	return out, nil
 }
 
+func (c *userMgrService) GetUser(ctx context.Context, in *GetUserRequest, opts ...client.CallOption) (*GetUserResponse, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.GetUser", in)
+	out := new(GetUserResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userMgrService) GetUserByEmail(ctx context.Context, in *GetUserByEmailRequest, opts ...client.CallOption) (*GetUserResponse, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.GetUserByEmail", in)
+	out := new(GetUserResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userMgrService) UpdateCurrentTeamID(ctx context.Context, in *UpdateCurrentTeamIDRequest, opts ...client.CallOption) (*empty.Empty, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.UpdateCurrentTeamID", in)
+	out := new(empty.Empty)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for UserMgr service
 
 type UserMgrHandler interface {
@@ -383,6 +417,9 @@ type UserMgrHandler interface {
 	// internal api
 	PasswordVerify(context.Context, *PasswordVerifyRequest, *PasswordVerifyResponse) error
 	CreateAddress(context.Context, *GenerateAddressRequest, *GenerateAddressResponse) error
+	GetUser(context.Context, *GetUserRequest, *GetUserResponse) error
+	GetUserByEmail(context.Context, *GetUserByEmailRequest, *GetUserResponse) error
+	UpdateCurrentTeamID(context.Context, *UpdateCurrentTeamIDRequest, *empty.Empty) error
 }
 
 func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server.HandlerOption) error {
@@ -413,6 +450,9 @@ func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server
 		PhoneChange(ctx context.Context, in *PhoneChangeRequest, out *common.Empty) error
 		PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, out *PasswordVerifyResponse) error
 		CreateAddress(ctx context.Context, in *GenerateAddressRequest, out *GenerateAddressResponse) error
+		GetUser(ctx context.Context, in *GetUserRequest, out *GetUserResponse) error
+		GetUserByEmail(ctx context.Context, in *GetUserByEmailRequest, out *GetUserResponse) error
+		UpdateCurrentTeamID(ctx context.Context, in *UpdateCurrentTeamIDRequest, out *empty.Empty) error
 	}
 	type UserMgr struct {
 		userMgr
@@ -527,4 +567,16 @@ func (h *userMgrHandler) PasswordVerify(ctx context.Context, in *PasswordVerifyR
 
 func (h *userMgrHandler) CreateAddress(ctx context.Context, in *GenerateAddressRequest, out *GenerateAddressResponse) error {
 	return h.UserMgrHandler.CreateAddress(ctx, in, out)
+}
+
+func (h *userMgrHandler) GetUser(ctx context.Context, in *GetUserRequest, out *GetUserResponse) error {
+	return h.UserMgrHandler.GetUser(ctx, in, out)
+}
+
+func (h *userMgrHandler) GetUserByEmail(ctx context.Context, in *GetUserByEmailRequest, out *GetUserResponse) error {
+	return h.UserMgrHandler.GetUserByEmail(ctx, in, out)
+}
+
+func (h *userMgrHandler) UpdateCurrentTeamID(ctx context.Context, in *UpdateCurrentTeamIDRequest, out *empty.Empty) error {
+	return h.UserMgrHandler.UpdateCurrentTeamID(ctx, in, out)
 }
