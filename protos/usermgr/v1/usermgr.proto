@@ -143,7 +143,8 @@ message UpdateCurrentTeamIDRequest {
 message UserConfirmedEvent {
     string uid = 1;
     string user_name = 2;
-    google.protobuf.Timestamp publish_time = 3;
+    string email = 3;
+    google.protobuf.Timestamp confirm_time = 4;
 }
 
 message FakeTokenRequest {
