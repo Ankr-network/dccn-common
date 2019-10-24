@@ -45,10 +45,10 @@ message LogItem {
 
 message LogAppRequest {
     string req_id            = 1;
-	string app_id            = 2;
-	repeated string keywords = 3;
-	uint64 start_time        = 4;
-	uint64 end_time          = 5;
+    string app_id            = 2;
+    repeated string keywords = 3;
+    uint64 start_time        = 4;
+    uint64 end_time          = 5;
     uint64 search_after      = 6;  //search_after: timestamp
     uint32 size    = 7;  //max 1000
     string sort    = 8; //asc, desc
