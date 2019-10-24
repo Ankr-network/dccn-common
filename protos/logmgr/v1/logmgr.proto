@@ -7,6 +7,7 @@ service LogMgr {
    rpc  GetLogCountByPodName (LogPodCountRequest) returns (LogPodCountResponse) {}
    rpc  ListLogByAppId (LogAppRequest) returns (LogAppResponse) {}
    rpc  ListLogByPodName (LogPodRequest) returns (LogPodResponse) {}
+   rpc  ListLogByK8SAPI (LogAppByK8SAPIRequest) returns (LogAppByK8SAPIResponse) {}
 }
 
 message LogMetaData {

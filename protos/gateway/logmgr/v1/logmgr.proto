@@ -6,22 +6,22 @@ service LogMgr {
    rpc GetLogCountByAppId (LogAppCountRequest) returns (LogAppCountResponse) {
        option (google.api.http) = {
            get:"/log/count/appid"
-	   };
+       };
    }
    rpc GetLogCountByPodName (LogPodCountRequest) returns (LogPodCountResponse) {
        option (google.api.http) = {
            get:"/log/count/podname"
-	   };
+       };
    }
    rpc ListLogByAppId (LogAppRequest) returns (LogAppResponse) {
        option (google.api.http) = {
            get:"/log/list/appid"
-	   };
+       };
    }
    rpc ListLogByPodName (LogPodRequest) returns (LogPodResponse) {
        option (google.api.http) = {
            get:"/log/list/podname"
-	   };
+       };
    }
    rpc ListLogByK8SAPI (LogAppByK8SAPIRequest) returns (LogAppByK8SAPIResponse) {
        option (google.api.http) = {
