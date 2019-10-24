@@ -101,12 +101,13 @@ message LogPodCountResponse {
 message LogAppByK8SAPIRequest {
     string req_id  = 1;
     string app_id  = 2;
-    string chart_name = 3;
-    uint64 since_time = 4;
-    uint64 end_time   = 5;
-    uint32 page       = 6;
-    uint32 limit      = 7;
-    uint64 search_after = 8;
+    string chart_name     = 3;
+    string namespace_name = 4;
+    uint64 since_time     = 5;
+    uint64 end_time   = 6;
+    uint32 page       = 7;
+    uint32 limit      = 8;
+    uint64 search_after = 9;
 }
 
 message K8SLogItem {
