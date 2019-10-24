@@ -12,6 +12,62 @@ service AdminMgr {
     rpc ListTransactionRecordByUserEmail (TransactionRecordRequest) returns (TransactionRecordResponse) {}
     rpc ListTransactionDetailByTxID (TransactionDetailRequest) returns (TransactionDetailResponse) {}
     rpc ListTransactionRecordByTokenAddr (TransactionRecordRequest) returns (TransactionRecordResponse) {}
+    //invitation code
+    rpc GenerateInvitationCode(InvitationCodeRequest) returns (InvitationCodeResponse) {}
+    rpc CheckInvitationCode(CheckInvitationCodeRequest) returns (CheckInvitationCodeResponse) {}
+    rpc ListInvitationCode(ListInvitationCodeRequest) returns (ListInvitationCodeResponse) {}
+    rpc DeleteInvitationCode(DeleteInvitationCodeRequest) returns (DeleteInvitationCodeResponse) {}
+}
+
+//invitation code
+message InvitationCodeRequest {
+    string req_id = 1;
+    uint32 count  = 2;
+}
+
+message InvitationCodeResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+}
+
+message CheckInvitationCodeRequest {
+    string req_id = 1;
+    string invitation_code   = 2;
+}
+
+message CheckInvitationCodeResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    bool   ok     = 4; //1: valid 0: invalid
+}
+
+message ListInvitationCodeRequest {
+    string req_id = 1;
+}
+
+message InvitationCode {
+    string code        = 1;
+    uint64 create_time = 2;
+}
+
+message ListInvitationCodeResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    repeated InvitationCode invitation_codes = 4;
+}
+
+message DeleteInvitationCodeRequest {
+    string   req_id      = 1;
+    repeated string invitation_codes = 2;
+}
+
+message DeleteInvitationCodeResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
 }
 
 message UserRequest {
