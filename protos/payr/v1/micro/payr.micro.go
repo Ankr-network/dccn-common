@@ -43,7 +43,6 @@ type PayrService interface {
 	ListPlan(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*ListPlanResponse, error)
 	ListSubs(ctx context.Context, in *ListSubsRequest, opts ...client.CallOption) (*ListSubsResponse, error)
 	Withdraw(ctx context.Context, in *WithdrawRequest, opts ...client.CallOption) (*WithdrawResponse, error)
-	CreateAddress(ctx context.Context, in *GenerateAddressRequest, opts ...client.CallOption) (*GenerateAddressResponse, error)
 }
 
 type payrService struct {
@@ -144,16 +143,6 @@ func (c *payrService) Withdraw(ctx context.Context, in *WithdrawRequest, opts ..
 	return out, nil
 }
 
-func (c *payrService) CreateAddress(ctx context.Context, in *GenerateAddressRequest, opts ...client.CallOption) (*GenerateAddressResponse, error) {
-	req := c.c.NewRequest(c.name, "Payr.CreateAddress", in)
-	out := new(GenerateAddressResponse)
-	err := c.c.Call(ctx, req, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // Server API for Payr service
 
 type PayrHandler interface {
@@ -165,7 +154,6 @@ type PayrHandler interface {
 	ListPlan(context.Context, *common.Empty, *ListPlanResponse) error
 	ListSubs(context.Context, *ListSubsRequest, *ListSubsResponse) error
 	Withdraw(context.Context, *WithdrawRequest, *WithdrawResponse) error
-	CreateAddress(context.Context, *GenerateAddressRequest, *GenerateAddressResponse) error
 }
 
 func RegisterPayrHandler(s server.Server, hdlr PayrHandler, opts ...server.HandlerOption) error {
@@ -178,7 +166,6 @@ func RegisterPayrHandler(s server.Server, hdlr PayrHandler, opts ...server.Handl
 		ListPlan(ctx context.Context, in *common.Empty, out *ListPlanResponse) error
 		ListSubs(ctx context.Context, in *ListSubsRequest, out *ListSubsResponse) error
 		Withdraw(ctx context.Context, in *WithdrawRequest, out *WithdrawResponse) error
-		CreateAddress(ctx context.Context, in *GenerateAddressRequest, out *GenerateAddressResponse) error
 	}
 	type Payr struct {
 		payr
@@ -221,8 +208,4 @@ func (h *payrHandler) ListSubs(ctx context.Context, in *ListSubsRequest, out *Li
 
 func (h *payrHandler) Withdraw(ctx context.Context, in *WithdrawRequest, out *WithdrawResponse) error {
 	return h.PayrHandler.Withdraw(ctx, in, out)
-}
-
-func (h *payrHandler) CreateAddress(ctx context.Context, in *GenerateAddressRequest, out *GenerateAddressResponse) error {
-	return h.PayrHandler.CreateAddress(ctx, in, out)
 }

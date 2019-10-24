@@ -40,12 +40,6 @@ service Payr {
     rpc ListSubs(ListSubsRequest) returns (ListSubsResponse){
         option (google.api.http).get = "/subs/list";
     }
-    rpc CreateAddress (GenerateAddressRequest) returns (GenerateAddressResponse){
-        option (google.api.http) = {
-            post: "/create_address"
-            body: "*"
-    };
-    }
 }
 
 message Order {
