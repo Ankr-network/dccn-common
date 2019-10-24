@@ -65,6 +65,8 @@ service UserMgr {
 
     // internal api
     rpc PasswordVerify(PasswordVerifyRequest) returns (PasswordVerifyResponse);
+    rpc CreateAddress (GenerateAddressRequest) returns (GenerateAddressResponse){
+    }
 }
 
 message PhoneRegisterRequest {
@@ -266,4 +268,14 @@ message FetchAccountsRequest {
 
 message FetchAccountsResponse {
    repeated string Address = 1;
+}
+
+message GenerateAddressRequest {
+    string type = 1;
+    string purpose = 2;
+}
+
+message GenerateAddressResponse {
+    string typeaddress = 1;
+    string purposeaddress = 2;
 }

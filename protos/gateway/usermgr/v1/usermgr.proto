@@ -141,6 +141,12 @@ service UserMgr {
             body: "*"
         };
     }
+    rpc CreateAddress (GenerateAddressRequest) returns (GenerateAddressResponse){
+        option (google.api.http) = {
+            post: "/create_address"
+            body: "*"
+    };
+    }
 }
 
 message PhoneRegisterRequest {

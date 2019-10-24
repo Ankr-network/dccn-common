@@ -24,8 +24,6 @@ service Payr {
     }
     rpc Withdraw(WithdrawRequest) returns (WithdrawResponse) { 
     }
-    rpc CreateAddress (GenerateAddressRequest) returns (GenerateAddressResponse){
-    }
 }
 
 message Order {
@@ -134,14 +132,4 @@ message WithdrawResponse{
     int32   code   = 2;
     string  msg    = 3;
     string transanction_hash = 4;
-}
-
-message GenerateAddressRequest {
-    string type = 1;
-    string purpose = 2;
-}
-
-message GenerateAddressResponse {
-    string typeaddress = 1;
-    string purposeaddress = 2;
 }

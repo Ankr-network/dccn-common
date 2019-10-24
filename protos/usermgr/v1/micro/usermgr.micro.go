@@ -67,6 +67,7 @@ type UserMgrService interface {
 	PhoneChange(ctx context.Context, in *PhoneChangeRequest, opts ...client.CallOption) (*common.Empty, error)
 	// internal api
 	PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, opts ...client.CallOption) (*PasswordVerifyResponse, error)
+	CreateAddress(ctx context.Context, in *GenerateAddressRequest, opts ...client.CallOption) (*GenerateAddressResponse, error)
 }
 
 type userMgrService struct {
@@ -337,6 +338,16 @@ func (c *userMgrService) PasswordVerify(ctx context.Context, in *PasswordVerifyR
 	return out, nil
 }
 
+func (c *userMgrService) CreateAddress(ctx context.Context, in *GenerateAddressRequest, opts ...client.CallOption) (*GenerateAddressResponse, error) {
+	req := c.c.NewRequest(c.name, "UserMgr.CreateAddress", in)
+	out := new(GenerateAddressResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for UserMgr service
 
 type UserMgrHandler interface {
@@ -371,6 +382,7 @@ type UserMgrHandler interface {
 	PhoneChange(context.Context, *PhoneChangeRequest, *common.Empty) error
 	// internal api
 	PasswordVerify(context.Context, *PasswordVerifyRequest, *PasswordVerifyResponse) error
+	CreateAddress(context.Context, *GenerateAddressRequest, *GenerateAddressResponse) error
 }
 
 func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server.HandlerOption) error {
@@ -400,6 +412,7 @@ func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server
 		PhoneResetPassword(ctx context.Context, in *PhoneResetPasswordRequest, out *common.Empty) error
 		PhoneChange(ctx context.Context, in *PhoneChangeRequest, out *common.Empty) error
 		PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, out *PasswordVerifyResponse) error
+		CreateAddress(ctx context.Context, in *GenerateAddressRequest, out *GenerateAddressResponse) error
 	}
 	type UserMgr struct {
 		userMgr
@@ -510,4 +523,8 @@ func (h *userMgrHandler) PhoneChange(ctx context.Context, in *PhoneChangeRequest
 
 func (h *userMgrHandler) PasswordVerify(ctx context.Context, in *PasswordVerifyRequest, out *PasswordVerifyResponse) error {
 	return h.UserMgrHandler.PasswordVerify(ctx, in, out)
+}
+
+func (h *userMgrHandler) CreateAddress(ctx context.Context, in *GenerateAddressRequest, out *GenerateAddressResponse) error {
+	return h.UserMgrHandler.CreateAddress(ctx, in, out)
 }
