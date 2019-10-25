@@ -45,6 +45,8 @@ message CheckInvitationCodeResponse {
 
 message ListInvitationCodeRequest {
     string req_id = 1;
+    uint32 page   = 2;
+    uint32 limit  = 3;
 }
 
 message InvitationCode {
