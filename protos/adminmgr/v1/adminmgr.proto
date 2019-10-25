@@ -51,7 +51,7 @@ message ListInvitationCodeRequest {
 
 message InvitationCode {
     string code        = 1;
-    uint64 create_time = 2;
+    string create_time = 2;
 }
 
 message ListInvitationCodeResponse {
@@ -134,10 +134,10 @@ message AppDetail {
     string cluster_id   = 4;
     string namespace_name = 5; 
     string namespace_id   = 6;
-    uint32 status = 7;//1: Run 2: Deleted 3: Unknown
+    uint32 status       = 7;//1: Run 2: Deleted 3: Unknown
     string created_time = 8;
     string last_modified_time = 9;
-    ChartDetail chart = 10;
+    ChartDetail chart         = 10;
 }
 
 message AppResourceResponse {
@@ -145,11 +145,11 @@ message AppResourceResponse {
     int32  code   = 2;
     string msg    = 3;
     repeated AppDetail app = 4;
-    uint64 total_count = 5;
+    uint64 total_count     = 5;
 }
 
 message NamespaceAttributeRequest {
-    string req_id = 1;
+    string req_id       = 1;
     string namespace_id = 2;
 }
 
@@ -172,7 +172,7 @@ message NamespaceDetail {
     uint64 mem_used   = 8;
     uint64 disk_limit = 9;
     uint64 disk_used  = 10;
-    uint32 status = 11; //1: Run 2: Deleted 3: Unknown
+    uint32 status       = 11; //1: Run 2: Deleted 3: Unknown
     string created_time = 12;
     string last_modified_time = 13;
 }
