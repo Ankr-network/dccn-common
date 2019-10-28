@@ -12,49 +12,60 @@ service DCStreamer {
 
 // The dclist service definition.
 service DCAPI {
-      rpc DataCenterList (common.proto.Empty) returns (DataCenterListResponse) {
-        option (google.api.http).get = "/dc/list";
-      }
-      rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){
-        option (google.api.http).get = "/dc/networkinfo";
-      }
-      rpc RegisterDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){
-        option (google.api.http) = {
-            post: "/dc/register"
-            body: "*"
+  rpc DataCenterList (common.proto.Empty) returns (DataCenterListResponse) {
+    option (google.api.http).get = "/dc/list";
+  }
+
+  rpc DataCenterListWithFilter (DataCenterListWithFilterRequest) returns (DataCenterListResponse) {
+    option (google.api.http).get = "/dc/listwithfilter";
+  }
+
+  rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){
+    option (google.api.http).get = "/dc/networkinfo";
+  }
+
+  rpc RegisterDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){
+    option (google.api.http) = {
+      post: "/dc/register"
+      body: "*"
     };
-      }
-      rpc ResetDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){
-        option (google.api.http) = {
-            post: "/dc/reset"
-            body: "*"
+  }
+
+  rpc ResetDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){
+    option (google.api.http) = {
+      post: "/dc/reset"
+      body: "*"
     };
-      }
-      rpc MyDataCenter(common.proto.Empty) returns (common.proto.DataCenterStatuses){
-        option (google.api.http).get = "/dc/mydc_list";
-      }
+  }
 
+  rpc MyDataCenter(common.proto.Empty) returns (common.proto.DataCenterStatuses){
+    option (google.api.http).get = "/dc/mydc_list";
+  }
 
-    rpc ClusterDashBoard (DashBoardRequest) returns (DashBoardResponse) {
-       option (google.api.http).get = "/dc/dashboard";
-    }
-    rpc UserHistoryFeesList (HistoryFeesRequest) returns (HistoryFeesResponse) {
-        option (google.api.http).get = "/fees/history_list";
-    }
-    rpc MonthFeesDetail (FeesDetailRequest) returns (FeesDetailResponse) {
-         option (google.api.http).get = "/fees/month_detail";
-    }
+  rpc ClusterDashBoard (DashBoardRequest) returns (DashBoardResponse) {
+    option (google.api.http).get = "/dc/dashboard";
+  }
 
-    rpc InvoiceDetail (InvoiceDetailRequest) returns (FeesDetailResponse) {
-         option (google.api.http).get = "/fees/invoice_detail";
-    }
+  rpc UserHistoryFeesList (HistoryFeesRequest) returns (HistoryFeesResponse) {
+    option (google.api.http).get = "/fees/history_list";
+  }
+
+  rpc MonthFeesDetail (FeesDetailRequest) returns (FeesDetailResponse) {
+    option (google.api.http).get = "/fees/month_detail";
+  }
+
+  rpc InvoiceDetail (InvoiceDetailRequest) returns (FeesDetailResponse) {
+    option (google.api.http).get = "/fees/invoice_detail";
+  }
 }
-
 
 message DataCenterListResponse {
   repeated common.proto.DataCenterStatus dcList= 1; // repeated groups of DataCenterInfo list
 }
 
+message DataCenterListWithFilterRequest {
+  common.proto.DataCenterListFilter dclist_filter = 1;
+}
 
 message NetworkInfoResponse {
   int32 user_count = 1;
@@ -90,9 +101,6 @@ message RegisterDataCenterResponse {
   string cluster_name = 5;
   string configmap = 6;
 }
-
-
-
 
 message DashBoardRequest {
   string uid = 1;

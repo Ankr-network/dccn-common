@@ -215,6 +215,7 @@ func (h *dCHandler) Overview(ctx context.Context, in *DCOverviewRequest, out *DC
 
 type DCAPIService interface {
 	DataCenterList(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*DataCenterListResponse, error)
+	DataCenterListWithFilter(ctx context.Context, in *DataCenterListWithFilterRequest, opts ...client.CallOption) (*DataCenterListResponse, error)
 	DataCenterListWithCertification(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*DataCenterListWithCertificationResponse, error)
 	NetworkInfo(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*NetworkInfoResponse, error)
 	RegisterDataCenter(ctx context.Context, in *RegisterDataCenterRequest, opts ...client.CallOption) (*RegisterDataCenterResponse, error)
@@ -243,6 +244,16 @@ func NewDCAPIService(name string, c client.Client) DCAPIService {
 
 func (c *dCAPIService) DataCenterList(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*DataCenterListResponse, error) {
 	req := c.c.NewRequest(c.name, "DCAPI.DataCenterList", in)
+	out := new(DataCenterListResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *dCAPIService) DataCenterListWithFilter(ctx context.Context, in *DataCenterListWithFilterRequest, opts ...client.CallOption) (*DataCenterListResponse, error) {
+	req := c.c.NewRequest(c.name, "DCAPI.DataCenterListWithFilter", in)
 	out := new(DataCenterListResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -315,6 +326,7 @@ func (c *dCAPIService) GetClusterCertificate(ctx context.Context, in *GetCluster
 
 type DCAPIHandler interface {
 	DataCenterList(context.Context, *common.Empty, *DataCenterListResponse) error
+	DataCenterListWithFilter(context.Context, *DataCenterListWithFilterRequest, *DataCenterListResponse) error
 	DataCenterListWithCertification(context.Context, *common.Empty, *DataCenterListWithCertificationResponse) error
 	NetworkInfo(context.Context, *common.Empty, *NetworkInfoResponse) error
 	RegisterDataCenter(context.Context, *RegisterDataCenterRequest, *RegisterDataCenterResponse) error
@@ -326,6 +338,7 @@ type DCAPIHandler interface {
 func RegisterDCAPIHandler(s server.Server, hdlr DCAPIHandler, opts ...server.HandlerOption) error {
 	type dCAPI interface {
 		DataCenterList(ctx context.Context, in *common.Empty, out *DataCenterListResponse) error
+		DataCenterListWithFilter(ctx context.Context, in *DataCenterListWithFilterRequest, out *DataCenterListResponse) error
 		DataCenterListWithCertification(ctx context.Context, in *common.Empty, out *DataCenterListWithCertificationResponse) error
 		NetworkInfo(ctx context.Context, in *common.Empty, out *NetworkInfoResponse) error
 		RegisterDataCenter(ctx context.Context, in *RegisterDataCenterRequest, out *RegisterDataCenterResponse) error
@@ -346,6 +359,10 @@ type dCAPIHandler struct {
 
 func (h *dCAPIHandler) DataCenterList(ctx context.Context, in *common.Empty, out *DataCenterListResponse) error {
 	return h.DCAPIHandler.DataCenterList(ctx, in, out)
+}
+
+func (h *dCAPIHandler) DataCenterListWithFilter(ctx context.Context, in *DataCenterListWithFilterRequest, out *DataCenterListResponse) error {
+	return h.DCAPIHandler.DataCenterListWithFilter(ctx, in, out)
 }
 
 func (h *dCAPIHandler) DataCenterListWithCertification(ctx context.Context, in *common.Empty, out *DataCenterListWithCertificationResponse) error {

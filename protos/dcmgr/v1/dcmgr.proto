@@ -20,13 +20,14 @@ service DC {
 //
 // The dclist service definition.
 service DCAPI {
-      rpc DataCenterList (common.proto.Empty) returns (DataCenterListResponse) {}
-      rpc DataCenterListWithCertification (common.proto.Empty) returns (DataCenterListWithCertificationResponse) {}
-      rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){}
-      rpc RegisterDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
-      rpc ResetDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
-      rpc MyDataCenter(MyDataCenterRequest) returns (common.proto.DataCenterStatuses){}
-      rpc GetClusterCertificate (GetClusterCertificateRequest) returns (GetClusterCertificateResponse) {}
+    rpc DataCenterList (common.proto.Empty) returns (DataCenterListResponse) {}
+    rpc DataCenterListWithFilter (DataCenterListWithFilterRequest) returns (DataCenterListResponse) {}
+    rpc DataCenterListWithCertification (common.proto.Empty) returns (DataCenterListWithCertificationResponse) {}
+    rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){}
+    rpc RegisterDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
+    rpc ResetDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
+    rpc MyDataCenter(MyDataCenterRequest) returns (common.proto.DataCenterStatuses){}
+    rpc GetClusterCertificate (GetClusterCertificateRequest) returns (GetClusterCertificateResponse) {}
 }
 
 
@@ -49,6 +50,9 @@ message RegisterDataCenterRequest {
   string cluster_name = 2;
 }
 
+message DataCenterListWithFilterRequest {
+  common.proto.DataCenterListFilter dclist_filter = 1;
+}
 
 message RegisterDataCenterResponse {
   string client_key = 1;
@@ -58,8 +62,6 @@ message RegisterDataCenterResponse {
   string cluster_name = 5;
   string configmap = 6;
 }
-
-
 
 message ClusterRecord {
   string cluster_id = 1;
