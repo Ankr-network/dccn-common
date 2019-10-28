@@ -58,7 +58,8 @@ message ListInvitationCodeResponse {
     string req_id = 1;
     int32  code   = 2;
     string msg    = 3;
-    repeated InvitationCode invitation_codes = 4;
+    uint32 total_count = 4;
+    repeated InvitationCode invitation_codes = 5;
 }
 
 message DeleteInvitationCodeRequest {
