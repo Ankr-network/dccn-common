@@ -9,6 +9,8 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -1192,6 +1194,26 @@ type LogMgrServer interface {
 	ListLogByAppId(context.Context, *LogAppRequest) (*LogAppResponse, error)
 	ListLogByPodName(context.Context, *LogPodRequest) (*LogPodResponse, error)
 	ListLogByK8SAPI(context.Context, *LogAppByK8SAPIRequest) (*LogAppByK8SAPIResponse, error)
+}
+
+// UnimplementedLogMgrServer can be embedded to have forward compatible implementations.
+type UnimplementedLogMgrServer struct {
+}
+
+func (*UnimplementedLogMgrServer) GetLogCountByAppId(ctx context.Context, req *LogAppCountRequest) (*LogAppCountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLogCountByAppId not implemented")
+}
+func (*UnimplementedLogMgrServer) GetLogCountByPodName(ctx context.Context, req *LogPodCountRequest) (*LogPodCountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLogCountByPodName not implemented")
+}
+func (*UnimplementedLogMgrServer) ListLogByAppId(ctx context.Context, req *LogAppRequest) (*LogAppResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListLogByAppId not implemented")
+}
+func (*UnimplementedLogMgrServer) ListLogByPodName(ctx context.Context, req *LogPodRequest) (*LogPodResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListLogByPodName not implemented")
+}
+func (*UnimplementedLogMgrServer) ListLogByK8SAPI(ctx context.Context, req *LogAppByK8SAPIRequest) (*LogAppByK8SAPIResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListLogByK8SAPI not implemented")
 }
 
 func RegisterLogMgrServer(s *grpc.Server, srv LogMgrServer) {

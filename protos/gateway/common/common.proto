@@ -99,6 +99,11 @@ message DataCenterStatus {
     DCHeartbeatReport dc_heartbeat_report = 6;
 }
 
+// Data center filter
+message DataCenterListFilter {
+    map<string, string> dc_instance_type = 1; //data center instance type
+}
+
 message GeoLocation {
     string lat = 1; // latitude
     string lng = 2; // longitude
