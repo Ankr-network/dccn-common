@@ -14,6 +14,7 @@ import (
 	"net/http"
 
 	"github.com/Ankr-network/dccn-common/protos/common"
+	"github.com/golang/protobuf/descriptor"
 	"github.com/golang/protobuf/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/utilities"
@@ -23,11 +24,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// Suppress "imported and not used" errors
 var _ codes.Code
 var _ io.Reader
 var _ status.Status
 var _ = runtime.String
 var _ = utilities.NewDoubleArray
+var _ = descriptor.ForMessage
 
 func request_DCAPI_DataCenterList_0(ctx context.Context, marshaler runtime.Marshaler, client DCAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq common_proto.Empty
@@ -43,6 +46,39 @@ func local_request_DCAPI_DataCenterList_0(ctx context.Context, marshaler runtime
 	var metadata runtime.ServerMetadata
 
 	msg, err := server.DataCenterList(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+var (
+	filter_DCAPI_DataCenterListWithFilter_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
+)
+
+func request_DCAPI_DataCenterListWithFilter_0(ctx context.Context, marshaler runtime.Marshaler, client DCAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DataCenterListWithFilterRequest
+	var metadata runtime.ServerMetadata
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_DCAPI_DataCenterListWithFilter_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.DataCenterListWithFilter(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_DCAPI_DataCenterListWithFilter_0(ctx context.Context, marshaler runtime.Marshaler, server DCAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DataCenterListWithFilterRequest
+	var metadata runtime.ServerMetadata
+
+	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_DCAPI_DataCenterListWithFilter_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.DataCenterListWithFilter(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -308,6 +344,26 @@ func RegisterDCAPIHandlerServer(ctx context.Context, mux *runtime.ServeMux, serv
 
 	})
 
+	mux.Handle("GET", pattern_DCAPI_DataCenterListWithFilter_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_DCAPI_DataCenterListWithFilter_0(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_DCAPI_DataCenterListWithFilter_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("GET", pattern_DCAPI_NetworkInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -529,6 +585,26 @@ func RegisterDCAPIHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 
 	})
 
+	mux.Handle("GET", pattern_DCAPI_DataCenterListWithFilter_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_DCAPI_DataCenterListWithFilter_0(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_DCAPI_DataCenterListWithFilter_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
 	mux.Handle("GET", pattern_DCAPI_NetworkInfo_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -695,6 +771,8 @@ func RegisterDCAPIHandlerClient(ctx context.Context, mux *runtime.ServeMux, clie
 var (
 	pattern_DCAPI_DataCenterList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "list"}, "", runtime.AssumeColonVerbOpt(true)))
 
+	pattern_DCAPI_DataCenterListWithFilter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "listwithfilter"}, "", runtime.AssumeColonVerbOpt(true)))
+
 	pattern_DCAPI_NetworkInfo_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "networkinfo"}, "", runtime.AssumeColonVerbOpt(true)))
 
 	pattern_DCAPI_RegisterDataCenter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"dc", "register"}, "", runtime.AssumeColonVerbOpt(true)))
@@ -714,6 +792,8 @@ var (
 
 var (
 	forward_DCAPI_DataCenterList_0 = runtime.ForwardResponseMessage
+
+	forward_DCAPI_DataCenterListWithFilter_0 = runtime.ForwardResponseMessage
 
 	forward_DCAPI_NetworkInfo_0 = runtime.ForwardResponseMessage
 
