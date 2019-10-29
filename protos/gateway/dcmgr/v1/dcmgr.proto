@@ -17,7 +17,10 @@ service DCAPI {
   }
 
   rpc DataCenterListWithFilter (DataCenterListWithFilterRequest) returns (DataCenterListResponse) {
-    option (google.api.http).get = "/dc/listwithfilter";
+    option (google.api.http) = {
+      post: "/dc/listwithfilter"
+      body: "*"
+    };
   }
 
   rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){
