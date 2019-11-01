@@ -34,7 +34,7 @@ service Payr {
     };
     }
     rpc ListPlan(common.proto.Empty) returns (ListPlanResponse){
-        option (google.api.http).get = "/plan/list";
+        option (google.api.http).get = "/plans/list";
     }
 
     rpc ListSubs(ListSubsRequest) returns (ListSubsResponse){
