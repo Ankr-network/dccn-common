@@ -11,6 +11,8 @@ import (
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -1232,6 +1234,14 @@ type DCStreamerServer interface {
 	ServerStream(DCStreamer_ServerStreamServer) error
 }
 
+// UnimplementedDCStreamerServer can be embedded to have forward compatible implementations.
+type UnimplementedDCStreamerServer struct {
+}
+
+func (*UnimplementedDCStreamerServer) ServerStream(srv DCStreamer_ServerStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method ServerStream not implemented")
+}
+
 func RegisterDCStreamerServer(s *grpc.Server, srv DCStreamerServer) {
 	s.RegisterService(&_DCStreamer_serviceDesc, srv)
 }
@@ -1403,6 +1413,41 @@ type DCAPIServer interface {
 	UserHistoryFeesList(context.Context, *HistoryFeesRequest) (*HistoryFeesResponse, error)
 	MonthFeesDetail(context.Context, *FeesDetailRequest) (*FeesDetailResponse, error)
 	InvoiceDetail(context.Context, *InvoiceDetailRequest) (*FeesDetailResponse, error)
+}
+
+// UnimplementedDCAPIServer can be embedded to have forward compatible implementations.
+type UnimplementedDCAPIServer struct {
+}
+
+func (*UnimplementedDCAPIServer) DataCenterList(ctx context.Context, req *common.Empty) (*DataCenterListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DataCenterList not implemented")
+}
+func (*UnimplementedDCAPIServer) DataCenterListWithFilter(ctx context.Context, req *DataCenterListWithFilterRequest) (*DataCenterListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DataCenterListWithFilter not implemented")
+}
+func (*UnimplementedDCAPIServer) NetworkInfo(ctx context.Context, req *common.Empty) (*NetworkInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method NetworkInfo not implemented")
+}
+func (*UnimplementedDCAPIServer) RegisterDataCenter(ctx context.Context, req *RegisterDataCenterRequest) (*RegisterDataCenterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterDataCenter not implemented")
+}
+func (*UnimplementedDCAPIServer) ResetDataCenter(ctx context.Context, req *RegisterDataCenterRequest) (*RegisterDataCenterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResetDataCenter not implemented")
+}
+func (*UnimplementedDCAPIServer) MyDataCenter(ctx context.Context, req *common.Empty) (*common.DataCenterStatuses, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MyDataCenter not implemented")
+}
+func (*UnimplementedDCAPIServer) ClusterDashBoard(ctx context.Context, req *DashBoardRequest) (*DashBoardResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ClusterDashBoard not implemented")
+}
+func (*UnimplementedDCAPIServer) UserHistoryFeesList(ctx context.Context, req *HistoryFeesRequest) (*HistoryFeesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserHistoryFeesList not implemented")
+}
+func (*UnimplementedDCAPIServer) MonthFeesDetail(ctx context.Context, req *FeesDetailRequest) (*FeesDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MonthFeesDetail not implemented")
+}
+func (*UnimplementedDCAPIServer) InvoiceDetail(ctx context.Context, req *InvoiceDetailRequest) (*FeesDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InvoiceDetail not implemented")
 }
 
 func RegisterDCAPIServer(s *grpc.Server, srv DCAPIServer) {
