@@ -108,7 +108,7 @@ message LogAppByK8SAPIRequest {
     uint32 page       = 7;
     uint32 limit      = 8;
     uint64 search_after = 9;
-    repeated string keywords = 10;
+    string keywords     = 10;
 }
 
 message K8SLogItem {
