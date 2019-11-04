@@ -82,6 +82,9 @@ service TeamMgr {
 	  };
   }
   rpc GetUserTeamID(common.proto.Empty) returns (TeamID) {
+    option (google.api.http) = {
+      get:"/v1alpha/currentTeam"
+	  };
   }
   rpc CheckUserAccess(CheckUserAccessRequest) returns (CheckUserAccessResponse) {}
 }
