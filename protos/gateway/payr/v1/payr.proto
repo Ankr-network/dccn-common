@@ -78,11 +78,11 @@ message PlanType {
     string   memory_number = 3;
     string   storage_number = 4;
     string   price = 5;
-    string   price_unit = 6;
-	string   price_week = 7;
-	string   price_month = 8;
-	string   price_hour = 9;
-	string   plan_title = 10;
+	string   price_week = 6;
+	string   price_month = 7;
+	string   price_hour = 8;
+	string   plan_title = 9;
+    repeated string  plan_set = 10;
 }
 
 message ListSubsRequest {
