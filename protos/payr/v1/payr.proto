@@ -39,7 +39,9 @@ message Order {
     string team_id = 7; //The order belongs to which team.
     string plan_type = 8; //The related plan type. 
     string time = 9;
-    string sub_id = 10; //After the plan is confirmed, arrange the plan id to order.
+    string time_unit = 10;
+    string sub_id = 11; //After the plan is confirmed, arrange the plan id to order.
+    string app_id = 12; //Record app id
 }
 
 message Subscription {
@@ -50,7 +52,9 @@ message Subscription {
     PlanStatus status = 5; //The status of current plan
     int64 issued_at = 6;
     string time = 7;
+    string time_unit = 8;
 }
+
 
 message PlanType {
     string   plan_type = 1;
@@ -58,6 +62,11 @@ message PlanType {
     string   memory_number = 3;
     string   storage_number = 4;
     string   price = 5;
+    string   price_unit = 6;
+	string   price_week = 7;
+	string   price_month = 8;
+	string   price_hour = 9;
+	string   plan_title = 10;
 }
 
 message ListSubsRequest {
@@ -77,6 +86,7 @@ message CollectFeeRequest {
     string memory_number = 2;
     string storage_number = 3;
     string time = 4;
+    string time_unit = 5;
 }
 
 message PlanFeeRequest {
@@ -107,6 +117,7 @@ message NewOrderRequest{
     string type = 2;
     string plan = 3;
     string time = 4;
+    string time_unit = 5;
 }
 
 message NewOrderResponse{
