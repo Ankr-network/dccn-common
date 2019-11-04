@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "common/common.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 package usermgr;
 
 // TODO: supports filter
@@ -67,6 +68,9 @@ service UserMgr {
     rpc PasswordVerify(PasswordVerifyRequest) returns (PasswordVerifyResponse);
     rpc CreateAddress (GenerateAddressRequest) returns (GenerateAddressResponse){
     }
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
+    rpc GetUserByEmail(GetUserByEmailRequest) returns (GetUserResponse);
+    rpc UpdateCurrentTeamID(UpdateCurrentTeamIDRequest) returns (google.protobuf.Empty);
 }
 
 message PhoneRegisterRequest {
@@ -114,6 +118,33 @@ message PasswordVerifyRequest {
 
 message PasswordVerifyResponse {
     bool success = 1;
+}
+
+message GetUserRequest {
+    string uid = 1;
+}
+
+message GetUserResponse {
+    string uid = 1;
+    string name = 2;
+    string email = 3;
+    string current_team_id = 4;
+}
+
+message GetUserByEmailRequest {
+    string email = 1;
+}
+
+message UpdateCurrentTeamIDRequest {
+    string uid = 1;
+    string team_id = 2;
+}
+
+message UserConfirmedEvent {
+    string uid = 1;
+    string user_name = 2;
+    string email = 3;
+    google.protobuf.Timestamp confirm_time = 4;
 }
 
 message FakeTokenRequest {

@@ -14,6 +14,7 @@ import (
 	"net/http"
 
 	"github.com/Ankr-network/dccn-common/protos/common"
+	"github.com/golang/protobuf/descriptor"
 	"github.com/golang/protobuf/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/utilities"
@@ -23,11 +24,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// Suppress "imported and not used" errors
 var _ codes.Code
 var _ io.Reader
 var _ status.Status
 var _ = runtime.String
 var _ = utilities.NewDoubleArray
+var _ = descriptor.ForMessage
 
 func request_TeamMgr_CreateTeam_0(ctx context.Context, marshaler runtime.Marshaler, client TeamMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq CreateTeamRequest
@@ -419,6 +422,40 @@ func local_request_TeamMgr_SetUserCurrentTeam_0(ctx context.Context, marshaler r
 
 }
 
+func request_TeamMgr_SetUserCurrentTeam_1(ctx context.Context, marshaler runtime.Marshaler, client TeamMgrClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq SetUserCurrentTeamRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.SetUserCurrentTeam(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_TeamMgr_SetUserCurrentTeam_1(ctx context.Context, marshaler runtime.Marshaler, server TeamMgrServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq SetUserCurrentTeamRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.SetUserCurrentTeam(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
 // RegisterTeamMgrHandlerServer registers the http handlers for service TeamMgr to "mux".
 // UnaryRPC     :call TeamMgrServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
@@ -644,7 +681,7 @@ func RegisterTeamMgrHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 
 	})
 
-	mux.Handle("POST", pattern_TeamMgr_SetUserCurrentTeam_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_TeamMgr_SetUserCurrentTeam_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -661,6 +698,26 @@ func RegisterTeamMgrHandlerServer(ctx context.Context, mux *runtime.ServeMux, se
 		}
 
 		forward_TeamMgr_SetUserCurrentTeam_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_TeamMgr_SetUserCurrentTeam_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateIncomingContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_TeamMgr_SetUserCurrentTeam_1(rctx, inboundMarshaler, server, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_TeamMgr_SetUserCurrentTeam_1(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -925,7 +982,7 @@ func RegisterTeamMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 
 	})
 
-	mux.Handle("POST", pattern_TeamMgr_SetUserCurrentTeam_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("PUT", pattern_TeamMgr_SetUserCurrentTeam_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -942,6 +999,26 @@ func RegisterTeamMgrHandlerClient(ctx context.Context, mux *runtime.ServeMux, cl
 		}
 
 		forward_TeamMgr_SetUserCurrentTeam_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_TeamMgr_SetUserCurrentTeam_1, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		rctx, err := runtime.AnnotateContext(ctx, mux, req)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_TeamMgr_SetUserCurrentTeam_1(rctx, inboundMarshaler, client, req, pathParams)
+		ctx = runtime.NewServerMetadataContext(ctx, md)
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_TeamMgr_SetUserCurrentTeam_1(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -971,7 +1048,9 @@ var (
 
 	pattern_TeamMgr_ListTeamRoles_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "roles"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_TeamMgr_SetUserCurrentTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "set"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_TeamMgr_SetUserCurrentTeam_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1alpha", "currentTeam"}, "", runtime.AssumeColonVerbOpt(true)))
+
+	pattern_TeamMgr_SetUserCurrentTeam_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"team", "set"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (
@@ -998,4 +1077,6 @@ var (
 	forward_TeamMgr_ListTeamRoles_0 = runtime.ForwardResponseMessage
 
 	forward_TeamMgr_SetUserCurrentTeam_0 = runtime.ForwardResponseMessage
+
+	forward_TeamMgr_SetUserCurrentTeam_1 = runtime.ForwardResponseMessage
 )
