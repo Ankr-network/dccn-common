@@ -135,6 +135,7 @@ message NewOrderRequest{
     string plan = 3;
     string time = 4;
     string time_unit = 5;
+    CreateAppConfig App = 6;
 }
 
 message NewOrderResponse{
@@ -156,4 +157,26 @@ message GenerateAddressRequest {
 message GenerateAddressResponse {
     string typeaddress = 1;
     string purposeaddress = 2;
+}
+
+
+message Chart {
+    string chart_name = 1;
+    string chart_repo = 2;
+    string chart_ver = 3;
+}
+message Namespace {
+    string ns_name = 1;
+    string cluster_id = 2;
+	uint32 ns_cpu_limit = 3;
+    uint32 ns_mem_limit = 4;
+    uint32 ns_storage_limit = 5;
+}
+message CreateAppConfig {
+    string app_name = 1;
+    Chart chart = 2;
+    string ns_id = 3;
+	Namespace namespace = 4;
+    repeated common.proto.CustomValue custom_values= 5;
+
 }
