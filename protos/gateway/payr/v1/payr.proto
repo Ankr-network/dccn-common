@@ -43,7 +43,6 @@ service Payr {
 }
 
 message Order {
-    // order number
     string id = 1;
     // Order type, marking the kind of currency using.
     string order_type = 2;
@@ -57,7 +56,7 @@ message Order {
     string time = 9;
     string time_unit = 10;
     string sub_id = 11; //After the plan is confirmed, arrange the plan id to order.
-    string app_id = 12; //Record app id
+    common.proto.App app = 12;
 }
 
 message Subscription {
