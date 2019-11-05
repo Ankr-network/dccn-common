@@ -93,6 +93,7 @@ message PlanFeeRequest {
     string plan = 1;
     string time = 2;
     string team_id = 3;
+    string time_unit = 4;
 }
 
 message CollectFeeResponse {
