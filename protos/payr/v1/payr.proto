@@ -41,7 +41,7 @@ message Order {
     string time = 9;
     string time_unit = 10;
     string sub_id = 11; //After the plan is confirmed, arrange the plan id to order.
-    string app_id = 12; //Record app id
+    common.proto.App app = 12;
 }
 
 message Subscription {
@@ -67,6 +67,7 @@ message PlanType {
 	string   price_hour = 8;
 	string   plan_title = 9;
     repeated string  plan_set = 10;
+    string  plan_status = 11;
 }
 
 message ListSubsRequest {
@@ -93,6 +94,7 @@ message PlanFeeRequest {
     string plan = 1;
     string time = 2;
     string team_id = 3;
+    string time_unit = 4;
 }
 
 message CollectFeeResponse {
@@ -118,6 +120,8 @@ message NewOrderRequest{
     string plan = 3;
     string time = 4;
     string time_unit = 5;
+    common.proto.App App = 6;
+    string cluster_id = 7;
 }
 
 message NewOrderResponse{
