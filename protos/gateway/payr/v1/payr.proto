@@ -136,6 +136,7 @@ message NewOrderRequest{
     string time = 4;
     string time_unit = 5;
     CreateAppConfig App = 6;
+    string cluster_id = 7;
 }
 
 message NewOrderResponse{
