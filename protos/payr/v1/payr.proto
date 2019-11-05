@@ -67,6 +67,7 @@ message PlanType {
 	string   price_hour = 8;
 	string   plan_title = 9;
     repeated string  plan_set = 10;
+    string  plan_status = 11;
 }
 
 message ListSubsRequest {
