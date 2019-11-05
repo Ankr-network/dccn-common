@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "common/common.proto";
 import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
 package gwpayr;
 
 // TODO: supports filter
@@ -65,7 +66,7 @@ message Subscription {
     string plan_type = 3; // Plan type, which should use a map or Enum in the future.
     string team_id = 4; //which team is using it
     PlanStatus status = 5; //The status of current plan
-    int64 issued_at = 6;
+    google.protobuf.Timestamp issued_at = 6;
     string time = 7;
     string time_unit = 8;
 }
