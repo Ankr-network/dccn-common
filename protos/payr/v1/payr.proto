@@ -25,7 +25,7 @@ service Payr {
     }
     rpc Withdraw(WithdrawRequest) returns (WithdrawResponse) { 
     }
-    rpc PaymentHistory (common.proto.Empty) returns (PaymentHistoryResponse){
+    rpc PaymentHistory (TeamID) returns (PaymentHistoryResponse){
     }
 }
 

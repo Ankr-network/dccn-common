@@ -41,7 +41,7 @@ service Payr {
     rpc ListSubs(ListSubsRequest) returns (ListSubsResponse){
         option (google.api.http).get = "/subs/list";
     }
-    rpc PaymentHistory (common.proto.Empty) returns (PaymentHistoryResponse){
+    rpc PaymentHistory (TeamID) returns (PaymentHistoryResponse){
         option (google.api.http).get = "/payment/history";
     }
 }
