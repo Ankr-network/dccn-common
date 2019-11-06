@@ -41,6 +41,9 @@ service Payr {
     rpc ListSubs(ListSubsRequest) returns (ListSubsResponse){
         option (google.api.http).get = "/subs/list";
     }
+    rpc PaymentHistory (TeamID) returns (PaymentHistoryResponse){
+        option (google.api.http).get = "/payment/history";
+    }
 }
 
 message Order {
@@ -182,4 +185,8 @@ message CreateAppConfig {
 	Namespace namespace = 4;
     repeated common.proto.CustomValue custom_values= 5;
 
+}
+
+message PaymentHistoryResponse {
+    repeated common.proto.Payment payments = 1;
 }
