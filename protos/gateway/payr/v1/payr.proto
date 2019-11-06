@@ -63,6 +63,7 @@ message Order {
     common.proto.App app = 12;
     string chart_name = 13;
     string chart_icon_url = 14;
+    string balance_usdt = 15;
 }
 
 message Subscription {
@@ -77,6 +78,7 @@ message Subscription {
     string time_unit = 9;
     string chart_name = 10;
     string chart_icon_url = 11;
+    string order_type = 12;
 }
 
 
