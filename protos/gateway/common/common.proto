@@ -257,3 +257,17 @@ message Deposit {
   string toTxHash = 10;
   string toTxHashMemo = 11;
 }
+
+message Payment {
+  google.protobuf.Timestamp time = 1;
+  string fromAccountAddress = 2;
+  string teamId = 3;
+  string toAccountAddress = 4;
+  string paymentType = 5;
+  string txHash = 6;
+  string amount = 7;
+  string confirmedBlockHeight = 8;
+  TransactionState txState = 9;
+  string planType = 10;
+  string subId = 11;
+}

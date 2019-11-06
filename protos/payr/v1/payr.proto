@@ -25,6 +25,8 @@ service Payr {
     }
     rpc Withdraw(WithdrawRequest) returns (WithdrawResponse) { 
     }
+    rpc PaymentHistory (common.proto.Empty) returns (PaymentHistoryResponse){
+    }
 }
 
 message Order {
@@ -149,4 +151,8 @@ message WithdrawResponse{
     int32   code   = 2;
     string  msg    = 3;
     string transanction_hash = 4;
+}
+
+message PaymentHistoryResponse {
+    repeated common.proto.Payment payments = 1;
 }
