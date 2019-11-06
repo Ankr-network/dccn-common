@@ -175,6 +175,8 @@ message Chart {
     string chart_name = 1;
     string chart_repo = 2;
     string chart_ver = 3;
+    string chart_icon_url = 4;
+    string chart_app_ver = 5;
 }
 message Namespace {
     string ns_name = 1;
