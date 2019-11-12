@@ -10,117 +10,123 @@ service AppMgr {
         option (google.api.http) = {
             post: "/app/create"
             body: "*"
-    };
+        };
     }
-    rpc AppList (common.proto.Empty) returns (AppListResponse) {
-      option (google.api.http).get = "/app/list";
+    rpc AppList (AppListRequest) returns (AppListResponse) {
+        option (google.api.http).get = "/app/list";
     }
     rpc AppDetail (AppID) returns (AppDetailResponse) {
         option (google.api.http) = {
-	             get:"/app/detail/{app_id}"
-	        };
+            get:"/app/detail/{app_id}"
+        };
     }
     rpc CancelApp (AppID) returns (common.proto.Empty) {
         option (google.api.http) = {
             post: "/app/cancel/{app_id}"
             body: "*"
-    };
+        };
     }
     rpc PurgeApp (AppID) returns (common.proto.Empty) {
         option (google.api.http) = {
-	             delete:"/app/purge/{app_id}"
-	        };
+            delete:"/app/purge/{app_id}"
+        };
     }
     rpc UpdateApp (UpdateAppRequest) returns (common.proto.Empty) {
         option (google.api.http) = {
             post: "/app/update/{app_id}"
             body: "*"
-    };
+        };
     }
     rpc AppCount (AppCountRequest) returns (AppCountResponse){
         option (google.api.http).get = "/app/count";
     }
-    rpc AppOverview (common.proto.Empty) returns (AppOverviewResponse) {
+
+    rpc AppOverview (AppOverviewRequest) returns (AppOverviewResponse) {
         option (google.api.http).get = "/app/overview";
     }
+
     rpc UploadChart (UploadChartRequest) returns (common.proto.Empty) {
         option (google.api.http) = {
             post: "/chart/upload/{chart_repo}/{chart_name}/{chart_ver}"
             body: "*"
-    };
+        };
     }
     rpc ChartList (ChartListRequest) returns (ChartListResponse) {
         option (google.api.http).get = "/chart/list";
     }
     rpc ChartDetail (ChartDetailRequest) returns (ChartDetailResponse) {
         option (google.api.http) = {
-	            get:"/chart/detail/{chart_repo}/{chart_name}/{chart_ver}"
-	        };
+            get:"/chart/detail/{chart_repo}/{chart_name}/{chart_ver}"
+        };
     }
     rpc DeleteChart (DeleteChartRequest) returns (common.proto.Empty) {
         option (google.api.http) = {
-	            delete:"/chart/delete/{chart_repo}/{chart_name}/{chart_ver}"
-	        };
+            delete:"/chart/delete/{chart_repo}/{chart_name}/{chart_ver}"
+        };
     }
     rpc SaveAsChart (SaveAsChartRequest) returns (common.proto.Empty) {
         option (google.api.http) = {
             put: "/chart/saveas"
             body: "*"
-    };
+        };
     }
     rpc DownloadChart (DownloadChartRequest) returns (DownloadChartResponse) {
         option (google.api.http) = {
-	            get:"/chart/download/{chart_repo}/{chart_name}/{chart_ver}"
-	        };
+            get:"/chart/download/{chart_repo}/{chart_name}/{chart_ver}"
+        };
     }  
     rpc CreateNamespace (CreateNamespaceRequest) returns (CreateNamespaceResponse) {
         option (google.api.http) = {
             post: "/namespace/create"
             body: "*"
-    };
+        };
     }
-    rpc NamespaceList (common.proto.Empty) returns (NamespaceListResponse) {
+    rpc NamespaceList (NamespaceListRequest) returns (NamespaceListResponse) {
         option (google.api.http).get = "/namespace/list";
     }
     rpc UpdateNamespace (UpdateNamespaceRequest) returns (common.proto.Empty) {
         option (google.api.http) = {
             post: "/namespace/update"
             body: "*"
-    };
+        };
     }
     rpc DeleteNamespace (DeleteNamespaceRequest) returns (common.proto.Empty) {
         option (google.api.http) = {
             delete: "/namespace/delete/{ns_id}"
-    };
+        };
     }
     rpc AnkrPrice (common.proto.Empty) returns (AnkrPriceResponse) {
         option (google.api.http) = {
             get: "/price"
-    };
+        };
     }
     rpc AnkrPriceHistory (AnkrPriceHistoryRequest) returns (history) {
         option (google.api.http) = {
             get: "/price/history/{history_request}"
-    };
+        };
     }
     rpc NamespaceCount (NamespaceCountRequest) returns (NamespaceCountResponse) {
         option (google.api.http) = {
             get: "/namespace/count"
-    };
+        };
     }
 }
 
 message NamespaceCountRequest {
     string cluster_id = 1;
+    string team_id    = 2;
 }
 
 message NamespaceCountResponse {
     uint64 namespace = 1;
-    uint64 app = 2;
+    uint64 app       = 2;
 }
+
 message AnkrPriceHistoryRequest{
     string history_request = 1;
+    string team_id         = 2;
 }
+
 message trade {
 	double time = 1;
 	double high = 2;
@@ -155,15 +161,20 @@ message Namespace {
 }
 message CreateAppRequest {
     string app_name = 1;
-    Chart chart = 2;
-    string ns_id = 3;
+    Chart  chart    = 2;
+    string ns_id    = 3;
 	Namespace namespace = 4;
     repeated common.proto.CustomValue custom_values= 5;
+    string team_id  = 6;
 
 }
 
 message CreateAppResponse {
     string app_id = 1;
+}
+
+message AppListRequest {
+    string team_id = 1;
 }
 
 message AppListResponse {
@@ -179,43 +190,51 @@ message AppID {
 }
 
 message UpdateAppRequest{
-    string app_name = 1;
-    string app_id = 2;
+    string app_name  = 1;
+    string app_id    = 2;
     string chart_ver = 3;
     repeated common.proto.CustomValue custom_values= 4;
+    string team_id   = 5;
 }
 
 message AppCountRequest{
-  string uid = 1;
-  string cluster_id = 2;
+    string uid        = 1;
+    string cluster_id = 2;
+    string team_id    = 3;
 }
 
 message AppCountResponse{
-  uint32 app_count = 1;
+    uint32 app_count = 1;
+}
+
+message AppOverviewRequest {
+    string team_id = 1;
 }
 
 message AppOverviewResponse{
-  uint32 cluster_count = 1;
-  uint32 namespace_count = 2;
-  uint32 network_count = 3;
-  uint32 total_app_count = 4;
-  float cpu_total = 5;
-  float cpu_usage = 6;
-  float mem_total = 7;
-  float mem_usage = 8;
-  float storage_total = 9;
-  float storage_usage = 10;
+    uint32 cluster_count   = 1;
+    uint32 namespace_count = 2;
+    uint32 network_count   = 3;
+    uint32 total_app_count = 4;
+    float  cpu_total = 5;
+    float  cpu_usage = 6;
+    float  mem_total = 7;
+    float  mem_usage = 8;
+    float  storage_total = 9;
+    float  storage_usage = 10;
 }
 
 message UploadChartRequest {
     string chart_repo = 1;
-    string chart_ver = 2;
+    string chart_ver  = 2;
     string chart_name = 3;
-    bytes chart_file = 4;
+    bytes  chart_file = 4;
+    string team_id    = 5;
 }
 
 message ChartListRequest {
     string chart_repo = 1;
+    string team_id    = 2;
 }
 
 message ChartListResponse {
@@ -225,7 +244,8 @@ message ChartListResponse {
 message ChartDetailRequest {
     string chart_name = 1;
     string chart_repo = 2;
-    string chart_ver = 3;
+    string chart_ver  = 3;
+    string team_id    = 4;
 }
 
 message ChartDetailResponse {
@@ -233,27 +253,33 @@ message ChartDetailResponse {
     string chart_repo = 2;
     string chart_description = 3;
     repeated common.proto.ChartVersionDetail chart_version_details = 4; //for multiple version
-    string readme_md = 5; // readme.md for current version 
+    string readme_md   = 5; // readme.md for current version 
 	string values_yaml = 6; // value.yaml for current version 
     repeated common.proto.CustomValue custom_values = 7;
 }
 
 message DeleteChartRequest {
     string chart_repo = 1;
-    string chart_ver = 2;
+    string chart_ver  = 2;
     string chart_name = 3;
+    string team_id    = 4;
 }
 
 message CreateNamespaceRequest {
-	string ns_name = 1;
+	string ns_name    = 1;
     string cluster_id = 2;
     uint32 ns_cpu_limit = 3;
     uint32 ns_mem_limit = 4;
     uint32 ns_storage_limit = 5;
+    string team_id          = 6;
 }
 
 message CreateNamespaceResponse {
     string ns_id = 1;
+}
+
+message NamespaceListRequest {
+    string team_id = 1;
 }
 
 message NamespaceListResponse {
@@ -261,19 +287,21 @@ message NamespaceListResponse {
 }
 
 message UpdateNamespaceRequest {
-    string ns_id = 1;
+    string ns_id        = 1;
     uint32 ns_cpu_limit = 2;
     uint32 ns_mem_limit = 3;
     uint32 ns_storage_limit = 4;
+    string team_id      = 5;
 }
 
 message DeleteNamespaceRequest {
-    string ns_id = 1;
+    string ns_id   = 1;
+    string team_id = 2;
 }
 
 message DownloadChartRequest {
     string chart_repo = 1;
-    string chart_ver = 2;
+    string chart_ver  = 2;
     string chart_name = 3;
 }
 
@@ -283,17 +311,18 @@ message DownloadChartResponse {
 
 message Source {
     string chart_repo = 1;
-    string chart_ver = 2;
+    string chart_ver  = 2;
     string chart_name = 3;
 }
 
 message Destination {
-    string saveas_ver = 1;
+    string saveas_ver  = 1;
     string saveas_name = 2;
 }
 
 message SaveAsChartRequest {
-    Source source = 1;
+    Source source           = 1;
     Destination destination = 2;
-    bytes values_yaml = 3;
+    bytes values_yaml       = 3;
+    string team_id          = 4;
 }

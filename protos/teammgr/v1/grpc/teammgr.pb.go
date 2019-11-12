@@ -9,8 +9,6 @@ import (
 	common "github.com/Ankr-network/dccn-common/protos/common"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -1388,71 +1386,6 @@ type TeamMgrServer interface {
 	// for micro service only
 	CreateDefaultTeam(context.Context, *UserID) (*TeamID, error)
 	GetTeamIDByUserID(context.Context, *UserID) (*TeamID, error)
-}
-
-// UnimplementedTeamMgrServer can be embedded to have forward compatible implementations.
-type UnimplementedTeamMgrServer struct {
-}
-
-func (*UnimplementedTeamMgrServer) CreateTeam(ctx context.Context, req *CreateTeamRequest) (*TeamID, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateTeam not implemented")
-}
-func (*UnimplementedTeamMgrServer) DeleteTeam(ctx context.Context, req *TeamID) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteTeam not implemented")
-}
-func (*UnimplementedTeamMgrServer) UpdateTeam(ctx context.Context, req *Team) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateTeam not implemented")
-}
-func (*UnimplementedTeamMgrServer) ListUserTeams(ctx context.Context, req *common.Empty) (*ListUserTeamsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListUserTeams not implemented")
-}
-func (*UnimplementedTeamMgrServer) InviteTeamMember(ctx context.Context, req *InviteTeamMemberRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InviteTeamMember not implemented")
-}
-func (*UnimplementedTeamMgrServer) ReInviteTeamMember(ctx context.Context, req *ReInviteTeamMemberRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReInviteTeamMember not implemented")
-}
-func (*UnimplementedTeamMgrServer) ConfirmTeamMember(ctx context.Context, req *ConfirmTeamMemberRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ConfirmTeamMember not implemented")
-}
-func (*UnimplementedTeamMgrServer) DeleteTeamMember(ctx context.Context, req *DeleteTeamMemberRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteTeamMember not implemented")
-}
-func (*UnimplementedTeamMgrServer) UpdateTeamMemberRoles(ctx context.Context, req *UpdateTeamMemberRolesRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateTeamMemberRoles not implemented")
-}
-func (*UnimplementedTeamMgrServer) ListTeamMembers(ctx context.Context, req *TeamID) (*ListTeamMembersResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListTeamMembers not implemented")
-}
-func (*UnimplementedTeamMgrServer) CreateRole(ctx context.Context, req *CreateRoleRequest) (*RoleID, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateRole not implemented")
-}
-func (*UnimplementedTeamMgrServer) DeleteRole(ctx context.Context, req *RoleID) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteRole not implemented")
-}
-func (*UnimplementedTeamMgrServer) UpdateRole(ctx context.Context, req *Role) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateRole not implemented")
-}
-func (*UnimplementedTeamMgrServer) GetRole(ctx context.Context, req *RoleID) (*Role, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetRole not implemented")
-}
-func (*UnimplementedTeamMgrServer) ListTeamRoles(ctx context.Context, req *TeamID) (*ListTeamRoleResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListTeamRoles not implemented")
-}
-func (*UnimplementedTeamMgrServer) SetUserCurrentTeam(ctx context.Context, req *SetUserCurrentTeamRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetUserCurrentTeam not implemented")
-}
-func (*UnimplementedTeamMgrServer) GetUserTeamID(ctx context.Context, req *common.Empty) (*TeamID, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserTeamID not implemented")
-}
-func (*UnimplementedTeamMgrServer) CheckUserAccess(ctx context.Context, req *CheckUserAccessRequest) (*CheckUserAccessResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckUserAccess not implemented")
-}
-func (*UnimplementedTeamMgrServer) CreateDefaultTeam(ctx context.Context, req *UserID) (*TeamID, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateDefaultTeam not implemented")
-}
-func (*UnimplementedTeamMgrServer) GetTeamIDByUserID(ctx context.Context, req *UserID) (*TeamID, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetTeamIDByUserID not implemented")
 }
 
 func RegisterTeamMgrServer(s *grpc.Server, srv TeamMgrServer) {
