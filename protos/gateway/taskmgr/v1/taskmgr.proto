@@ -166,7 +166,6 @@ message CreateAppRequest {
 	Namespace namespace = 4;
     repeated common.proto.CustomValue custom_values= 5;
     string team_id  = 6;
-
 }
 
 message CreateAppResponse {
@@ -304,6 +303,7 @@ message DownloadChartRequest {
     string chart_repo = 1;
     string chart_ver  = 2;
     string chart_name = 3;
+    string team_id    = 4;
 }
 
 message DownloadChartResponse {
