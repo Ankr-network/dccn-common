@@ -15,18 +15,18 @@ service AppMgr {
     rpc AppList (AppListRequest) returns (AppListResponse) {
         option (google.api.http).get = "/app/list";
     }
-    rpc AppDetail (AppID) returns (AppDetailResponse) {
+    rpc AppDetail (AppRequest) returns (AppDetailResponse) {
         option (google.api.http) = {
             get:"/app/detail/{app_id}"
         };
     }
-    rpc CancelApp (AppID) returns (common.proto.Empty) {
+    rpc CancelApp (AppRequest) returns (common.proto.Empty) {
         option (google.api.http) = {
             post: "/app/cancel/{app_id}"
             body: "*"
         };
     }
-    rpc PurgeApp (AppID) returns (common.proto.Empty) {
+    rpc PurgeApp (AppRequest) returns (common.proto.Empty) {
         option (google.api.http) = {
             delete:"/app/purge/{app_id}"
         };
@@ -185,8 +185,9 @@ message AppDetailResponse {
     common.proto.AppReport app_report = 1;
 }
 
-message AppID {
-    string app_id = 1;
+message AppRequest {
+    string app_id  = 1;
+    string team_id = 2;
 }
 
 message UpdateAppRequest{

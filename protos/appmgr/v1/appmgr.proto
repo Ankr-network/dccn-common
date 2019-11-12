@@ -7,9 +7,9 @@ service AppMgr {
     // Sends request to start a app and list app
     rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {}
     rpc AppList (AppListRequest) returns (AppListResponse) {}
-    rpc AppDetail (AppID) returns (AppDetailResponse) {}
-    rpc CancelApp (AppID) returns (common.proto.Empty) {}
-    rpc PurgeApp (AppID) returns (common.proto.Empty) {}
+    rpc AppDetail (AppRequest) returns (AppDetailResponse) {}
+    rpc CancelApp (AppRequest) returns (common.proto.Empty) {}
+    rpc PurgeApp (AppRequest) returns (common.proto.Empty) {}
     rpc UpdateApp (UpdateAppRequest) returns (common.proto.Empty) {}
     rpc AppOverview (AppOverviewRequest) returns (AppOverviewResponse) {}
     rpc UploadChart (UploadChartRequest) returns (common.proto.Empty) {}
@@ -58,8 +58,9 @@ message AppDetailResponse {
     common.proto.AppReport app_report = 1;
 }
 
-message AppID {
-    string app_id = 1;
+message AppRequest {
+    string app_id  = 1;
+    string team_id = 2;
 }
 
 message UpdateAppRequest{
