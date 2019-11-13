@@ -35,7 +35,7 @@ service UserMgr {
     };
     }
 
-    rpc ConfirmRegistration(ConfirmRegistrationRequest) returns (common.proto.Empty) {
+    rpc ConfirmRegistration(ConfirmRegistrationRequest) returns (ConfirmResponse) {
         option (google.api.http) = {
             post: "/confirm_registration"
             body: "*"
@@ -49,7 +49,7 @@ service UserMgr {
     };
     }
 
-    rpc ConfirmPassword(ConfirmPasswordRequest) returns (common.proto.Empty) {
+    rpc ConfirmPassword(ConfirmPasswordRequest) returns (ConfirmResponse) {
         option (google.api.http) = {
             post: "/confirm_password"
             body: "*"
@@ -80,7 +80,7 @@ service UserMgr {
     rpc VerifyAccessToken(common.proto.Empty) returns (common.proto.Empty){
     }
 
-    rpc ConfirmEmail(ConfirmEmailRequest) returns (common.proto.Empty){
+    rpc ConfirmEmail(ConfirmEmailRequest) returns (ConfirmResponse){
         option (google.api.http) = {
             post: "/confirm_email"
             body: "*"
@@ -293,8 +293,7 @@ message RefreshToken {
 }
 
 message ConfirmRegistrationRequest {
-    string email = 1;
-    string confirmation_code = 2;
+    string code = 3;
 }
 
 message ForgotPasswordRequest {
@@ -303,9 +302,8 @@ message ForgotPasswordRequest {
 }
 
 message ConfirmPasswordRequest {
-    string email = 1;
-    string confirmation_code = 2;
     string new_password = 3;
+    string code = 4;
 }
 
 message ChangePasswordRequest {
@@ -322,6 +320,9 @@ message UpdateAttributesRequest {
 }
 
 message ConfirmEmailRequest {
-  string ConfirmationCode = 1;
-  string Email = 2;
+  string code = 3;
+}
+
+message ConfirmResponse {
+    string email = 1;
 }
