@@ -45,14 +45,14 @@ type UserMgrService interface {
 	Logout(ctx context.Context, in *RefreshToken, opts ...client.CallOption) (*common.Empty, error)
 	// RefreshToken reset token last access token
 	RefreshSession(ctx context.Context, in *RefreshToken, opts ...client.CallOption) (*AuthenticationResult, error)
-	ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, opts ...client.CallOption) (*common.Empty, error)
+	ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, opts ...client.CallOption) (*ConfirmResponse, error)
 	ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, opts ...client.CallOption) (*common.Empty, error)
-	ConfirmPassword(ctx context.Context, in *ConfirmPasswordRequest, opts ...client.CallOption) (*common.Empty, error)
+	ConfirmPassword(ctx context.Context, in *ConfirmPasswordRequest, opts ...client.CallOption) (*ConfirmResponse, error)
 	ChangePassword(ctx context.Context, in *ChangePasswordRequest, opts ...client.CallOption) (*common.Empty, error)
 	UpdateAttributes(ctx context.Context, in *UpdateAttributesRequest, opts ...client.CallOption) (*User, error)
 	ChangeEmail(ctx context.Context, in *ChangeEmailRequest, opts ...client.CallOption) (*common.Empty, error)
 	VerifyAccessToken(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*common.Empty, error)
-	ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, opts ...client.CallOption) (*common.Empty, error)
+	ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, opts ...client.CallOption) (*ConfirmResponse, error)
 	DepositHistory(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*DepositHistoryResponse, error)
 	SearchDeposit(ctx context.Context, in *SearchDepositRequest, opts ...client.CallOption) (*DepositHistoryResponse, error)
 	UserDetail(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*User, error)
@@ -132,9 +132,9 @@ func (c *userMgrService) RefreshSession(ctx context.Context, in *RefreshToken, o
 	return out, nil
 }
 
-func (c *userMgrService) ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, opts ...client.CallOption) (*common.Empty, error) {
+func (c *userMgrService) ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, opts ...client.CallOption) (*ConfirmResponse, error) {
 	req := c.c.NewRequest(c.name, "UserMgr.ConfirmRegistration", in)
-	out := new(common.Empty)
+	out := new(ConfirmResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -152,9 +152,9 @@ func (c *userMgrService) ForgotPassword(ctx context.Context, in *ForgotPasswordR
 	return out, nil
 }
 
-func (c *userMgrService) ConfirmPassword(ctx context.Context, in *ConfirmPasswordRequest, opts ...client.CallOption) (*common.Empty, error) {
+func (c *userMgrService) ConfirmPassword(ctx context.Context, in *ConfirmPasswordRequest, opts ...client.CallOption) (*ConfirmResponse, error) {
 	req := c.c.NewRequest(c.name, "UserMgr.ConfirmPassword", in)
-	out := new(common.Empty)
+	out := new(ConfirmResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -202,9 +202,9 @@ func (c *userMgrService) VerifyAccessToken(ctx context.Context, in *common.Empty
 	return out, nil
 }
 
-func (c *userMgrService) ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, opts ...client.CallOption) (*common.Empty, error) {
+func (c *userMgrService) ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, opts ...client.CallOption) (*ConfirmResponse, error) {
 	req := c.c.NewRequest(c.name, "UserMgr.ConfirmEmail", in)
-	out := new(common.Empty)
+	out := new(ConfirmResponse)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -393,14 +393,14 @@ type UserMgrHandler interface {
 	Logout(context.Context, *RefreshToken, *common.Empty) error
 	// RefreshToken reset token last access token
 	RefreshSession(context.Context, *RefreshToken, *AuthenticationResult) error
-	ConfirmRegistration(context.Context, *ConfirmRegistrationRequest, *common.Empty) error
+	ConfirmRegistration(context.Context, *ConfirmRegistrationRequest, *ConfirmResponse) error
 	ForgotPassword(context.Context, *ForgotPasswordRequest, *common.Empty) error
-	ConfirmPassword(context.Context, *ConfirmPasswordRequest, *common.Empty) error
+	ConfirmPassword(context.Context, *ConfirmPasswordRequest, *ConfirmResponse) error
 	ChangePassword(context.Context, *ChangePasswordRequest, *common.Empty) error
 	UpdateAttributes(context.Context, *UpdateAttributesRequest, *User) error
 	ChangeEmail(context.Context, *ChangeEmailRequest, *common.Empty) error
 	VerifyAccessToken(context.Context, *common.Empty, *common.Empty) error
-	ConfirmEmail(context.Context, *ConfirmEmailRequest, *common.Empty) error
+	ConfirmEmail(context.Context, *ConfirmEmailRequest, *ConfirmResponse) error
 	DepositHistory(context.Context, *common.Empty, *DepositHistoryResponse) error
 	SearchDeposit(context.Context, *SearchDepositRequest, *DepositHistoryResponse) error
 	UserDetail(context.Context, *common.Empty, *User) error
@@ -428,14 +428,14 @@ func RegisterUserMgrHandler(s server.Server, hdlr UserMgrHandler, opts ...server
 		Login(ctx context.Context, in *LoginRequest, out *LoginResponse) error
 		Logout(ctx context.Context, in *RefreshToken, out *common.Empty) error
 		RefreshSession(ctx context.Context, in *RefreshToken, out *AuthenticationResult) error
-		ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, out *common.Empty) error
+		ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, out *ConfirmResponse) error
 		ForgotPassword(ctx context.Context, in *ForgotPasswordRequest, out *common.Empty) error
-		ConfirmPassword(ctx context.Context, in *ConfirmPasswordRequest, out *common.Empty) error
+		ConfirmPassword(ctx context.Context, in *ConfirmPasswordRequest, out *ConfirmResponse) error
 		ChangePassword(ctx context.Context, in *ChangePasswordRequest, out *common.Empty) error
 		UpdateAttributes(ctx context.Context, in *UpdateAttributesRequest, out *User) error
 		ChangeEmail(ctx context.Context, in *ChangeEmailRequest, out *common.Empty) error
 		VerifyAccessToken(ctx context.Context, in *common.Empty, out *common.Empty) error
-		ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, out *common.Empty) error
+		ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, out *ConfirmResponse) error
 		DepositHistory(ctx context.Context, in *common.Empty, out *DepositHistoryResponse) error
 		SearchDeposit(ctx context.Context, in *SearchDepositRequest, out *DepositHistoryResponse) error
 		UserDetail(ctx context.Context, in *common.Empty, out *User) error
@@ -481,7 +481,7 @@ func (h *userMgrHandler) RefreshSession(ctx context.Context, in *RefreshToken, o
 	return h.UserMgrHandler.RefreshSession(ctx, in, out)
 }
 
-func (h *userMgrHandler) ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, out *common.Empty) error {
+func (h *userMgrHandler) ConfirmRegistration(ctx context.Context, in *ConfirmRegistrationRequest, out *ConfirmResponse) error {
 	return h.UserMgrHandler.ConfirmRegistration(ctx, in, out)
 }
 
@@ -489,7 +489,7 @@ func (h *userMgrHandler) ForgotPassword(ctx context.Context, in *ForgotPasswordR
 	return h.UserMgrHandler.ForgotPassword(ctx, in, out)
 }
 
-func (h *userMgrHandler) ConfirmPassword(ctx context.Context, in *ConfirmPasswordRequest, out *common.Empty) error {
+func (h *userMgrHandler) ConfirmPassword(ctx context.Context, in *ConfirmPasswordRequest, out *ConfirmResponse) error {
 	return h.UserMgrHandler.ConfirmPassword(ctx, in, out)
 }
 
@@ -509,7 +509,7 @@ func (h *userMgrHandler) VerifyAccessToken(ctx context.Context, in *common.Empty
 	return h.UserMgrHandler.VerifyAccessToken(ctx, in, out)
 }
 
-func (h *userMgrHandler) ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, out *common.Empty) error {
+func (h *userMgrHandler) ConfirmEmail(ctx context.Context, in *ConfirmEmailRequest, out *ConfirmResponse) error {
 	return h.UserMgrHandler.ConfirmEmail(ctx, in, out)
 }
 
