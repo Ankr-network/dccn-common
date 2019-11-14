@@ -24,7 +24,7 @@ micro: common
 
 grpc: common
 	@echo "Generating gPRC proto"
-	@for type in email usermgr appmgr dcmgr teammgr payr; do \
+	@for type in email usermgr appmgr dcmgr teammgr payr adminmgr; do \
 		cp $$type/v1/*.proto $$type/v1/grpc/; \
 		protoc -I. -Icommon \
 			--go_out=plugins=grpc,Mcommon/common.proto=github.com/Ankr-network/dccn-common/protos/common:. \
