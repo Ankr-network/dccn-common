@@ -1,24 +1,78 @@
 syntax = "proto3";
-
+import "google/api/annotations.proto";
 package adminmgr;
 
 service AdminMgr {
-    rpc ListAllUser(UserRequest) returns (UserResponse) {}
-    rpc GetUserByUserEmail(UserRequest) returns (UserResponse) {}
-    rpc GetAppAttributeByAppID (AppAttributeRequest) returns (AppAttributeResponse) {}
-    rpc GetNamespaceAttributeByNamespaceID (NamespaceAttributeRequest) returns (NamespaceAttributeResponse) {}
-    rpc GetUserToken(TokenRequest) returns (TokenResponse) {}
+    rpc ListAllUser(UserRequest) returns (UserResponse) {
+        option (google.api.http) = {
+            get: "/api/user/list"
+        }; 
+    }
+    rpc GetUserByUserEmail(UserRequest) returns (UserResponse) {
+        option (google.api.http) = {
+            get: "/api/user/profile"
+        }; 
+    }
 
-    rpc ListAppResourceByUserEmail (AppResourceRequest) returns (AppResourceResponse) {}
-    rpc ListNamespaceResourceByUserEmail (NamespaceResourceRequest) returns (NamespaceResourceResponse) {}
-    rpc ListTransactionRecordByUserEmail (TransactionRecordRequest) returns (TransactionRecordResponse) {}
-    rpc ListTransactionDetailByTxID (TransactionDetailRequest) returns (TransactionDetailResponse) {}
-    rpc ListTransactionRecordByTokenAddr (TransactionRecordRequest) returns (TransactionRecordResponse) {}
+    rpc GetUserToken(TokenRequest) returns (TokenResponse) {
+        option (google.api.http) = {
+            get: "/api/user/token" 
+        }; 
+    }
+    rpc GetAppAttributeByAppID (AppAttributeRequest) returns (AppAttributeResponse) {
+        option (google.api.http) = {
+            get: "/api/app/{app_id}"
+        }; 
+    }
+    rpc GetNamespaceAttributeByNamespaceID (NamespaceAttributeRequest) returns (NamespaceAttributeResponse) {
+        option (google.api.http) = {
+            get: "/api/namespace/{namespace_id}"
+        }; 
+    }
+    rpc ListAppResourceByUserEmail (AppResourceRequest) returns (AppResourceResponse) {
+        option (google.api.http) = {
+            get: "/api/app/list" 
+        }; 
+    }
+    rpc ListNamespaceResourceByUserEmail (NamespaceResourceRequest) returns (NamespaceResourceResponse) {
+        option (google.api.http) = {
+            get: "/api/namespace/list" 
+        }; 
+    }
+    rpc ListTransactionRecordByUserEmail (TransactionRecordRequest) returns (TransactionRecordResponse) {
+        option (google.api.http) = {
+            get: "/api/transaction/list" 
+        }; 
+    }
+    rpc ListTransactionDetailByTxID (TransactionDetailRequest) returns (TransactionDetailResponse) {
+        option (google.api.http) = {
+            get: "/api/transaction/{tx_hash_id}" 
+        };
+    }
+    rpc ListTransactionRecordByTokenAddr (TransactionRecordRequest) returns (TransactionRecordResponse) {
+        option (google.api.http) = {
+            get: "/api/transaction/{token_addr}" 
+        };
+    }
     //invitation code
-    rpc GenerateInvitationCode(InvitationCodeRequest) returns (InvitationCodeResponse) {}
+    rpc GenerateInvitationCode(InvitationCodeRequest) returns (InvitationCodeResponse) {
+        option (google.api.http) = {
+            post: "/api/code/generate" 
+            body: "*"
+        };
+    }
     rpc CheckInvitationCode(CheckInvitationCodeRequest) returns (CheckInvitationCodeResponse) {}
-    rpc ListInvitationCode(ListInvitationCodeRequest) returns (ListInvitationCodeResponse) {}
-    rpc DeleteInvitationCode(DeleteInvitationCodeRequest) returns (DeleteInvitationCodeResponse) {}
+    rpc ListInvitationCode(ListInvitationCodeRequest) returns (ListInvitationCodeResponse) {
+        option (google.api.http) = {
+            get: "/api/code/list" 
+        };
+    }
+    rpc DeleteInvitationCode(DeleteInvitationCodeRequest) returns (DeleteInvitationCodeResponse) {
+        option (google.api.http) = {
+            post: "/api/code/delete" 
+            body: "*"
+        };
+    }
 }
 
 //invitation code
@@ -102,6 +156,18 @@ message User {
     string bep_to_mainnet_addr = 9;
 }
 
+message TokenRequest {
+    string req_id = 1;
+    string email  = 2;
+}
+
+message TokenResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    string access_token = 4;
+}
+
 message AppAttributeRequest {
     string req_id = 1;
     string app_id = 2;
@@ -178,18 +244,6 @@ message NamespaceDetail {
     uint32 status       = 11; //1: Run 2: Deleted 3: Unknown
     string created_time = 12;
     string last_modified_time = 13;
-}
-
-message TokenRequest {
-    string req_id = 1;
-    string email  = 2;
-}
-
-message TokenResponse {
-    string req_id = 1;
-    int32  code   = 2;
-    string msg    = 3;
-    string access_token = 4;
 }
 
 message NamespaceResourceRequest {
