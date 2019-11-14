@@ -14,6 +14,7 @@ import (
 	"net/http"
 
 	"github.com/Ankr-network/dccn-common/protos/common"
+	"github.com/golang/protobuf/descriptor"
 	"github.com/golang/protobuf/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/utilities"
@@ -23,11 +24,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// Suppress "imported and not used" errors
 var _ codes.Code
 var _ io.Reader
 var _ status.Status
 var _ = runtime.String
 var _ = utilities.NewDoubleArray
+var _ = descriptor.ForMessage
 
 func request_DCAPI_DataCenterList_0(ctx context.Context, marshaler runtime.Marshaler, client DCAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq common_proto.Empty
@@ -185,20 +188,9 @@ func local_request_DCAPI_MyDataCenter_0(ctx context.Context, marshaler runtime.M
 
 }
 
-var (
-	filter_DCAPI_ClusterDashBoard_0 = &utilities.DoubleArray{Encoding: map[string]int{}, Base: []int(nil), Check: []int(nil)}
-)
-
 func request_DCAPI_ClusterDashBoard_0(ctx context.Context, marshaler runtime.Marshaler, client DCAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq DashBoardRequest
 	var metadata runtime.ServerMetadata
-
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_DCAPI_ClusterDashBoard_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
 
 	msg, err := client.ClusterDashBoard(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -208,10 +200,6 @@ func request_DCAPI_ClusterDashBoard_0(ctx context.Context, marshaler runtime.Mar
 func local_request_DCAPI_ClusterDashBoard_0(ctx context.Context, marshaler runtime.Marshaler, server DCAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq DashBoardRequest
 	var metadata runtime.ServerMetadata
-
-	if err := runtime.PopulateQueryParameters(&protoReq, req.URL.Query(), filter_DCAPI_ClusterDashBoard_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
 
 	msg, err := server.ClusterDashBoard(ctx, &protoReq)
 	return msg, metadata, err
