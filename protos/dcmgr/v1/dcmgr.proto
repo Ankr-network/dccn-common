@@ -113,7 +113,6 @@ message DCOverviewResponse {
 
 
 message DashBoardRequest {
-  string uid = 1;
 }
 message DashBoardResponse{
    int32 total_income = 1;

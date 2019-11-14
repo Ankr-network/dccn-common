@@ -106,7 +106,6 @@ message RegisterDataCenterResponse {
 }
 
 message DashBoardRequest {
-  string uid = 1;
 }
 message DashBoardResponse{
    int32 total_income = 1;
@@ -135,6 +134,7 @@ message Usage {
 message HistoryFeesRequest {
   string start = 1;
   string end = 2;
+  string team_id = 3;
 }
 
 
@@ -152,6 +152,7 @@ message HistoryFeesResponse {
 
 message FeesDetailRequest {
   string month = 1;
+  string team_id = 2;
 }
 
 message NamespaceFees {
@@ -176,6 +177,6 @@ message FeesDetailResponse {
 
 
 message InvoiceDetailRequest{
-   string uid = 1;
    string invoice_id = 2;
+   string team_id = 3;
 }
