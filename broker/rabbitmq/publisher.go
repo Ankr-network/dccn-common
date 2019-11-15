@@ -1,64 +1,92 @@
 package rabbitmq
 
 import (
-	"fmt"
-	"github.com/golang/protobuf/proto"
+	"time"
+
+	"github.com/gogo/protobuf/proto"
 	"github.com/streadway/amqp"
 )
 
-type rabbitPublisher struct {
-	reliable bool
-	url      string
-	topic    string
-	conn     *Connection
+//https://gist.github.com/OhBonsai/28868448ba84c38749a55ea63f22ca77
+
+const (
+	reconnectDelay = 10 * time.Second
+	resendDelay    = 5 * time.Second
+	resendTime     = 3
+)
+
+type publisher struct {
+	reliable      bool
+	url           string
+	topic         string
+	isConnected   bool
+	done          chan struct{}
+	conn          *amqp.Connection
+	channel       *amqp.Channel
+	notifyClose   chan *amqp.Error
+	notifyConfirm chan amqp.Confirmation
 }
 
-func (p *rabbitPublisher) Connect() error {
-	conn, err := Dial(p.url)
+func newPublisher(reliable bool, url, topic string) *publisher {
+	p := &publisher{
+		reliable:    reliable,
+		url:         url,
+		topic:       topic,
+		isConnected: false,
+		done:        make(chan struct{}),
+	}
+	go p.handleConnect()
+	return p
+}
+
+func (p *publisher) handleConnect() {
+	for {
+		p.isConnected = false
+		logger.Println("Publisher is attempting connect ...")
+		for !p.connect() {
+			logger.Println("Publisher failed to connect ...")
+			time.Sleep(reconnectDelay)
+		}
+		logger.Println("Publisher connected!")
+		select {
+		case <-p.done:
+			return
+		case <-p.notifyClose:
+		}
+	}
+}
+
+func (p *publisher) connect() bool {
+	conn, err := amqp.Dial(p.url)
 	if err != nil {
-		return err
+		return false
+	}
+	channel, err := conn.Channel()
+	if err != nil {
+		return false
 	}
 
-	channel, err := conn.Channel(false)
-	if err != nil {
-		if err := conn.Close(); err != nil {
-			logger.Printf("Connection.Close error: %v", err)
+	if p.reliable {
+		err = channel.Confirm(false)
+		if err != nil {
+			return false
 		}
-		return err
-	}
-	defer func() {
-		if err := channel.Close(); err != nil {
-			logger.Printf("Channel.Close error: %v", err)
-		}
-	}()
-
-	if err := exchangeDeclare(defaultExchange, channel.Channel); err != nil {
-		if err := conn.Close(); err != nil {
-			logger.Printf("Connection.Close error: %v", err)
-		}
-		return err
 	}
 
 	p.conn = conn
-
-	return nil
+	p.channel = channel
+	p.notifyClose = make(chan *amqp.Error)
+	p.notifyConfirm = make(chan amqp.Confirmation)
+	p.channel.NotifyClose(p.notifyClose)
+	p.channel.NotifyPublish(p.notifyConfirm)
+	p.isConnected = true
+	return true
 }
 
-func (p *rabbitPublisher) Close() error {
-	return p.conn.Close()
-}
-
-func (p *rabbitPublisher) Publish(m interface{}) error {
-	// ever single channel for publish
-	channel, err := p.conn.Channel(false)
-	if err != nil {
-		return err
+func (p *publisher) Publish(m interface{}) error {
+	if !p.isConnected {
+		return ErrPublisherConn
 	}
-	defer func() {
-		if err := channel.Close(); err != nil {
-			logger.Printf("Channel.Close error %v", err)
-		}
-	}()
 
 	msg, ok := m.(proto.Message)
 	if !ok {
@@ -66,35 +94,76 @@ func (p *rabbitPublisher) Publish(m interface{}) error {
 	}
 	body, err := proto.Marshal(msg)
 	if err != nil {
-		return fmt.Errorf("proto.Marshal error: %w", err)
+		return ErrProtoMarshal
 	}
+
 	publishing := amqp.Publishing{
-		ContentType: "application/protobuf",
-		Body:        body,
+		Headers:         amqp.Table{},
+		ContentType:     "application/protobuf",
+		ContentEncoding: "",
+		Body:            body,
+		DeliveryMode:    amqp.Transient,
+		Priority:        0,
 	}
 
 	if p.reliable {
-		if err := channel.Confirm(false); err != nil {
-			return fmt.Errorf("Channel.Confirm error: %w", err)
-		}
-
-		confirmCh := channel.NotifyPublish(make(chan amqp.Confirmation, 1))
-
-		publishing.DeliveryMode = amqp.Persistent
-
-		if err := channel.Publish(defaultExchange, p.topic, false, false, publishing); err != nil {
-			return fmt.Errorf("channel.Publish error: %w", err)
-		}
-
-		confirm := <-confirmCh
-		if !confirm.Ack {
-			return ErrPublishMessageNotAck
-		}
-	} else {
-		if err := channel.Publish(defaultExchange, p.topic, false, false, publishing); err != nil {
-			return fmt.Errorf("channel.Publish error: %w", err)
+		currentTime := 0
+		for {
+			publishing.DeliveryMode = amqp.Persistent
+			if err := p.channel.Publish(
+				defaultExchange,
+				p.topic,
+				false,
+				false,
+				publishing,
+			); err != nil {
+				currentTime += 1
+				logger.Printf("Publish message(reliable) failed, retry %d time\n", currentTime)
+				if currentTime < resendTime {
+					time.Sleep(resendDelay)
+					continue
+				}
+				return err
+			}
+			ticker := time.NewTicker(resendDelay)
+			select {
+			case confirm := <-p.notifyConfirm:
+				if confirm.Ack {
+					//logger.Printf("Publish message(reliable): msg=> %+v, DeliveryTag=>%d\n", m, confirm.DeliveryTag)
+					return nil
+				}
+			case <-ticker.C:
+				//logger.Printf("Publish message(reliable) timeout: msg=> %+v\n", m)
+			}
+			ticker.Stop()
+			logger.Printf("Publish message(reliable): send message failed\n")
+			return ErrPublishTimeout
 		}
 	}
+	err = p.channel.Publish(
+		defaultExchange,
+		p.topic,
+		false,
+		false,
+		publishing,
+	)
+	//logger.Printf("Publish mesage(unreliable): %+v\n", m)
+	return err
+}
 
+func (p *publisher) Close() error {
+	if !p.isConnected {
+		return ErrPublishConnClose
+	}
+	err := p.channel.Close()
+	if err != nil {
+		return err
+	}
+	err = p.conn.Close()
+	if err != nil {
+		return err
+	}
+	close(p.done)
+	p.isConnected = false
 	return nil
 }

@@ -1,9 +1,30 @@
 package rabbitmq
 
 import (
-	"github.com/golang/protobuf/proto"
+	"errors"
 	"reflect"
+
+	"github.com/golang/protobuf/proto"
 )
+
+var (
+	ErrMessageIsNotProtoMessage = errors.New("message must be proto.Message")
+	ErrInvalidHandler           = errors.New("invalid handler, must be func and have single proto.Message implement and return single error")
+	ErrPublishMessageNotAck     = errors.New("message not ack by broker")
+	ErrPublishTimeout           = errors.New("publish message wait confirmation timeout")
+	ErrProtoMarshal             = errors.New("marshal proto failed")
+	ErrChannelConfirm           = errors.New("set confirm mode failed")
+	ErrPublisherConn            = errors.New("publisher connection failed")
+	ErrPublishConnClose         = errors.New("publisher connection already close")
+	ErrSubscriberConnClose      = errors.New("subscriber connection already close")
+
+	protoMessageType         = reflect.TypeOf((*proto.Message)(nil)).Elem()
+	errorType                = reflect.TypeOf((*error)(nil)).Elem()
+	errTypeIsNotPtr          = errors.New("type must be pointer")
+	errTypeIsNotProtoMessage = errors.New("type must be proto.Message")
+	errTypeIsNotError        = errors.New("type must be error")
+)
+
 
 type handler struct {
 	methodValue reflect.Value
@@ -51,4 +72,22 @@ func (h *handler) call(msg proto.Message) error {
 		return nil
 	}
 	return out[0].Interface().(error)
+}
+
+func checkIsProtoMessage(t reflect.Type) error {
+	if t.Kind() != reflect.Ptr {
+		return errTypeIsNotPtr
+	}
+
+	if !t.Implements(protoMessageType) {
+		return errTypeIsNotProtoMessage
+	}
+	return nil
+}
+
+func checkIsError(t reflect.Type) error {
+	if !t.Implements(errorType) {
+		return errTypeIsNotError
+	}
+	return nil
 }
