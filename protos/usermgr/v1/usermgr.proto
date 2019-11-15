@@ -70,6 +70,7 @@ service UserMgr {
     }
     rpc GetUser(GetUserRequest) returns (GetUserResponse);
     rpc GetUserByEmail(GetUserByEmailRequest) returns (GetUserResponse);
+    rpc ListAllUsers (common.proto.Empty) returns (ListAllUsersResponse){}
     rpc UpdateCurrentTeamID(UpdateCurrentTeamIDRequest) returns (google.protobuf.Empty);
 }
 
@@ -296,6 +297,10 @@ message FetchAccountsRequest {
 
 message FetchAccountsResponse {
    repeated string Address = 1;
+}
+
+message ListAllUsersResponse {
+    repeated GetUserResponse user_list = 1;
 }
 
 message GenerateAddressRequest {
