@@ -66,6 +66,18 @@ func (p *publisher) connect() bool {
 		return false
 	}
 
+	err = channel.ExchangeDeclare(
+		defaultExchange,
+		defaultExchangeType,
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return false
+	}
 	if p.reliable {
 		err = channel.Confirm(false)
 		if err != nil {
