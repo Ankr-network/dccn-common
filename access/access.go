@@ -5,13 +5,13 @@ import (
 	"fmt"
 
 	"github.com/Ankr-network/dccn-teammgr/api/protos/v1alpha/role"
-	"github.com/Ankr-network/dccn-tools/logger"
+	//	"github.com/Ankr-network/dccn-tools/logger"
 	"google.golang.org/grpc"
 )
 
 const (
-	//defaultTeamMgrEndpoint = "dccn-teammgr:50051"
-	defaultTeamMgrEndpoint = "rbac-app-svc:6801"
+	defaultTeamMgrEndpoint = "dccn-teammgr:50051"
+	//defaultTeamMgrEndpoint = "rbac-app-svc:6801"
 )
 
 var (
@@ -23,11 +23,11 @@ type AuthorizationService interface {
 }
 
 func NewAuthorizationService(teamMgrEndpoint string) AuthorizationService {
-	//return &teamMgrAuthorizationSvc{teamMgrEndpoint: teamMgrEndpoint}
-	return &rbac{
-		teamMgrEndpoint: teamMgrEndpoint,
-		log:             logger.NewLogger(),
-	}
+	return &teamMgrAuthorizationSvc{teamMgrEndpoint: teamMgrEndpoint}
+	//return &rbac{
+	//	teamMgrEndpoint: teamMgrEndpoint,
+	//	log:             logger.NewLogger(),
+	//	}
 }
 
 type teamMgrAuthorizationSvc struct {
