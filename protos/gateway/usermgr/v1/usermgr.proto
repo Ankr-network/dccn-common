@@ -217,12 +217,12 @@ message SearchDepositRequest {
 message GenerateAddressRequest {
     string type = 1;
     string purpose = 2;
+    string team_id = 3;
 }
 
 message GenerateAddressResponse {
     string typeaddress = 1;
     string purposeaddress = 2;
-    string team_id = 3;
 }
 message DepositHistoryResponse {
     repeated common.proto.Deposit deposits = 1;
