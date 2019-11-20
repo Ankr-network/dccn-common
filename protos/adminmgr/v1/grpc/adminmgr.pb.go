@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -2373,6 +2375,53 @@ type AdminMgrServer interface {
 	CheckInvitationCode(context.Context, *CheckInvitationCodeRequest) (*CheckInvitationCodeResponse, error)
 	ListInvitationCode(context.Context, *ListInvitationCodeRequest) (*ListInvitationCodeResponse, error)
 	DeleteInvitationCode(context.Context, *DeleteInvitationCodeRequest) (*DeleteInvitationCodeResponse, error)
+}
+
+// UnimplementedAdminMgrServer can be embedded to have forward compatible implementations.
+type UnimplementedAdminMgrServer struct {
+}
+
+func (*UnimplementedAdminMgrServer) ListAllUser(ctx context.Context, req *UserRequest) (*UserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAllUser not implemented")
+}
+func (*UnimplementedAdminMgrServer) GetUserByUserEmail(ctx context.Context, req *UserRequest) (*UserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserByUserEmail not implemented")
+}
+func (*UnimplementedAdminMgrServer) GetAppAttributeByAppID(ctx context.Context, req *AppAttributeRequest) (*AppAttributeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAppAttributeByAppID not implemented")
+}
+func (*UnimplementedAdminMgrServer) GetNamespaceAttributeByNamespaceID(ctx context.Context, req *NamespaceAttributeRequest) (*NamespaceAttributeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNamespaceAttributeByNamespaceID not implemented")
+}
+func (*UnimplementedAdminMgrServer) GetUserToken(ctx context.Context, req *TokenRequest) (*TokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserToken not implemented")
+}
+func (*UnimplementedAdminMgrServer) ListAppResourceByUserEmail(ctx context.Context, req *AppResourceRequest) (*AppResourceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAppResourceByUserEmail not implemented")
+}
+func (*UnimplementedAdminMgrServer) ListNamespaceResourceByUserEmail(ctx context.Context, req *NamespaceResourceRequest) (*NamespaceResourceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListNamespaceResourceByUserEmail not implemented")
+}
+func (*UnimplementedAdminMgrServer) ListTransactionRecordByUserEmail(ctx context.Context, req *TransactionRecordRequest) (*TransactionRecordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTransactionRecordByUserEmail not implemented")
+}
+func (*UnimplementedAdminMgrServer) ListTransactionDetailByTxID(ctx context.Context, req *TransactionDetailRequest) (*TransactionDetailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTransactionDetailByTxID not implemented")
+}
+func (*UnimplementedAdminMgrServer) ListTransactionRecordByTokenAddr(ctx context.Context, req *TransactionRecordRequest) (*TransactionRecordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTransactionRecordByTokenAddr not implemented")
+}
+func (*UnimplementedAdminMgrServer) GenerateInvitationCode(ctx context.Context, req *InvitationCodeRequest) (*InvitationCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateInvitationCode not implemented")
+}
+func (*UnimplementedAdminMgrServer) CheckInvitationCode(ctx context.Context, req *CheckInvitationCodeRequest) (*CheckInvitationCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckInvitationCode not implemented")
+}
+func (*UnimplementedAdminMgrServer) ListInvitationCode(ctx context.Context, req *ListInvitationCodeRequest) (*ListInvitationCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListInvitationCode not implemented")
+}
+func (*UnimplementedAdminMgrServer) DeleteInvitationCode(ctx context.Context, req *DeleteInvitationCodeRequest) (*DeleteInvitationCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteInvitationCode not implemented")
 }
 
 func RegisterAdminMgrServer(s *grpc.Server, srv AdminMgrServer) {

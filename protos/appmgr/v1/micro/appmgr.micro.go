@@ -38,9 +38,9 @@ type AppMgrService interface {
 	// Sends request to start a app and list app
 	CreateApp(ctx context.Context, in *CreateAppRequest, opts ...client.CallOption) (*CreateAppResponse, error)
 	AppList(ctx context.Context, in *AppListRequest, opts ...client.CallOption) (*AppListResponse, error)
-	AppDetail(ctx context.Context, in *AppID, opts ...client.CallOption) (*AppDetailResponse, error)
-	CancelApp(ctx context.Context, in *AppID, opts ...client.CallOption) (*common.Empty, error)
-	PurgeApp(ctx context.Context, in *AppID, opts ...client.CallOption) (*common.Empty, error)
+	AppDetail(ctx context.Context, in *AppRequest, opts ...client.CallOption) (*AppDetailResponse, error)
+	CancelApp(ctx context.Context, in *AppRequest, opts ...client.CallOption) (*common.Empty, error)
+	PurgeApp(ctx context.Context, in *AppRequest, opts ...client.CallOption) (*common.Empty, error)
 	UpdateApp(ctx context.Context, in *UpdateAppRequest, opts ...client.CallOption) (*common.Empty, error)
 	AppOverview(ctx context.Context, in *AppOverviewRequest, opts ...client.CallOption) (*AppOverviewResponse, error)
 	UploadChart(ctx context.Context, in *UploadChartRequest, opts ...client.CallOption) (*common.Empty, error)
@@ -95,7 +95,7 @@ func (c *appMgrService) AppList(ctx context.Context, in *AppListRequest, opts ..
 	return out, nil
 }
 
-func (c *appMgrService) AppDetail(ctx context.Context, in *AppID, opts ...client.CallOption) (*AppDetailResponse, error) {
+func (c *appMgrService) AppDetail(ctx context.Context, in *AppRequest, opts ...client.CallOption) (*AppDetailResponse, error) {
 	req := c.c.NewRequest(c.name, "AppMgr.AppDetail", in)
 	out := new(AppDetailResponse)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -105,7 +105,7 @@ func (c *appMgrService) AppDetail(ctx context.Context, in *AppID, opts ...client
 	return out, nil
 }
 
-func (c *appMgrService) CancelApp(ctx context.Context, in *AppID, opts ...client.CallOption) (*common.Empty, error) {
+func (c *appMgrService) CancelApp(ctx context.Context, in *AppRequest, opts ...client.CallOption) (*common.Empty, error) {
 	req := c.c.NewRequest(c.name, "AppMgr.CancelApp", in)
 	out := new(common.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -115,7 +115,7 @@ func (c *appMgrService) CancelApp(ctx context.Context, in *AppID, opts ...client
 	return out, nil
 }
 
-func (c *appMgrService) PurgeApp(ctx context.Context, in *AppID, opts ...client.CallOption) (*common.Empty, error) {
+func (c *appMgrService) PurgeApp(ctx context.Context, in *AppRequest, opts ...client.CallOption) (*common.Empty, error) {
 	req := c.c.NewRequest(c.name, "AppMgr.PurgeApp", in)
 	out := new(common.Empty)
 	err := c.c.Call(ctx, req, out, opts...)
@@ -271,9 +271,9 @@ type AppMgrHandler interface {
 	// Sends request to start a app and list app
 	CreateApp(context.Context, *CreateAppRequest, *CreateAppResponse) error
 	AppList(context.Context, *AppListRequest, *AppListResponse) error
-	AppDetail(context.Context, *AppID, *AppDetailResponse) error
-	CancelApp(context.Context, *AppID, *common.Empty) error
-	PurgeApp(context.Context, *AppID, *common.Empty) error
+	AppDetail(context.Context, *AppRequest, *AppDetailResponse) error
+	CancelApp(context.Context, *AppRequest, *common.Empty) error
+	PurgeApp(context.Context, *AppRequest, *common.Empty) error
 	UpdateApp(context.Context, *UpdateAppRequest, *common.Empty) error
 	AppOverview(context.Context, *AppOverviewRequest, *AppOverviewResponse) error
 	UploadChart(context.Context, *UploadChartRequest, *common.Empty) error
@@ -294,9 +294,9 @@ func RegisterAppMgrHandler(s server.Server, hdlr AppMgrHandler, opts ...server.H
 	type appMgr interface {
 		CreateApp(ctx context.Context, in *CreateAppRequest, out *CreateAppResponse) error
 		AppList(ctx context.Context, in *AppListRequest, out *AppListResponse) error
-		AppDetail(ctx context.Context, in *AppID, out *AppDetailResponse) error
-		CancelApp(ctx context.Context, in *AppID, out *common.Empty) error
-		PurgeApp(ctx context.Context, in *AppID, out *common.Empty) error
+		AppDetail(ctx context.Context, in *AppRequest, out *AppDetailResponse) error
+		CancelApp(ctx context.Context, in *AppRequest, out *common.Empty) error
+		PurgeApp(ctx context.Context, in *AppRequest, out *common.Empty) error
 		UpdateApp(ctx context.Context, in *UpdateAppRequest, out *common.Empty) error
 		AppOverview(ctx context.Context, in *AppOverviewRequest, out *AppOverviewResponse) error
 		UploadChart(ctx context.Context, in *UploadChartRequest, out *common.Empty) error
@@ -331,15 +331,15 @@ func (h *appMgrHandler) AppList(ctx context.Context, in *AppListRequest, out *Ap
 	return h.AppMgrHandler.AppList(ctx, in, out)
 }
 
-func (h *appMgrHandler) AppDetail(ctx context.Context, in *AppID, out *AppDetailResponse) error {
+func (h *appMgrHandler) AppDetail(ctx context.Context, in *AppRequest, out *AppDetailResponse) error {
 	return h.AppMgrHandler.AppDetail(ctx, in, out)
 }
 
-func (h *appMgrHandler) CancelApp(ctx context.Context, in *AppID, out *common.Empty) error {
+func (h *appMgrHandler) CancelApp(ctx context.Context, in *AppRequest, out *common.Empty) error {
 	return h.AppMgrHandler.CancelApp(ctx, in, out)
 }
 
-func (h *appMgrHandler) PurgeApp(ctx context.Context, in *AppID, out *common.Empty) error {
+func (h *appMgrHandler) PurgeApp(ctx context.Context, in *AppRequest, out *common.Empty) error {
 	return h.AppMgrHandler.PurgeApp(ctx, in, out)
 }
 

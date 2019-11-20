@@ -301,6 +301,7 @@ message FetchAccountsResponse {
 message GenerateAddressRequest {
     string type = 1;
     string purpose = 2;
+    string team_id = 3;
 }
 
 message GenerateAddressResponse {
