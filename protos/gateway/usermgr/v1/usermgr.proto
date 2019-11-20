@@ -222,6 +222,7 @@ message GenerateAddressRequest {
 message GenerateAddressResponse {
     string typeaddress = 1;
     string purposeaddress = 2;
+    string team_id = 3;
 }
 message DepositHistoryResponse {
     repeated common.proto.Deposit deposits = 1;
