@@ -33,7 +33,7 @@ message ProfitRecordRequest {
 message ProfitRecord {
     string uid           = 1;
     string currency_type = 2;
-    double amount        = 3;
+    string amount        = 3;
     string create_time   = 4;
 }
 
@@ -79,7 +79,7 @@ message TransactionRecord {
     int32  asset_id   = 2;
     string product_id = 3;
     int32  action     = 4;
-    int32  amount     = 5;
+    string amount     = 5;
     string detail     = 6;
     int32  status       = 7;
     string create_time  = 8;
@@ -169,7 +169,7 @@ message DepositRequest {
     string req_id     = 1;
     string uid        = 2;
     string currency_type = 3;
-    double amount        = 4;
+    string amount        = 4;
 }
 
 message DepositResponse {
@@ -185,8 +185,8 @@ message AccountBalanceRequest {
 
 message AccountBalance {
     string uid          = 1;
-    double ankr_balance = 2;
-    double usdt_balance = 3;
+    string ankr_balance = 2;
+    string usdt_balance = 3;
 }
 
 message AccountBalanceResponse {
@@ -201,7 +201,7 @@ message BuyAssetRequest {
     string uid        = 2;
     string product_id = 3;
     string product_name = 4;
-    int32  amount       = 5;
+    string amount       = 5;
     string verify_type  = 6;
     string verify_phone = 7;
     string verify_code  = 8;
@@ -225,7 +225,7 @@ message InvestItem {
     string uid          = 2;
     string product_id   = 3;
     string product_name = 4;
-    int32  total_cost   = 5;
+    string total_cost   = 5;
     int64  create_time  = 6;
     int64  update_time  = 7;
 }
@@ -242,7 +242,7 @@ message SellAssetRequest {
     string uid        = 2;
     string product_id = 3;
     string product_name = 4;
-    int32  amount       = 5;
+    string amount       = 5;
     string verify_type  = 6;
     string verify_phone = 7;
     string verify_code  = 8;
@@ -287,8 +287,8 @@ message AccumulatedProfit {
 }
 
 message AccumulatedProfitRequest {
-    string req_id     = 1;
-    string uid        = 2;
+    string req_id = 1;
+    string uid    = 2;
     repeated int32 asset_ids = 3;
 }
 
@@ -314,7 +314,7 @@ message PayProfitRequest {
     string req_id        = 1;
     string uid           = 2;
     string currency_type = 3;
-    double amount        = 4;
+    string amount        = 4;
 }
 
 message PayProfitResponse {
@@ -329,7 +329,7 @@ message WithdrawRequest {
     string  currency_type = 3;
     string  from_addr     = 4;
     string  to_addr       = 5;
-    double  amount        = 6;
+    string  amount        = 6;
     string  verify_type   = 7;
     string  verify_phone  = 8;
     string  verify_code   = 9;
