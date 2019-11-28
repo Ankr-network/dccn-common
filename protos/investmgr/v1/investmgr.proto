@@ -267,7 +267,7 @@ message AssetProfitDetail {
     int32  asset_id     = 2;
     string product_id   = 3;
     string product_name = 4;
-    double profit       = 5;
+    string profit       = 5;
     int64  create_time  = 6;
 }
 
