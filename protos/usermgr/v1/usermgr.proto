@@ -140,13 +140,6 @@ message UpdateCurrentTeamIDRequest {
     string team_id = 2;
 }
 
-message UserConfirmedEvent {
-    string uid = 1;
-    string user_name = 2;
-    string email = 3;
-    google.protobuf.Timestamp confirm_time = 4;
-}
-
 message FakeTokenRequest {
     string email = 1;
 }
@@ -311,4 +304,45 @@ message GenerateAddressResponse {
 
 message ConfirmResponse {
     string email = 1;
+}
+
+// events, for tmp usage
+message EmailUserEnabledEvent {
+    string uid = 1;
+    string name = 2;
+    string email = 3;
+    google.protobuf.Timestamp enable_time = 4;
+}
+
+message UserCreatedEvent {
+    string uid = 1;
+    string password = 2; // TODO not pass password in domain event
+    string name = 3;
+    string email = 4;
+    string phone = 5;
+    bool enabled = 6;
+    google.protobuf.Timestamp create_time = 7;
+}
+
+message EmailUpdatedEvent {
+    string uid = 1;
+    string name = 2;
+    string old_email = 3;
+    string new_email = 4;
+    google.protobuf.Timestamp update_time = 5; 
+}
+
+message PhoneUpdateEvent {
+    string uid = 1;
+    string name = 2;
+    string old_phone = 3;
+    string new_phone =4;
+    google.protobuf.Timestamp update_time = 5; 
+}
+
+message PasswordUpdateEvent {
+    string uid = 1;
+    string name = 2;
+    string new_password = 3; // TODO not pass password in domain event
+    google.protobuf.Timestamp update_time = 4;
 }
