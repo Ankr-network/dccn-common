@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package gwpayr;
+
+import "google/protobuf/timestamp.proto";
+
+message PaymentCreatedEvent {
+    string  payment_type = 1;
+	string	payment_purpose = 2;
+	string	currency_type = 3;
+    string  amount = 4;
+	string  uID = 5;
+	string	target_address = 6;
+	string	transaction_hash = 7;
+    google.protobuf.Timestamp create_time = 8;
+    string  error_message = 9;
+}

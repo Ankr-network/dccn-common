@@ -2,11 +2,11 @@
 // source: payr/v1/payr.proto
 
 /*
-Package gwpayr is a reverse proxy.
+Package payr is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package gwpayr
+package payr
 
 import (
 	"context"

@@ -6,11 +6,12 @@ package gwpayr
 import (
 	context "context"
 	fmt "fmt"
-	common "github.com/Ankr-network/dccn-common/protos/common"
 	proto "github.com/golang/protobuf/proto"
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -25,1359 +26,256 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type OrderStatus int32
+type PaymentStatus int32
 
 const (
-	OrderStatus_CONFIRMING  OrderStatus = 0
-	OrderStatus_CONFIRMED   OrderStatus = 1
-	OrderStatus_DEACTIVATED OrderStatus = 2
+	PaymentStatus_CONFIRMING PaymentStatus = 0
+	PaymentStatus_CONFIRMED  PaymentStatus = 1
+	PaymentStatus_FAILED     PaymentStatus = 2
 )
 
-var OrderStatus_name = map[int32]string{
+var PaymentStatus_name = map[int32]string{
 	0: "CONFIRMING",
 	1: "CONFIRMED",
-	2: "DEACTIVATED",
+	2: "FAILED",
 }
 
-var OrderStatus_value = map[string]int32{
-	"CONFIRMING":  0,
-	"CONFIRMED":   1,
-	"DEACTIVATED": 2,
+var PaymentStatus_value = map[string]int32{
+	"CONFIRMING": 0,
+	"CONFIRMED":  1,
+	"FAILED":     2,
 }
 
-func (x OrderStatus) String() string {
-	return proto.EnumName(OrderStatus_name, int32(x))
+func (x PaymentStatus) String() string {
+	return proto.EnumName(PaymentStatus_name, int32(x))
 }
 
-func (OrderStatus) EnumDescriptor() ([]byte, []int) {
+func (PaymentStatus) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_b0c0d16023c4b7d8, []int{0}
 }
 
-type PlanStatus int32
-
-const (
-	PlanStatus_UNPAID  PlanStatus = 0
-	PlanStatus_PAID    PlanStatus = 1
-	PlanStatus_EXPRIED PlanStatus = 2
-)
-
-var PlanStatus_name = map[int32]string{
-	0: "UNPAID",
-	1: "PAID",
-	2: "EXPRIED",
-}
-
-var PlanStatus_value = map[string]int32{
-	"UNPAID":  0,
-	"PAID":    1,
-	"EXPRIED": 2,
-}
-
-func (x PlanStatus) String() string {
-	return proto.EnumName(PlanStatus_name, int32(x))
-}
-
-func (PlanStatus) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{1}
-}
-
-type Order struct {
-	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Order type, marking the kind of currency using.
-	OrderType string `protobuf:"bytes,2,opt,name=order_type,json=orderType,proto3" json:"order_type,omitempty"`
-	// How much money left to pay.
-	Balance              string               `protobuf:"bytes,3,opt,name=balance,proto3" json:"balance,omitempty"`
-	Status               OrderStatus          `protobuf:"varint,4,opt,name=status,proto3,enum=gwpayr.OrderStatus" json:"status,omitempty"`
-	IssuedAt             *timestamp.Timestamp `protobuf:"bytes,5,opt,name=issued_at,json=issuedAt,proto3" json:"issued_at,omitempty"`
-	Expiration           *timestamp.Timestamp `protobuf:"bytes,6,opt,name=expiration,proto3" json:"expiration,omitempty"`
-	TeamId               string               `protobuf:"bytes,7,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	PlanType             string               `protobuf:"bytes,8,opt,name=plan_type,json=planType,proto3" json:"plan_type,omitempty"`
-	Time                 string               `protobuf:"bytes,9,opt,name=time,proto3" json:"time,omitempty"`
-	TimeUnit             string               `protobuf:"bytes,10,opt,name=time_unit,json=timeUnit,proto3" json:"time_unit,omitempty"`
-	SubId                string               `protobuf:"bytes,11,opt,name=sub_id,json=subId,proto3" json:"sub_id,omitempty"`
-	App                  *common.App          `protobuf:"bytes,12,opt,name=app,proto3" json:"app,omitempty"`
-	ChartName            string               `protobuf:"bytes,13,opt,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
-	ChartIconUrl         string               `protobuf:"bytes,14,opt,name=chart_icon_url,json=chartIconUrl,proto3" json:"chart_icon_url,omitempty"`
-	BalanceUsdt          string               `protobuf:"bytes,15,opt,name=balance_usdt,json=balanceUsdt,proto3" json:"balance_usdt,omitempty"`
-	BalanceOriginal      string               `protobuf:"bytes,16,opt,name=balance_original,json=balanceOriginal,proto3" json:"balance_original,omitempty"`
-	TokenOriginal        string               `protobuf:"bytes,17,opt,name=token_original,json=tokenOriginal,proto3" json:"token_original,omitempty"`
+type Payment struct {
+	ID                   string               `protobuf:"bytes,1,opt,name=iD,proto3" json:"iD,omitempty"`
+	PaymentType          string               `protobuf:"bytes,2,opt,name=payment_type,json=paymentType,proto3" json:"payment_type,omitempty"`
+	PaymentPurpose       string               `protobuf:"bytes,3,opt,name=payment_purpose,json=paymentPurpose,proto3" json:"payment_purpose,omitempty"`
+	CurrencyType         string               `protobuf:"bytes,4,opt,name=currency_type,json=currencyType,proto3" json:"currency_type,omitempty"`
+	Amount               string               `protobuf:"bytes,5,opt,name=amount,proto3" json:"amount,omitempty"`
+	UID                  string               `protobuf:"bytes,6,opt,name=uID,proto3" json:"uID,omitempty"`
+	Status               PaymentStatus        `protobuf:"varint,7,opt,name=status,proto3,enum=gwpayr.PaymentStatus" json:"status,omitempty"`
+	TargetAddress        string               `protobuf:"bytes,8,opt,name=target_address,json=targetAddress,proto3" json:"target_address,omitempty"`
+	TransactionHash      string               `protobuf:"bytes,9,opt,name=transaction_hash,json=transactionHash,proto3" json:"transaction_hash,omitempty"`
+	CreateTime           *timestamp.Timestamp `protobuf:"bytes,10,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
+	ErrorMessage         string               `protobuf:"bytes,11,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
 	XXX_unrecognized     []byte               `json:"-"`
 	XXX_sizecache        int32                `json:"-"`
 }
 
-func (m *Order) Reset()         { *m = Order{} }
-func (m *Order) String() string { return proto.CompactTextString(m) }
-func (*Order) ProtoMessage()    {}
-func (*Order) Descriptor() ([]byte, []int) {
+func (m *Payment) Reset()         { *m = Payment{} }
+func (m *Payment) String() string { return proto.CompactTextString(m) }
+func (*Payment) ProtoMessage()    {}
+func (*Payment) Descriptor() ([]byte, []int) {
 	return fileDescriptor_b0c0d16023c4b7d8, []int{0}
 }
 
-func (m *Order) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Order.Unmarshal(m, b)
+func (m *Payment) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_Payment.Unmarshal(m, b)
 }
-func (m *Order) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Order.Marshal(b, m, deterministic)
+func (m *Payment) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_Payment.Marshal(b, m, deterministic)
 }
-func (m *Order) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Order.Merge(m, src)
+func (m *Payment) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_Payment.Merge(m, src)
 }
-func (m *Order) XXX_Size() int {
-	return xxx_messageInfo_Order.Size(m)
+func (m *Payment) XXX_Size() int {
+	return xxx_messageInfo_Payment.Size(m)
 }
-func (m *Order) XXX_DiscardUnknown() {
-	xxx_messageInfo_Order.DiscardUnknown(m)
+func (m *Payment) XXX_DiscardUnknown() {
+	xxx_messageInfo_Payment.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_Order proto.InternalMessageInfo
+var xxx_messageInfo_Payment proto.InternalMessageInfo
 
-func (m *Order) GetId() string {
+func (m *Payment) GetID() string {
 	if m != nil {
-		return m.Id
+		return m.ID
 	}
 	return ""
 }
 
-func (m *Order) GetOrderType() string {
+func (m *Payment) GetPaymentType() string {
 	if m != nil {
-		return m.OrderType
+		return m.PaymentType
 	}
 	return ""
 }
 
-func (m *Order) GetBalance() string {
+func (m *Payment) GetPaymentPurpose() string {
 	if m != nil {
-		return m.Balance
+		return m.PaymentPurpose
 	}
 	return ""
 }
 
-func (m *Order) GetStatus() OrderStatus {
+func (m *Payment) GetCurrencyType() string {
+	if m != nil {
+		return m.CurrencyType
+	}
+	return ""
+}
+
+func (m *Payment) GetAmount() string {
+	if m != nil {
+		return m.Amount
+	}
+	return ""
+}
+
+func (m *Payment) GetUID() string {
+	if m != nil {
+		return m.UID
+	}
+	return ""
+}
+
+func (m *Payment) GetStatus() PaymentStatus {
 	if m != nil {
 		return m.Status
 	}
-	return OrderStatus_CONFIRMING
+	return PaymentStatus_CONFIRMING
 }
 
-func (m *Order) GetIssuedAt() *timestamp.Timestamp {
+func (m *Payment) GetTargetAddress() string {
 	if m != nil {
-		return m.IssuedAt
+		return m.TargetAddress
+	}
+	return ""
+}
+
+func (m *Payment) GetTransactionHash() string {
+	if m != nil {
+		return m.TransactionHash
+	}
+	return ""
+}
+
+func (m *Payment) GetCreateTime() *timestamp.Timestamp {
+	if m != nil {
+		return m.CreateTime
 	}
 	return nil
 }
 
-func (m *Order) GetExpiration() *timestamp.Timestamp {
+func (m *Payment) GetErrorMessage() string {
 	if m != nil {
-		return m.Expiration
-	}
-	return nil
-}
-
-func (m *Order) GetTeamId() string {
-	if m != nil {
-		return m.TeamId
+		return m.ErrorMessage
 	}
 	return ""
 }
 
-func (m *Order) GetPlanType() string {
-	if m != nil {
-		return m.PlanType
-	}
-	return ""
-}
-
-func (m *Order) GetTime() string {
-	if m != nil {
-		return m.Time
-	}
-	return ""
-}
-
-func (m *Order) GetTimeUnit() string {
-	if m != nil {
-		return m.TimeUnit
-	}
-	return ""
-}
-
-func (m *Order) GetSubId() string {
-	if m != nil {
-		return m.SubId
-	}
-	return ""
-}
-
-func (m *Order) GetApp() *common.App {
-	if m != nil {
-		return m.App
-	}
-	return nil
-}
-
-func (m *Order) GetChartName() string {
-	if m != nil {
-		return m.ChartName
-	}
-	return ""
-}
-
-func (m *Order) GetChartIconUrl() string {
-	if m != nil {
-		return m.ChartIconUrl
-	}
-	return ""
-}
-
-func (m *Order) GetBalanceUsdt() string {
-	if m != nil {
-		return m.BalanceUsdt
-	}
-	return ""
-}
-
-func (m *Order) GetBalanceOriginal() string {
-	if m != nil {
-		return m.BalanceOriginal
-	}
-	return ""
-}
-
-func (m *Order) GetTokenOriginal() string {
-	if m != nil {
-		return m.TokenOriginal
-	}
-	return ""
-}
-
-type Subscription struct {
-	Id                   string               `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	OrderId              string               `protobuf:"bytes,2,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	PlanType             string               `protobuf:"bytes,3,opt,name=plan_type,json=planType,proto3" json:"plan_type,omitempty"`
-	TeamId               string               `protobuf:"bytes,4,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	Status               PlanStatus           `protobuf:"varint,5,opt,name=status,proto3,enum=gwpayr.PlanStatus" json:"status,omitempty"`
-	IssuedAt             *timestamp.Timestamp `protobuf:"bytes,6,opt,name=issued_at,json=issuedAt,proto3" json:"issued_at,omitempty"`
-	Expiration           *timestamp.Timestamp `protobuf:"bytes,7,opt,name=expiration,proto3" json:"expiration,omitempty"`
-	Time                 string               `protobuf:"bytes,8,opt,name=time,proto3" json:"time,omitempty"`
-	TimeUnit             string               `protobuf:"bytes,9,opt,name=time_unit,json=timeUnit,proto3" json:"time_unit,omitempty"`
-	ChartName            string               `protobuf:"bytes,10,opt,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
-	ChartIconUrl         string               `protobuf:"bytes,11,opt,name=chart_icon_url,json=chartIconUrl,proto3" json:"chart_icon_url,omitempty"`
-	OrderType            string               `protobuf:"bytes,12,opt,name=order_type,json=orderType,proto3" json:"order_type,omitempty"`
-	BalanceOriginal      string               `protobuf:"bytes,13,opt,name=balance_original,json=balanceOriginal,proto3" json:"balance_original,omitempty"`
-	TokenOriginal        string               `protobuf:"bytes,14,opt,name=token_original,json=tokenOriginal,proto3" json:"token_original,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}             `json:"-"`
-	XXX_unrecognized     []byte               `json:"-"`
-	XXX_sizecache        int32                `json:"-"`
-}
-
-func (m *Subscription) Reset()         { *m = Subscription{} }
-func (m *Subscription) String() string { return proto.CompactTextString(m) }
-func (*Subscription) ProtoMessage()    {}
-func (*Subscription) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{1}
-}
-
-func (m *Subscription) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Subscription.Unmarshal(m, b)
-}
-func (m *Subscription) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Subscription.Marshal(b, m, deterministic)
-}
-func (m *Subscription) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Subscription.Merge(m, src)
-}
-func (m *Subscription) XXX_Size() int {
-	return xxx_messageInfo_Subscription.Size(m)
-}
-func (m *Subscription) XXX_DiscardUnknown() {
-	xxx_messageInfo_Subscription.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Subscription proto.InternalMessageInfo
-
-func (m *Subscription) GetId() string {
-	if m != nil {
-		return m.Id
-	}
-	return ""
-}
-
-func (m *Subscription) GetOrderId() string {
-	if m != nil {
-		return m.OrderId
-	}
-	return ""
-}
-
-func (m *Subscription) GetPlanType() string {
-	if m != nil {
-		return m.PlanType
-	}
-	return ""
-}
-
-func (m *Subscription) GetTeamId() string {
-	if m != nil {
-		return m.TeamId
-	}
-	return ""
-}
-
-func (m *Subscription) GetStatus() PlanStatus {
-	if m != nil {
-		return m.Status
-	}
-	return PlanStatus_UNPAID
-}
-
-func (m *Subscription) GetIssuedAt() *timestamp.Timestamp {
-	if m != nil {
-		return m.IssuedAt
-	}
-	return nil
-}
-
-func (m *Subscription) GetExpiration() *timestamp.Timestamp {
-	if m != nil {
-		return m.Expiration
-	}
-	return nil
-}
-
-func (m *Subscription) GetTime() string {
-	if m != nil {
-		return m.Time
-	}
-	return ""
-}
-
-func (m *Subscription) GetTimeUnit() string {
-	if m != nil {
-		return m.TimeUnit
-	}
-	return ""
-}
-
-func (m *Subscription) GetChartName() string {
-	if m != nil {
-		return m.ChartName
-	}
-	return ""
-}
-
-func (m *Subscription) GetChartIconUrl() string {
-	if m != nil {
-		return m.ChartIconUrl
-	}
-	return ""
-}
-
-func (m *Subscription) GetOrderType() string {
-	if m != nil {
-		return m.OrderType
-	}
-	return ""
-}
-
-func (m *Subscription) GetBalanceOriginal() string {
-	if m != nil {
-		return m.BalanceOriginal
-	}
-	return ""
-}
-
-func (m *Subscription) GetTokenOriginal() string {
-	if m != nil {
-		return m.TokenOriginal
-	}
-	return ""
-}
-
-type PlanType struct {
-	PlanType             string   `protobuf:"bytes,1,opt,name=plan_type,json=planType,proto3" json:"plan_type,omitempty"`
-	CpuNumber            string   `protobuf:"bytes,2,opt,name=cpu_number,json=cpuNumber,proto3" json:"cpu_number,omitempty"`
-	MemoryNumber         string   `protobuf:"bytes,3,opt,name=memory_number,json=memoryNumber,proto3" json:"memory_number,omitempty"`
-	StorageNumber        string   `protobuf:"bytes,4,opt,name=storage_number,json=storageNumber,proto3" json:"storage_number,omitempty"`
-	Price                string   `protobuf:"bytes,5,opt,name=price,proto3" json:"price,omitempty"`
-	PriceWeek            string   `protobuf:"bytes,6,opt,name=price_week,json=priceWeek,proto3" json:"price_week,omitempty"`
-	PriceMonth           string   `protobuf:"bytes,7,opt,name=price_month,json=priceMonth,proto3" json:"price_month,omitempty"`
-	PriceHour            string   `protobuf:"bytes,8,opt,name=price_hour,json=priceHour,proto3" json:"price_hour,omitempty"`
-	PlanTitle            string   `protobuf:"bytes,9,opt,name=plan_title,json=planTitle,proto3" json:"plan_title,omitempty"`
-	PlanSet              string   `protobuf:"bytes,10,opt,name=plan_set,json=planSet,proto3" json:"plan_set,omitempty"`
-	PlanStatus           string   `protobuf:"bytes,11,opt,name=plan_status,json=planStatus,proto3" json:"plan_status,omitempty"`
-	PlanFeatured         bool     `protobuf:"varint,12,opt,name=plan_featured,json=planFeatured,proto3" json:"plan_featured,omitempty"`
+type CreatePaymentRequest struct {
+	Payment              *Payment `protobuf:"bytes,1,opt,name=payment,proto3" json:"payment,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *PlanType) Reset()         { *m = PlanType{} }
-func (m *PlanType) String() string { return proto.CompactTextString(m) }
-func (*PlanType) ProtoMessage()    {}
-func (*PlanType) Descriptor() ([]byte, []int) {
+func (m *CreatePaymentRequest) Reset()         { *m = CreatePaymentRequest{} }
+func (m *CreatePaymentRequest) String() string { return proto.CompactTextString(m) }
+func (*CreatePaymentRequest) ProtoMessage()    {}
+func (*CreatePaymentRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b0c0d16023c4b7d8, []int{1}
+}
+
+func (m *CreatePaymentRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreatePaymentRequest.Unmarshal(m, b)
+}
+func (m *CreatePaymentRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreatePaymentRequest.Marshal(b, m, deterministic)
+}
+func (m *CreatePaymentRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreatePaymentRequest.Merge(m, src)
+}
+func (m *CreatePaymentRequest) XXX_Size() int {
+	return xxx_messageInfo_CreatePaymentRequest.Size(m)
+}
+func (m *CreatePaymentRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreatePaymentRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreatePaymentRequest proto.InternalMessageInfo
+
+func (m *CreatePaymentRequest) GetPayment() *Payment {
+	if m != nil {
+		return m.Payment
+	}
+	return nil
+}
+
+type ListPaymentsRequest struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *ListPaymentsRequest) Reset()         { *m = ListPaymentsRequest{} }
+func (m *ListPaymentsRequest) String() string { return proto.CompactTextString(m) }
+func (*ListPaymentsRequest) ProtoMessage()    {}
+func (*ListPaymentsRequest) Descriptor() ([]byte, []int) {
 	return fileDescriptor_b0c0d16023c4b7d8, []int{2}
 }
 
-func (m *PlanType) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_PlanType.Unmarshal(m, b)
+func (m *ListPaymentsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListPaymentsRequest.Unmarshal(m, b)
 }
-func (m *PlanType) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_PlanType.Marshal(b, m, deterministic)
+func (m *ListPaymentsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListPaymentsRequest.Marshal(b, m, deterministic)
 }
-func (m *PlanType) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PlanType.Merge(m, src)
+func (m *ListPaymentsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListPaymentsRequest.Merge(m, src)
 }
-func (m *PlanType) XXX_Size() int {
-	return xxx_messageInfo_PlanType.Size(m)
+func (m *ListPaymentsRequest) XXX_Size() int {
+	return xxx_messageInfo_ListPaymentsRequest.Size(m)
 }
-func (m *PlanType) XXX_DiscardUnknown() {
-	xxx_messageInfo_PlanType.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PlanType proto.InternalMessageInfo
-
-func (m *PlanType) GetPlanType() string {
-	if m != nil {
-		return m.PlanType
-	}
-	return ""
+func (m *ListPaymentsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListPaymentsRequest.DiscardUnknown(m)
 }
 
-func (m *PlanType) GetCpuNumber() string {
-	if m != nil {
-		return m.CpuNumber
-	}
-	return ""
+var xxx_messageInfo_ListPaymentsRequest proto.InternalMessageInfo
+
+type ListPaymentsResponse struct {
+	Payments             []*Payment `protobuf:"bytes,1,rep,name=payments,proto3" json:"payments,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}   `json:"-"`
+	XXX_unrecognized     []byte     `json:"-"`
+	XXX_sizecache        int32      `json:"-"`
 }
 
-func (m *PlanType) GetMemoryNumber() string {
-	if m != nil {
-		return m.MemoryNumber
-	}
-	return ""
-}
-
-func (m *PlanType) GetStorageNumber() string {
-	if m != nil {
-		return m.StorageNumber
-	}
-	return ""
-}
-
-func (m *PlanType) GetPrice() string {
-	if m != nil {
-		return m.Price
-	}
-	return ""
-}
-
-func (m *PlanType) GetPriceWeek() string {
-	if m != nil {
-		return m.PriceWeek
-	}
-	return ""
-}
-
-func (m *PlanType) GetPriceMonth() string {
-	if m != nil {
-		return m.PriceMonth
-	}
-	return ""
-}
-
-func (m *PlanType) GetPriceHour() string {
-	if m != nil {
-		return m.PriceHour
-	}
-	return ""
-}
-
-func (m *PlanType) GetPlanTitle() string {
-	if m != nil {
-		return m.PlanTitle
-	}
-	return ""
-}
-
-func (m *PlanType) GetPlanSet() string {
-	if m != nil {
-		return m.PlanSet
-	}
-	return ""
-}
-
-func (m *PlanType) GetPlanStatus() string {
-	if m != nil {
-		return m.PlanStatus
-	}
-	return ""
-}
-
-func (m *PlanType) GetPlanFeatured() bool {
-	if m != nil {
-		return m.PlanFeatured
-	}
-	return false
-}
-
-type ListSubsRequest struct {
-	TeamId               string   `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *ListSubsRequest) Reset()         { *m = ListSubsRequest{} }
-func (m *ListSubsRequest) String() string { return proto.CompactTextString(m) }
-func (*ListSubsRequest) ProtoMessage()    {}
-func (*ListSubsRequest) Descriptor() ([]byte, []int) {
+func (m *ListPaymentsResponse) Reset()         { *m = ListPaymentsResponse{} }
+func (m *ListPaymentsResponse) String() string { return proto.CompactTextString(m) }
+func (*ListPaymentsResponse) ProtoMessage()    {}
+func (*ListPaymentsResponse) Descriptor() ([]byte, []int) {
 	return fileDescriptor_b0c0d16023c4b7d8, []int{3}
 }
 
-func (m *ListSubsRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ListSubsRequest.Unmarshal(m, b)
+func (m *ListPaymentsResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_ListPaymentsResponse.Unmarshal(m, b)
 }
-func (m *ListSubsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ListSubsRequest.Marshal(b, m, deterministic)
+func (m *ListPaymentsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_ListPaymentsResponse.Marshal(b, m, deterministic)
 }
-func (m *ListSubsRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListSubsRequest.Merge(m, src)
+func (m *ListPaymentsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ListPaymentsResponse.Merge(m, src)
 }
-func (m *ListSubsRequest) XXX_Size() int {
-	return xxx_messageInfo_ListSubsRequest.Size(m)
+func (m *ListPaymentsResponse) XXX_Size() int {
+	return xxx_messageInfo_ListPaymentsResponse.Size(m)
 }
-func (m *ListSubsRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_ListSubsRequest.DiscardUnknown(m)
+func (m *ListPaymentsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_ListPaymentsResponse.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_ListSubsRequest proto.InternalMessageInfo
+var xxx_messageInfo_ListPaymentsResponse proto.InternalMessageInfo
 
-func (m *ListSubsRequest) GetTeamId() string {
-	if m != nil {
-		return m.TeamId
-	}
-	return ""
-}
-
-type ListSubsResponse struct {
-	Subs                 []*Subscription `protobuf:"bytes,1,rep,name=subs,proto3" json:"subs,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
-	XXX_unrecognized     []byte          `json:"-"`
-	XXX_sizecache        int32           `json:"-"`
-}
-
-func (m *ListSubsResponse) Reset()         { *m = ListSubsResponse{} }
-func (m *ListSubsResponse) String() string { return proto.CompactTextString(m) }
-func (*ListSubsResponse) ProtoMessage()    {}
-func (*ListSubsResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{4}
-}
-
-func (m *ListSubsResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ListSubsResponse.Unmarshal(m, b)
-}
-func (m *ListSubsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ListSubsResponse.Marshal(b, m, deterministic)
-}
-func (m *ListSubsResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListSubsResponse.Merge(m, src)
-}
-func (m *ListSubsResponse) XXX_Size() int {
-	return xxx_messageInfo_ListSubsResponse.Size(m)
-}
-func (m *ListSubsResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_ListSubsResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ListSubsResponse proto.InternalMessageInfo
-
-func (m *ListSubsResponse) GetSubs() []*Subscription {
-	if m != nil {
-		return m.Subs
-	}
-	return nil
-}
-
-type ListPlanResponse struct {
-	Plans                []*PlanType `protobuf:"bytes,1,rep,name=plans,proto3" json:"plans,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
-	XXX_unrecognized     []byte      `json:"-"`
-	XXX_sizecache        int32       `json:"-"`
-}
-
-func (m *ListPlanResponse) Reset()         { *m = ListPlanResponse{} }
-func (m *ListPlanResponse) String() string { return proto.CompactTextString(m) }
-func (*ListPlanResponse) ProtoMessage()    {}
-func (*ListPlanResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{5}
-}
-
-func (m *ListPlanResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_ListPlanResponse.Unmarshal(m, b)
-}
-func (m *ListPlanResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_ListPlanResponse.Marshal(b, m, deterministic)
-}
-func (m *ListPlanResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ListPlanResponse.Merge(m, src)
-}
-func (m *ListPlanResponse) XXX_Size() int {
-	return xxx_messageInfo_ListPlanResponse.Size(m)
-}
-func (m *ListPlanResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_ListPlanResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ListPlanResponse proto.InternalMessageInfo
-
-func (m *ListPlanResponse) GetPlans() []*PlanType {
-	if m != nil {
-		return m.Plans
-	}
-	return nil
-}
-
-type CollectFeeRequest struct {
-	CpuNumber            string   `protobuf:"bytes,1,opt,name=cpu_number,json=cpuNumber,proto3" json:"cpu_number,omitempty"`
-	MemoryNumber         string   `protobuf:"bytes,2,opt,name=memory_number,json=memoryNumber,proto3" json:"memory_number,omitempty"`
-	StorageNumber        string   `protobuf:"bytes,3,opt,name=storage_number,json=storageNumber,proto3" json:"storage_number,omitempty"`
-	Time                 string   `protobuf:"bytes,4,opt,name=time,proto3" json:"time,omitempty"`
-	TimeUnit             string   `protobuf:"bytes,5,opt,name=time_unit,json=timeUnit,proto3" json:"time_unit,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CollectFeeRequest) Reset()         { *m = CollectFeeRequest{} }
-func (m *CollectFeeRequest) String() string { return proto.CompactTextString(m) }
-func (*CollectFeeRequest) ProtoMessage()    {}
-func (*CollectFeeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{6}
-}
-
-func (m *CollectFeeRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CollectFeeRequest.Unmarshal(m, b)
-}
-func (m *CollectFeeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CollectFeeRequest.Marshal(b, m, deterministic)
-}
-func (m *CollectFeeRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CollectFeeRequest.Merge(m, src)
-}
-func (m *CollectFeeRequest) XXX_Size() int {
-	return xxx_messageInfo_CollectFeeRequest.Size(m)
-}
-func (m *CollectFeeRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_CollectFeeRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CollectFeeRequest proto.InternalMessageInfo
-
-func (m *CollectFeeRequest) GetCpuNumber() string {
-	if m != nil {
-		return m.CpuNumber
-	}
-	return ""
-}
-
-func (m *CollectFeeRequest) GetMemoryNumber() string {
-	if m != nil {
-		return m.MemoryNumber
-	}
-	return ""
-}
-
-func (m *CollectFeeRequest) GetStorageNumber() string {
-	if m != nil {
-		return m.StorageNumber
-	}
-	return ""
-}
-
-func (m *CollectFeeRequest) GetTime() string {
-	if m != nil {
-		return m.Time
-	}
-	return ""
-}
-
-func (m *CollectFeeRequest) GetTimeUnit() string {
-	if m != nil {
-		return m.TimeUnit
-	}
-	return ""
-}
-
-type PlanFeeRequest struct {
-	Plan                 string   `protobuf:"bytes,1,opt,name=plan,proto3" json:"plan,omitempty"`
-	Time                 string   `protobuf:"bytes,2,opt,name=time,proto3" json:"time,omitempty"`
-	TimeUnit             string   `protobuf:"bytes,3,opt,name=time_unit,json=timeUnit,proto3" json:"time_unit,omitempty"`
-	TeamId               string   `protobuf:"bytes,4,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *PlanFeeRequest) Reset()         { *m = PlanFeeRequest{} }
-func (m *PlanFeeRequest) String() string { return proto.CompactTextString(m) }
-func (*PlanFeeRequest) ProtoMessage()    {}
-func (*PlanFeeRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{7}
-}
-
-func (m *PlanFeeRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_PlanFeeRequest.Unmarshal(m, b)
-}
-func (m *PlanFeeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_PlanFeeRequest.Marshal(b, m, deterministic)
-}
-func (m *PlanFeeRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PlanFeeRequest.Merge(m, src)
-}
-func (m *PlanFeeRequest) XXX_Size() int {
-	return xxx_messageInfo_PlanFeeRequest.Size(m)
-}
-func (m *PlanFeeRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_PlanFeeRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PlanFeeRequest proto.InternalMessageInfo
-
-func (m *PlanFeeRequest) GetPlan() string {
-	if m != nil {
-		return m.Plan
-	}
-	return ""
-}
-
-func (m *PlanFeeRequest) GetTime() string {
-	if m != nil {
-		return m.Time
-	}
-	return ""
-}
-
-func (m *PlanFeeRequest) GetTimeUnit() string {
-	if m != nil {
-		return m.TimeUnit
-	}
-	return ""
-}
-
-func (m *PlanFeeRequest) GetTeamId() string {
-	if m != nil {
-		return m.TeamId
-	}
-	return ""
-}
-
-type CollectFeeResponse struct {
-	Plan                 string   `protobuf:"bytes,1,opt,name=plan,proto3" json:"plan,omitempty"`
-	Fee                  string   `protobuf:"bytes,2,opt,name=fee,proto3" json:"fee,omitempty"`
-	Token                string   `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *CollectFeeResponse) Reset()         { *m = CollectFeeResponse{} }
-func (m *CollectFeeResponse) String() string { return proto.CompactTextString(m) }
-func (*CollectFeeResponse) ProtoMessage()    {}
-func (*CollectFeeResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{8}
-}
-
-func (m *CollectFeeResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CollectFeeResponse.Unmarshal(m, b)
-}
-func (m *CollectFeeResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CollectFeeResponse.Marshal(b, m, deterministic)
-}
-func (m *CollectFeeResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CollectFeeResponse.Merge(m, src)
-}
-func (m *CollectFeeResponse) XXX_Size() int {
-	return xxx_messageInfo_CollectFeeResponse.Size(m)
-}
-func (m *CollectFeeResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_CollectFeeResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CollectFeeResponse proto.InternalMessageInfo
-
-func (m *CollectFeeResponse) GetPlan() string {
-	if m != nil {
-		return m.Plan
-	}
-	return ""
-}
-
-func (m *CollectFeeResponse) GetFee() string {
-	if m != nil {
-		return m.Fee
-	}
-	return ""
-}
-
-func (m *CollectFeeResponse) GetToken() string {
-	if m != nil {
-		return m.Token
-	}
-	return ""
-}
-
-type NewOrderRequest struct {
-	TeamId               string           `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	Type                 string           `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
-	Plan                 string           `protobuf:"bytes,3,opt,name=plan,proto3" json:"plan,omitempty"`
-	Time                 string           `protobuf:"bytes,4,opt,name=time,proto3" json:"time,omitempty"`
-	TimeUnit             string           `protobuf:"bytes,5,opt,name=time_unit,json=timeUnit,proto3" json:"time_unit,omitempty"`
-	App                  *CreateAppConfig `protobuf:"bytes,6,opt,name=App,proto3" json:"App,omitempty"`
-	ClusterId            string           `protobuf:"bytes,7,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
-	XXX_unrecognized     []byte           `json:"-"`
-	XXX_sizecache        int32            `json:"-"`
-}
-
-func (m *NewOrderRequest) Reset()         { *m = NewOrderRequest{} }
-func (m *NewOrderRequest) String() string { return proto.CompactTextString(m) }
-func (*NewOrderRequest) ProtoMessage()    {}
-func (*NewOrderRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{9}
-}
-
-func (m *NewOrderRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_NewOrderRequest.Unmarshal(m, b)
-}
-func (m *NewOrderRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_NewOrderRequest.Marshal(b, m, deterministic)
-}
-func (m *NewOrderRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NewOrderRequest.Merge(m, src)
-}
-func (m *NewOrderRequest) XXX_Size() int {
-	return xxx_messageInfo_NewOrderRequest.Size(m)
-}
-func (m *NewOrderRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_NewOrderRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_NewOrderRequest proto.InternalMessageInfo
-
-func (m *NewOrderRequest) GetTeamId() string {
-	if m != nil {
-		return m.TeamId
-	}
-	return ""
-}
-
-func (m *NewOrderRequest) GetType() string {
-	if m != nil {
-		return m.Type
-	}
-	return ""
-}
-
-func (m *NewOrderRequest) GetPlan() string {
-	if m != nil {
-		return m.Plan
-	}
-	return ""
-}
-
-func (m *NewOrderRequest) GetTime() string {
-	if m != nil {
-		return m.Time
-	}
-	return ""
-}
-
-func (m *NewOrderRequest) GetTimeUnit() string {
-	if m != nil {
-		return m.TimeUnit
-	}
-	return ""
-}
-
-func (m *NewOrderRequest) GetApp() *CreateAppConfig {
-	if m != nil {
-		return m.App
-	}
-	return nil
-}
-
-func (m *NewOrderRequest) GetClusterId() string {
-	if m != nil {
-		return m.ClusterId
-	}
-	return ""
-}
-
-type NewOrderResponse struct {
-	OrderId              string   `protobuf:"bytes,1,opt,name=order_id,json=orderId,proto3" json:"order_id,omitempty"`
-	Expiration           int64    `protobuf:"varint,2,opt,name=expiration,proto3" json:"expiration,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *NewOrderResponse) Reset()         { *m = NewOrderResponse{} }
-func (m *NewOrderResponse) String() string { return proto.CompactTextString(m) }
-func (*NewOrderResponse) ProtoMessage()    {}
-func (*NewOrderResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{10}
-}
-
-func (m *NewOrderResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_NewOrderResponse.Unmarshal(m, b)
-}
-func (m *NewOrderResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_NewOrderResponse.Marshal(b, m, deterministic)
-}
-func (m *NewOrderResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NewOrderResponse.Merge(m, src)
-}
-func (m *NewOrderResponse) XXX_Size() int {
-	return xxx_messageInfo_NewOrderResponse.Size(m)
-}
-func (m *NewOrderResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_NewOrderResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_NewOrderResponse proto.InternalMessageInfo
-
-func (m *NewOrderResponse) GetOrderId() string {
-	if m != nil {
-		return m.OrderId
-	}
-	return ""
-}
-
-func (m *NewOrderResponse) GetExpiration() int64 {
-	if m != nil {
-		return m.Expiration
-	}
-	return 0
-}
-
-type TeamID struct {
-	TeamId               string   `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *TeamID) Reset()         { *m = TeamID{} }
-func (m *TeamID) String() string { return proto.CompactTextString(m) }
-func (*TeamID) ProtoMessage()    {}
-func (*TeamID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{11}
-}
-
-func (m *TeamID) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_TeamID.Unmarshal(m, b)
-}
-func (m *TeamID) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_TeamID.Marshal(b, m, deterministic)
-}
-func (m *TeamID) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TeamID.Merge(m, src)
-}
-func (m *TeamID) XXX_Size() int {
-	return xxx_messageInfo_TeamID.Size(m)
-}
-func (m *TeamID) XXX_DiscardUnknown() {
-	xxx_messageInfo_TeamID.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_TeamID proto.InternalMessageInfo
-
-func (m *TeamID) GetTeamId() string {
-	if m != nil {
-		return m.TeamId
-	}
-	return ""
-}
-
-type OrderStatusResponse struct {
-	Order                *Order   `protobuf:"bytes,1,opt,name=order,proto3" json:"order,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *OrderStatusResponse) Reset()         { *m = OrderStatusResponse{} }
-func (m *OrderStatusResponse) String() string { return proto.CompactTextString(m) }
-func (*OrderStatusResponse) ProtoMessage()    {}
-func (*OrderStatusResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{12}
-}
-
-func (m *OrderStatusResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_OrderStatusResponse.Unmarshal(m, b)
-}
-func (m *OrderStatusResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_OrderStatusResponse.Marshal(b, m, deterministic)
-}
-func (m *OrderStatusResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_OrderStatusResponse.Merge(m, src)
-}
-func (m *OrderStatusResponse) XXX_Size() int {
-	return xxx_messageInfo_OrderStatusResponse.Size(m)
-}
-func (m *OrderStatusResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_OrderStatusResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_OrderStatusResponse proto.InternalMessageInfo
-
-func (m *OrderStatusResponse) GetOrder() *Order {
-	if m != nil {
-		return m.Order
-	}
-	return nil
-}
-
-type GenerateAddressRequest struct {
-	Type                 string   `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
-	Purpose              string   `protobuf:"bytes,2,opt,name=purpose,proto3" json:"purpose,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GenerateAddressRequest) Reset()         { *m = GenerateAddressRequest{} }
-func (m *GenerateAddressRequest) String() string { return proto.CompactTextString(m) }
-func (*GenerateAddressRequest) ProtoMessage()    {}
-func (*GenerateAddressRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{13}
-}
-
-func (m *GenerateAddressRequest) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GenerateAddressRequest.Unmarshal(m, b)
-}
-func (m *GenerateAddressRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GenerateAddressRequest.Marshal(b, m, deterministic)
-}
-func (m *GenerateAddressRequest) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GenerateAddressRequest.Merge(m, src)
-}
-func (m *GenerateAddressRequest) XXX_Size() int {
-	return xxx_messageInfo_GenerateAddressRequest.Size(m)
-}
-func (m *GenerateAddressRequest) XXX_DiscardUnknown() {
-	xxx_messageInfo_GenerateAddressRequest.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GenerateAddressRequest proto.InternalMessageInfo
-
-func (m *GenerateAddressRequest) GetType() string {
-	if m != nil {
-		return m.Type
-	}
-	return ""
-}
-
-func (m *GenerateAddressRequest) GetPurpose() string {
-	if m != nil {
-		return m.Purpose
-	}
-	return ""
-}
-
-type GenerateAddressResponse struct {
-	Typeaddress          string   `protobuf:"bytes,1,opt,name=typeaddress,proto3" json:"typeaddress,omitempty"`
-	Purposeaddress       string   `protobuf:"bytes,2,opt,name=purposeaddress,proto3" json:"purposeaddress,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *GenerateAddressResponse) Reset()         { *m = GenerateAddressResponse{} }
-func (m *GenerateAddressResponse) String() string { return proto.CompactTextString(m) }
-func (*GenerateAddressResponse) ProtoMessage()    {}
-func (*GenerateAddressResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{14}
-}
-
-func (m *GenerateAddressResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GenerateAddressResponse.Unmarshal(m, b)
-}
-func (m *GenerateAddressResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GenerateAddressResponse.Marshal(b, m, deterministic)
-}
-func (m *GenerateAddressResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GenerateAddressResponse.Merge(m, src)
-}
-func (m *GenerateAddressResponse) XXX_Size() int {
-	return xxx_messageInfo_GenerateAddressResponse.Size(m)
-}
-func (m *GenerateAddressResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_GenerateAddressResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_GenerateAddressResponse proto.InternalMessageInfo
-
-func (m *GenerateAddressResponse) GetTypeaddress() string {
-	if m != nil {
-		return m.Typeaddress
-	}
-	return ""
-}
-
-func (m *GenerateAddressResponse) GetPurposeaddress() string {
-	if m != nil {
-		return m.Purposeaddress
-	}
-	return ""
-}
-
-type Chart struct {
-	ChartName            string   `protobuf:"bytes,1,opt,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
-	ChartRepo            string   `protobuf:"bytes,2,opt,name=chart_repo,json=chartRepo,proto3" json:"chart_repo,omitempty"`
-	ChartVer             string   `protobuf:"bytes,3,opt,name=chart_ver,json=chartVer,proto3" json:"chart_ver,omitempty"`
-	ChartIconUrl         string   `protobuf:"bytes,4,opt,name=chart_icon_url,json=chartIconUrl,proto3" json:"chart_icon_url,omitempty"`
-	ChartAppVer          string   `protobuf:"bytes,5,opt,name=chart_app_ver,json=chartAppVer,proto3" json:"chart_app_ver,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Chart) Reset()         { *m = Chart{} }
-func (m *Chart) String() string { return proto.CompactTextString(m) }
-func (*Chart) ProtoMessage()    {}
-func (*Chart) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{15}
-}
-
-func (m *Chart) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Chart.Unmarshal(m, b)
-}
-func (m *Chart) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Chart.Marshal(b, m, deterministic)
-}
-func (m *Chart) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Chart.Merge(m, src)
-}
-func (m *Chart) XXX_Size() int {
-	return xxx_messageInfo_Chart.Size(m)
-}
-func (m *Chart) XXX_DiscardUnknown() {
-	xxx_messageInfo_Chart.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Chart proto.InternalMessageInfo
-
-func (m *Chart) GetChartName() string {
-	if m != nil {
-		return m.ChartName
-	}
-	return ""
-}
-
-func (m *Chart) GetChartRepo() string {
-	if m != nil {
-		return m.ChartRepo
-	}
-	return ""
-}
-
-func (m *Chart) GetChartVer() string {
-	if m != nil {
-		return m.ChartVer
-	}
-	return ""
-}
-
-func (m *Chart) GetChartIconUrl() string {
-	if m != nil {
-		return m.ChartIconUrl
-	}
-	return ""
-}
-
-func (m *Chart) GetChartAppVer() string {
-	if m != nil {
-		return m.ChartAppVer
-	}
-	return ""
-}
-
-type Namespace struct {
-	NsName               string   `protobuf:"bytes,1,opt,name=ns_name,json=nsName,proto3" json:"ns_name,omitempty"`
-	ClusterId            string   `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
-	NsCpuLimit           uint32   `protobuf:"varint,3,opt,name=ns_cpu_limit,json=nsCpuLimit,proto3" json:"ns_cpu_limit,omitempty"`
-	NsMemLimit           uint32   `protobuf:"varint,4,opt,name=ns_mem_limit,json=nsMemLimit,proto3" json:"ns_mem_limit,omitempty"`
-	NsStorageLimit       uint32   `protobuf:"varint,5,opt,name=ns_storage_limit,json=nsStorageLimit,proto3" json:"ns_storage_limit,omitempty"`
-	XXX_NoUnkeyedLiteral struct{} `json:"-"`
-	XXX_unrecognized     []byte   `json:"-"`
-	XXX_sizecache        int32    `json:"-"`
-}
-
-func (m *Namespace) Reset()         { *m = Namespace{} }
-func (m *Namespace) String() string { return proto.CompactTextString(m) }
-func (*Namespace) ProtoMessage()    {}
-func (*Namespace) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{16}
-}
-
-func (m *Namespace) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_Namespace.Unmarshal(m, b)
-}
-func (m *Namespace) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_Namespace.Marshal(b, m, deterministic)
-}
-func (m *Namespace) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_Namespace.Merge(m, src)
-}
-func (m *Namespace) XXX_Size() int {
-	return xxx_messageInfo_Namespace.Size(m)
-}
-func (m *Namespace) XXX_DiscardUnknown() {
-	xxx_messageInfo_Namespace.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_Namespace proto.InternalMessageInfo
-
-func (m *Namespace) GetNsName() string {
-	if m != nil {
-		return m.NsName
-	}
-	return ""
-}
-
-func (m *Namespace) GetClusterId() string {
-	if m != nil {
-		return m.ClusterId
-	}
-	return ""
-}
-
-func (m *Namespace) GetNsCpuLimit() uint32 {
-	if m != nil {
-		return m.NsCpuLimit
-	}
-	return 0
-}
-
-func (m *Namespace) GetNsMemLimit() uint32 {
-	if m != nil {
-		return m.NsMemLimit
-	}
-	return 0
-}
-
-func (m *Namespace) GetNsStorageLimit() uint32 {
-	if m != nil {
-		return m.NsStorageLimit
-	}
-	return 0
-}
-
-type CreateAppConfig struct {
-	AppName              string                `protobuf:"bytes,1,opt,name=app_name,json=appName,proto3" json:"app_name,omitempty"`
-	Chart                *Chart                `protobuf:"bytes,2,opt,name=chart,proto3" json:"chart,omitempty"`
-	NsId                 string                `protobuf:"bytes,3,opt,name=ns_id,json=nsId,proto3" json:"ns_id,omitempty"`
-	Namespace            *Namespace            `protobuf:"bytes,4,opt,name=namespace,proto3" json:"namespace,omitempty"`
-	CustomValues         []*common.CustomValue `protobuf:"bytes,5,rep,name=custom_values,json=customValues,proto3" json:"custom_values,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
-}
-
-func (m *CreateAppConfig) Reset()         { *m = CreateAppConfig{} }
-func (m *CreateAppConfig) String() string { return proto.CompactTextString(m) }
-func (*CreateAppConfig) ProtoMessage()    {}
-func (*CreateAppConfig) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{17}
-}
-
-func (m *CreateAppConfig) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_CreateAppConfig.Unmarshal(m, b)
-}
-func (m *CreateAppConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_CreateAppConfig.Marshal(b, m, deterministic)
-}
-func (m *CreateAppConfig) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CreateAppConfig.Merge(m, src)
-}
-func (m *CreateAppConfig) XXX_Size() int {
-	return xxx_messageInfo_CreateAppConfig.Size(m)
-}
-func (m *CreateAppConfig) XXX_DiscardUnknown() {
-	xxx_messageInfo_CreateAppConfig.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CreateAppConfig proto.InternalMessageInfo
-
-func (m *CreateAppConfig) GetAppName() string {
-	if m != nil {
-		return m.AppName
-	}
-	return ""
-}
-
-func (m *CreateAppConfig) GetChart() *Chart {
-	if m != nil {
-		return m.Chart
-	}
-	return nil
-}
-
-func (m *CreateAppConfig) GetNsId() string {
-	if m != nil {
-		return m.NsId
-	}
-	return ""
-}
-
-func (m *CreateAppConfig) GetNamespace() *Namespace {
-	if m != nil {
-		return m.Namespace
-	}
-	return nil
-}
-
-func (m *CreateAppConfig) GetCustomValues() []*common.CustomValue {
-	if m != nil {
-		return m.CustomValues
-	}
-	return nil
-}
-
-type PaymentHistoryResponse struct {
-	Payments             []*common.Payment `protobuf:"bytes,1,rep,name=payments,proto3" json:"payments,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
-}
-
-func (m *PaymentHistoryResponse) Reset()         { *m = PaymentHistoryResponse{} }
-func (m *PaymentHistoryResponse) String() string { return proto.CompactTextString(m) }
-func (*PaymentHistoryResponse) ProtoMessage()    {}
-func (*PaymentHistoryResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b0c0d16023c4b7d8, []int{18}
-}
-
-func (m *PaymentHistoryResponse) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_PaymentHistoryResponse.Unmarshal(m, b)
-}
-func (m *PaymentHistoryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_PaymentHistoryResponse.Marshal(b, m, deterministic)
-}
-func (m *PaymentHistoryResponse) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PaymentHistoryResponse.Merge(m, src)
-}
-func (m *PaymentHistoryResponse) XXX_Size() int {
-	return xxx_messageInfo_PaymentHistoryResponse.Size(m)
-}
-func (m *PaymentHistoryResponse) XXX_DiscardUnknown() {
-	xxx_messageInfo_PaymentHistoryResponse.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PaymentHistoryResponse proto.InternalMessageInfo
-
-func (m *PaymentHistoryResponse) GetPayments() []*common.Payment {
+func (m *ListPaymentsResponse) GetPayments() []*Payment {
 	if m != nil {
 		return m.Payments
 	}
@@ -1385,134 +283,50 @@ func (m *PaymentHistoryResponse) GetPayments() []*common.Payment {
 }
 
 func init() {
-	proto.RegisterEnum("gwpayr.OrderStatus", OrderStatus_name, OrderStatus_value)
-	proto.RegisterEnum("gwpayr.PlanStatus", PlanStatus_name, PlanStatus_value)
-	proto.RegisterType((*Order)(nil), "gwpayr.Order")
-	proto.RegisterType((*Subscription)(nil), "gwpayr.Subscription")
-	proto.RegisterType((*PlanType)(nil), "gwpayr.PlanType")
-	proto.RegisterType((*ListSubsRequest)(nil), "gwpayr.ListSubsRequest")
-	proto.RegisterType((*ListSubsResponse)(nil), "gwpayr.ListSubsResponse")
-	proto.RegisterType((*ListPlanResponse)(nil), "gwpayr.ListPlanResponse")
-	proto.RegisterType((*CollectFeeRequest)(nil), "gwpayr.CollectFeeRequest")
-	proto.RegisterType((*PlanFeeRequest)(nil), "gwpayr.PlanFeeRequest")
-	proto.RegisterType((*CollectFeeResponse)(nil), "gwpayr.CollectFeeResponse")
-	proto.RegisterType((*NewOrderRequest)(nil), "gwpayr.NewOrderRequest")
-	proto.RegisterType((*NewOrderResponse)(nil), "gwpayr.NewOrderResponse")
-	proto.RegisterType((*TeamID)(nil), "gwpayr.TeamID")
-	proto.RegisterType((*OrderStatusResponse)(nil), "gwpayr.OrderStatusResponse")
-	proto.RegisterType((*GenerateAddressRequest)(nil), "gwpayr.GenerateAddressRequest")
-	proto.RegisterType((*GenerateAddressResponse)(nil), "gwpayr.GenerateAddressResponse")
-	proto.RegisterType((*Chart)(nil), "gwpayr.Chart")
-	proto.RegisterType((*Namespace)(nil), "gwpayr.Namespace")
-	proto.RegisterType((*CreateAppConfig)(nil), "gwpayr.CreateAppConfig")
-	proto.RegisterType((*PaymentHistoryResponse)(nil), "gwpayr.PaymentHistoryResponse")
+	proto.RegisterEnum("gwpayr.PaymentStatus", PaymentStatus_name, PaymentStatus_value)
+	proto.RegisterType((*Payment)(nil), "gwpayr.Payment")
+	proto.RegisterType((*CreatePaymentRequest)(nil), "gwpayr.CreatePaymentRequest")
+	proto.RegisterType((*ListPaymentsRequest)(nil), "gwpayr.ListPaymentsRequest")
+	proto.RegisterType((*ListPaymentsResponse)(nil), "gwpayr.ListPaymentsResponse")
 }
 
 func init() { proto.RegisterFile("payr/v1/payr.proto", fileDescriptor_b0c0d16023c4b7d8) }
 
 var fileDescriptor_b0c0d16023c4b7d8 = []byte{
-	// 1616 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x57, 0xdd, 0x6e, 0x23, 0x49,
-	0x15, 0xde, 0xf6, 0xbf, 0x8f, 0x7f, 0xa7, 0x32, 0x3f, 0x3d, 0x5e, 0xd8, 0xcd, 0xf6, 0xb0, 0xab,
-	0x6c, 0x90, 0xdc, 0xda, 0x70, 0x81, 0x34, 0x02, 0x24, 0xcb, 0xc9, 0xec, 0x5a, 0x4c, 0x32, 0xde,
-	0xce, 0x0f, 0x88, 0x1b, 0xab, 0x6d, 0x57, 0x92, 0xd6, 0xb8, 0xab, 0x8b, 0xae, 0xee, 0x09, 0xbe,
-	0xe5, 0x86, 0x07, 0xe0, 0x35, 0x90, 0x10, 0xbc, 0x07, 0xe2, 0x82, 0x0b, 0x5e, 0x80, 0x77, 0xe0,
-	0x16, 0xd5, 0xa9, 0xaa, 0x76, 0xbb, 0xc7, 0x21, 0x81, 0x2b, 0x77, 0x9d, 0xf3, 0xd5, 0xa9, 0xf3,
-	0xf3, 0x9d, 0x53, 0x65, 0x20, 0xdc, 0x5f, 0xc7, 0xee, 0x87, 0x6f, 0x5c, 0xf9, 0x3b, 0xe4, 0x71,
-	0x94, 0x44, 0xa4, 0x76, 0x73, 0x27, 0x57, 0x83, 0xbd, 0x45, 0x14, 0x86, 0x11, 0x73, 0xd5, 0x8f,
-	0x52, 0x0e, 0x7e, 0x70, 0x13, 0x45, 0x37, 0x2b, 0xea, 0xfa, 0x3c, 0x70, 0x7d, 0xc6, 0xa2, 0xc4,
-	0x4f, 0x82, 0x88, 0x09, 0xad, 0xfd, 0x5c, 0x6b, 0x71, 0x35, 0x4f, 0xaf, 0xdd, 0x24, 0x08, 0xa9,
-	0x48, 0xfc, 0x90, 0x2b, 0x80, 0xf3, 0xf7, 0x0a, 0x54, 0xdf, 0xc5, 0x4b, 0x1a, 0x93, 0x2e, 0x94,
-	0x82, 0xa5, 0x6d, 0xed, 0x5b, 0x07, 0x4d, 0xaf, 0x14, 0x2c, 0xc9, 0x0f, 0x01, 0x22, 0xa9, 0x98,
-	0x25, 0x6b, 0x4e, 0xed, 0x12, 0xca, 0x9b, 0x28, 0xb9, 0x58, 0x73, 0x4a, 0x6c, 0xa8, 0xcf, 0xfd,
-	0x95, 0xcf, 0x16, 0xd4, 0x2e, 0xa3, 0xce, 0x2c, 0xc9, 0x8f, 0xa1, 0x26, 0x12, 0x3f, 0x49, 0x85,
-	0x5d, 0xd9, 0xb7, 0x0e, 0xba, 0x47, 0x7b, 0x43, 0xe5, 0xff, 0x10, 0xcf, 0x39, 0x47, 0x95, 0xa7,
-	0x21, 0xe4, 0xa7, 0xd0, 0x0c, 0x84, 0x48, 0xe9, 0x72, 0xe6, 0x27, 0x76, 0x75, 0xdf, 0x3a, 0x68,
-	0x1d, 0x0d, 0x86, 0xca, 0xe9, 0xa1, 0x71, 0x7a, 0x78, 0x61, 0x9c, 0xf6, 0x1a, 0x0a, 0x3c, 0x4a,
-	0xc8, 0x6b, 0x00, 0xfa, 0x3b, 0x1e, 0xc4, 0x18, 0xae, 0x5d, 0x7b, 0x70, 0x67, 0x0e, 0x4d, 0x5e,
-	0x40, 0x3d, 0xa1, 0x7e, 0x38, 0x0b, 0x96, 0x76, 0x1d, 0x7d, 0xaf, 0xc9, 0xe5, 0x64, 0x49, 0x3e,
-	0x85, 0x26, 0x5f, 0xf9, 0x4c, 0x85, 0xdc, 0x40, 0x55, 0x43, 0x0a, 0x30, 0x62, 0x02, 0x15, 0x99,
-	0x3d, 0xbb, 0x89, 0x72, 0xfc, 0x96, 0x1b, 0xe4, 0xef, 0x2c, 0x65, 0x41, 0x62, 0x83, 0xda, 0x20,
-	0x05, 0x97, 0x2c, 0x48, 0xc8, 0x33, 0xa8, 0x89, 0x74, 0x2e, 0x4f, 0x69, 0xa1, 0xa6, 0x2a, 0xd2,
-	0xf9, 0x64, 0x49, 0x5e, 0x41, 0xd9, 0xe7, 0xdc, 0x6e, 0xa3, 0xcb, 0x4f, 0x86, 0xf9, 0x6a, 0x0e,
-	0x47, 0x9c, 0x7b, 0x52, 0x2b, 0xb3, 0xbf, 0xb8, 0xf5, 0xe3, 0x64, 0xc6, 0xfc, 0x90, 0xda, 0x1d,
-	0x95, 0x7d, 0x94, 0x9c, 0xf9, 0x21, 0x25, 0x3f, 0x82, 0xae, 0x52, 0x07, 0x8b, 0x88, 0xcd, 0xd2,
-	0x78, 0x65, 0x77, 0x11, 0xd2, 0x46, 0xe9, 0x64, 0x11, 0xb1, 0xcb, 0x78, 0x45, 0xbe, 0x80, 0xb6,
-	0x2e, 0xca, 0x2c, 0x15, 0xcb, 0xc4, 0xee, 0x21, 0xa6, 0xa5, 0x65, 0x97, 0x62, 0x99, 0x90, 0xaf,
-	0xa1, 0x6f, 0x20, 0x51, 0x1c, 0xdc, 0x04, 0xcc, 0x5f, 0xd9, 0x7d, 0x84, 0xf5, 0xb4, 0xfc, 0x9d,
-	0x16, 0x93, 0x2f, 0xa1, 0x9b, 0x44, 0xef, 0x29, 0xdb, 0x00, 0x9f, 0x20, 0xb0, 0x83, 0x52, 0x03,
-	0x73, 0xfe, 0x5d, 0x86, 0xf6, 0x79, 0x3a, 0x17, 0x8b, 0x38, 0xe0, 0x98, 0xed, 0x22, 0xb1, 0x5e,
-	0x42, 0x43, 0x11, 0x2b, 0x58, 0x6a, 0x5a, 0xd5, 0x71, 0x5d, 0xcc, 0x7f, 0xb9, 0x90, 0xff, 0x5c,
-	0xd5, 0x2a, 0x5b, 0x55, 0x3b, 0xcc, 0x08, 0x57, 0x45, 0xc2, 0x11, 0x43, 0xb8, 0xe9, 0xca, 0x67,
-	0xff, 0x8d, 0x6f, 0xb5, 0xff, 0x9b, 0x6f, 0xf5, 0xff, 0x89, 0x6f, 0x86, 0x39, 0x8d, 0xfb, 0x98,
-	0xd3, 0x2c, 0x30, 0x67, 0xbb, 0xfa, 0xf0, 0x70, 0xf5, 0x5b, 0x3b, 0xaa, 0xbf, 0xdd, 0xc0, 0xed,
-	0x62, 0x03, 0xef, 0xaa, 0x7c, 0xe7, 0xb1, 0x95, 0xef, 0xee, 0xaa, 0xfc, 0x1f, 0xca, 0xd0, 0x98,
-	0x9a, 0x6a, 0x6d, 0x95, 0xd2, 0x2a, 0x94, 0x52, 0xc6, 0xc7, 0xd3, 0x19, 0x4b, 0xc3, 0x39, 0x8d,
-	0xcd, 0x6c, 0x59, 0xf0, 0xf4, 0x0c, 0x05, 0xe4, 0x15, 0x74, 0x42, 0x1a, 0x46, 0xf1, 0xda, 0x20,
-	0x14, 0x15, 0xda, 0x4a, 0xa8, 0x41, 0x5f, 0x42, 0x57, 0x24, 0x51, 0xec, 0xdf, 0x50, 0x83, 0x52,
-	0xac, 0xe8, 0x68, 0xa9, 0x86, 0x3d, 0x85, 0x2a, 0x8f, 0x83, 0x05, 0x45, 0x6e, 0x34, 0x3d, 0xb5,
-	0x90, 0x0e, 0xe0, 0xc7, 0xec, 0x8e, 0xd2, 0xf7, 0xc8, 0x83, 0xa6, 0xd7, 0x44, 0xc9, 0xaf, 0x28,
-	0x7d, 0x4f, 0x3e, 0x87, 0x96, 0x52, 0x87, 0x11, 0x4b, 0x6e, 0xf5, 0x90, 0x50, 0x3b, 0x4e, 0xa5,
-	0x64, 0xb3, 0xff, 0x36, 0x4a, 0x63, 0x5d, 0x57, 0xb5, 0xff, 0xbb, 0x28, 0x8d, 0x51, 0x8d, 0xc1,
-	0x07, 0xc9, 0xca, 0x0c, 0x0c, 0x4c, 0xc7, 0x85, 0x14, 0xc8, 0x0e, 0x40, 0xb5, 0xa0, 0x66, 0x68,
-	0xd4, 0xe5, 0xfa, 0x9c, 0x26, 0x78, 0x32, 0xaa, 0x14, 0xa1, 0x5b, 0xfa, 0xe4, 0x8c, 0xc8, 0x32,
-	0x37, 0x08, 0xb8, 0xa6, 0x7e, 0x92, 0xc6, 0x74, 0x89, 0x85, 0x6d, 0x78, 0x6d, 0x29, 0x7c, 0xa3,
-	0x65, 0xce, 0x21, 0xf4, 0xde, 0x06, 0x22, 0x91, 0x6d, 0xe8, 0xd1, 0xdf, 0xa6, 0x54, 0x24, 0xf9,
-	0xee, 0xb1, 0xf2, 0xdd, 0xe3, 0xfc, 0x0c, 0xfa, 0x1b, 0xac, 0xe0, 0x11, 0x13, 0x94, 0x1c, 0x40,
-	0x45, 0xa4, 0x73, 0x61, 0x5b, 0xfb, 0xe5, 0x83, 0xd6, 0xd1, 0x53, 0xd3, 0x4f, 0xf9, 0xb6, 0xf6,
-	0x10, 0xe1, 0xbc, 0x56, 0xbb, 0x65, 0xd9, 0xb3, 0xdd, 0x5f, 0x41, 0x55, 0x7a, 0x63, 0xb6, 0xf7,
-	0xf3, 0xed, 0x28, 0xcb, 0xef, 0x29, 0xb5, 0xf3, 0x67, 0x0b, 0x9e, 0x8c, 0xa3, 0xd5, 0x8a, 0x2e,
-	0x92, 0x37, 0x94, 0x1a, 0x47, 0xb7, 0xb9, 0x61, 0x3d, 0xc8, 0x8d, 0xd2, 0xa3, 0xb8, 0x51, 0xde,
-	0xc5, 0x0d, 0xd3, 0x97, 0x95, 0xfb, 0xfa, 0xb2, 0xba, 0xdd, 0x97, 0x0e, 0x83, 0xee, 0x14, 0xf3,
-	0x9c, 0x79, 0x4b, 0xa0, 0x22, 0x83, 0xd1, 0x7e, 0xe2, 0x77, 0x66, 0xb6, 0x74, 0x9f, 0xd9, 0x72,
-	0xa1, 0xdd, 0xef, 0x9b, 0x6c, 0xce, 0x14, 0x48, 0x3e, 0x41, 0x3a, 0xbf, 0xbb, 0xce, 0xec, 0x43,
-	0xf9, 0x9a, 0x9a, 0x23, 0xe5, 0xa7, 0x24, 0x3e, 0xb6, 0xa7, 0x3e, 0x4d, 0x2d, 0x9c, 0xbf, 0x59,
-	0xd0, 0x3b, 0xa3, 0x77, 0x78, 0x15, 0x3f, 0x44, 0x0d, 0x0c, 0x64, 0x73, 0xf9, 0xe3, 0x77, 0x76,
-	0x78, 0x79, 0x47, 0xc0, 0x8f, 0xcd, 0x23, 0xf9, 0x1a, 0xca, 0x23, 0xce, 0xf5, 0xfc, 0x7d, 0x61,
-	0xf8, 0x31, 0x8e, 0xa9, 0x9f, 0xd0, 0x11, 0xe7, 0xe3, 0x88, 0x5d, 0x07, 0x37, 0x9e, 0xc4, 0x20,
-	0x1d, 0x56, 0xa9, 0x48, 0xd4, 0x7d, 0x51, 0xd7, 0x74, 0x50, 0x92, 0xc9, 0xd2, 0x39, 0x85, 0xfe,
-	0x26, 0x1c, 0x9d, 0x9f, 0xfc, 0x05, 0x63, 0x6d, 0x5f, 0x30, 0x9f, 0x6d, 0x4d, 0x71, 0x19, 0x57,
-	0x39, 0x3f, 0xa9, 0x9d, 0x2f, 0xa0, 0x76, 0x21, 0x63, 0x3f, 0xbe, 0xbf, 0x5f, 0x5e, 0xc3, 0x5e,
-	0xfe, 0x21, 0x63, 0x0e, 0x7d, 0x05, 0x55, 0x3c, 0x04, 0xd1, 0xad, 0xa3, 0xce, 0xd6, 0xa3, 0xc7,
-	0x53, 0x3a, 0xe7, 0x0d, 0x3c, 0xff, 0x96, 0x32, 0x1a, 0xcb, 0x30, 0x97, 0xcb, 0x98, 0x0a, 0x91,
-	0xe3, 0x51, 0x6e, 0x52, 0xaa, 0x54, 0xdb, 0x50, 0xe7, 0x69, 0xcc, 0x23, 0x61, 0x2a, 0x60, 0x96,
-	0xce, 0x02, 0x5e, 0x7c, 0x64, 0x47, 0xfb, 0xb1, 0x0f, 0x2d, 0xb9, 0xd9, 0x57, 0x62, 0x6d, 0x2f,
-	0x2f, 0x22, 0x5f, 0x41, 0x57, 0xdb, 0x31, 0x20, 0x65, 0xbd, 0x20, 0x75, 0xfe, 0x64, 0x41, 0x75,
-	0x2c, 0x2f, 0x94, 0xc2, 0x75, 0x64, 0x15, 0xaf, 0xa3, 0x4c, 0x1d, 0x53, 0x1e, 0x65, 0xd3, 0x5c,
-	0x4a, 0x3c, 0xca, 0x23, 0xc9, 0x04, 0xa5, 0xfe, 0x90, 0xf5, 0x61, 0x03, 0x05, 0x57, 0x34, 0xde,
-	0x71, 0x95, 0x55, 0x76, 0x5c, 0x65, 0x0e, 0x74, 0x14, 0xca, 0xe7, 0x1c, 0xcd, 0x28, 0x42, 0xb5,
-	0x50, 0x38, 0xe2, 0xfc, 0x8a, 0xc6, 0xce, 0x5f, 0x2c, 0x68, 0x4a, 0x77, 0x04, 0xf7, 0x17, 0xf8,
-	0x58, 0x60, 0x22, 0xef, 0x6f, 0x8d, 0x89, 0xcc, 0xd9, 0x0d, 0x9f, 0x4a, 0x05, 0x3e, 0x91, 0x7d,
-	0x68, 0x33, 0x31, 0x93, 0x03, 0x68, 0x15, 0x84, 0xba, 0x55, 0x3b, 0x1e, 0x30, 0x31, 0xe6, 0xe9,
-	0x5b, 0x29, 0xd1, 0x88, 0x90, 0x86, 0x1a, 0x51, 0x31, 0x88, 0x53, 0x1a, 0x2a, 0xc4, 0x01, 0xf4,
-	0x99, 0x98, 0x99, 0x01, 0xa4, 0x50, 0x55, 0x44, 0x75, 0x99, 0x38, 0x57, 0x62, 0x44, 0x3a, 0xff,
-	0xb4, 0xa0, 0x57, 0x60, 0xbd, 0x64, 0xaf, 0x8c, 0x32, 0xe7, 0x7a, 0xdd, 0xe7, 0x1c, 0x7d, 0x7f,
-	0x05, 0x55, 0x8c, 0x18, 0xdd, 0xce, 0x71, 0x0c, 0xab, 0xe4, 0x29, 0x1d, 0xd9, 0x83, 0x2a, 0x13,
-	0x32, 0x36, 0xdd, 0xa1, 0x4c, 0x4c, 0x96, 0xc4, 0x85, 0x26, 0x33, 0xb9, 0x41, 0x8f, 0xe5, 0xcb,
-	0x53, 0xef, 0xce, 0x92, 0xe6, 0x6d, 0x30, 0xe4, 0x17, 0xd0, 0x59, 0xa4, 0x22, 0x89, 0xc2, 0xd9,
-	0x07, 0x7f, 0x95, 0x52, 0xf9, 0xb4, 0x92, 0xb3, 0xfc, 0xe5, 0xf6, 0x73, 0x75, 0x8c, 0x90, 0x2b,
-	0x89, 0xf0, 0xda, 0x8b, 0xcd, 0x42, 0x38, 0xbf, 0x84, 0xe7, 0x53, 0x7f, 0x1d, 0x52, 0x96, 0x7c,
-	0x17, 0xc8, 0x4c, 0xac, 0x33, 0x82, 0x7e, 0x03, 0x0d, 0xae, 0x34, 0xe6, 0x82, 0x78, 0xb6, 0x6d,
-	0x54, 0xef, 0xf3, 0x32, 0xd8, 0xe1, 0xcf, 0xa1, 0x95, 0x6b, 0x39, 0xd2, 0x05, 0x18, 0xbf, 0x3b,
-	0x7b, 0x33, 0xf1, 0x4e, 0x27, 0x67, 0xdf, 0xf6, 0x3f, 0x21, 0x1d, 0x68, 0xea, 0xf5, 0xc9, 0x71,
-	0xdf, 0x22, 0x3d, 0x68, 0x1d, 0x9f, 0x8c, 0xc6, 0x17, 0x93, 0xab, 0xd1, 0xc5, 0xc9, 0x71, 0xbf,
-	0x74, 0xe8, 0x02, 0x6c, 0x5e, 0x82, 0x04, 0xa0, 0x76, 0x79, 0x36, 0x1d, 0x4d, 0x8e, 0xfb, 0x9f,
-	0x90, 0x06, 0x54, 0xf0, 0xcb, 0x22, 0x2d, 0xa8, 0x9f, 0xfc, 0x7a, 0xea, 0x4d, 0xe4, 0x86, 0xa3,
-	0xbf, 0x56, 0xa1, 0x32, 0xf5, 0xd7, 0x31, 0x99, 0x01, 0x6c, 0xe6, 0x2f, 0x79, 0x99, 0xe5, 0xbb,
-	0x78, 0x69, 0x0d, 0x06, 0xbb, 0x54, 0x2a, 0x60, 0x67, 0xf0, 0xfb, 0x7f, 0xfc, 0xeb, 0x8f, 0xa5,
-	0xa7, 0x4e, 0xcf, 0xbd, 0xa6, 0xd4, 0x5d, 0x28, 0x40, 0x10, 0xb1, 0xd7, 0xd6, 0x21, 0x39, 0x87,
-	0xba, 0xbe, 0x50, 0xc8, 0xf3, 0xfc, 0x35, 0xf9, 0x48, 0xd3, 0x4f, 0xd1, 0x74, 0xd7, 0x69, 0xa2,
-	0x69, 0x39, 0x8b, 0xa5, 0xd1, 0x0b, 0x68, 0x98, 0x99, 0x48, 0xb2, 0xe1, 0x5a, 0x18, 0xfa, 0x03,
-	0xfb, 0x63, 0x85, 0x36, 0xfa, 0x0c, 0x8d, 0xf6, 0x1c, 0x70, 0x71, 0x68, 0xb9, 0x8c, 0xde, 0x49,
-	0xab, 0xdf, 0x17, 0x8a, 0x60, 0xf6, 0xab, 0x79, 0x39, 0xf8, 0x74, 0xd7, 0xbf, 0xbc, 0x82, 0x49,
-	0xd2, 0xd1, 0x26, 0xf5, 0x63, 0xfc, 0x2d, 0xb4, 0xc6, 0xf2, 0xa1, 0xb9, 0xd2, 0xff, 0x40, 0x0b,
-	0x26, 0xf7, 0xb6, 0x79, 0x71, 0x12, 0xf2, 0x64, 0xed, 0xd8, 0x68, 0x8a, 0x38, 0xc6, 0xd4, 0x02,
-	0x0d, 0x48, 0x07, 0xcf, 0xa0, 0x61, 0x9e, 0x22, 0x64, 0xd7, 0xd6, 0x4d, 0xc8, 0xc5, 0x17, 0x8b,
-	0xb3, 0x87, 0x46, 0x3b, 0xa4, 0x85, 0x39, 0x14, 0xee, 0x2a, 0x10, 0x09, 0xf9, 0x5e, 0xd9, 0x93,
-	0x8f, 0x9e, 0x4d, 0x1a, 0x0b, 0xcf, 0xaa, 0x6d, 0x9b, 0xf9, 0x37, 0x94, 0x43, 0xd0, 0x66, 0x9b,
-	0x80, 0x2b, 0x1f, 0x4a, 0xca, 0xe4, 0x6f, 0xa0, 0xbb, 0xdd, 0x15, 0x1f, 0xc5, 0xfc, 0x59, 0xc6,
-	0x82, 0x9d, 0xdd, 0x63, 0xc2, 0x27, 0x7d, 0x57, 0x77, 0x87, 0x7b, 0xab, 0x10, 0xf3, 0x1a, 0x86,
-	0xfa, 0x93, 0xff, 0x04, 0x00, 0x00, 0xff, 0xff, 0x5f, 0xaf, 0x5e, 0xed, 0x42, 0x10, 0x00, 0x00,
+	// 526 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x91, 0xdf, 0x6e, 0xd3, 0x30,
+	0x14, 0xc6, 0x49, 0x0b, 0xe9, 0x7a, 0xfa, 0x2f, 0x9c, 0x6d, 0x28, 0x74, 0x95, 0xe8, 0x82, 0x10,
+	0x1d, 0x88, 0x44, 0x2b, 0x77, 0xe3, 0xaa, 0x6a, 0x37, 0xa8, 0xb4, 0x8d, 0x2a, 0xec, 0xbe, 0x72,
+	0x5b, 0xd3, 0x46, 0x6a, 0x13, 0x63, 0x3b, 0x43, 0xb9, 0xe5, 0x15, 0xb8, 0xe0, 0xc1, 0x10, 0x6f,
+	0xc0, 0x83, 0xa0, 0xd8, 0x0e, 0x5a, 0xab, 0x5e, 0x25, 0xfe, 0x7d, 0x9f, 0xcf, 0xf1, 0xf9, 0x0e,
+	0x20, 0x23, 0x19, 0x0f, 0xee, 0xcf, 0x83, 0xfc, 0xeb, 0x33, 0x9e, 0xc8, 0x04, 0xed, 0xe5, 0xf7,
+	0xfc, 0xd4, 0x7e, 0xb1, 0x4c, 0x92, 0xe5, 0x9a, 0x06, 0x8a, 0xce, 0xd2, 0xaf, 0x81, 0x8c, 0x36,
+	0x54, 0x48, 0xb2, 0x61, 0xda, 0xd8, 0xee, 0x18, 0x03, 0x61, 0x51, 0x40, 0xe2, 0x38, 0x91, 0x44,
+	0x46, 0x49, 0x2c, 0xb4, 0xea, 0xfd, 0x2a, 0x43, 0x65, 0x42, 0xb2, 0x0d, 0x8d, 0x25, 0x36, 0xa1,
+	0x14, 0x8d, 0x5c, 0xab, 0x6b, 0xf5, 0xaa, 0x61, 0x29, 0x1a, 0xe1, 0x29, 0xd4, 0x99, 0x96, 0xa6,
+	0x32, 0x63, 0xd4, 0x2d, 0x29, 0xa5, 0x66, 0xd8, 0x5d, 0xc6, 0x28, 0xbe, 0x86, 0x56, 0x61, 0x61,
+	0x29, 0x67, 0x89, 0xa0, 0x6e, 0x59, 0xb9, 0x9a, 0x06, 0x4f, 0x34, 0xc5, 0x97, 0xd0, 0x98, 0xa7,
+	0x9c, 0xd3, 0x78, 0x9e, 0xe9, 0x62, 0x8f, 0x95, 0xad, 0x5e, 0x40, 0x55, 0xed, 0x19, 0xd8, 0x64,
+	0x93, 0xa4, 0xb1, 0x74, 0x9f, 0x28, 0xd5, 0x9c, 0xd0, 0x81, 0x72, 0x3a, 0x1e, 0xb9, 0xb6, 0x82,
+	0xf9, 0x2f, 0xbe, 0x03, 0x5b, 0x48, 0x22, 0x53, 0xe1, 0x56, 0xba, 0x56, 0xaf, 0xd9, 0x3f, 0xf6,
+	0x75, 0x1c, 0xbe, 0x99, 0xe5, 0x8b, 0x12, 0x43, 0x63, 0xc2, 0x57, 0xd0, 0x94, 0x84, 0x2f, 0xa9,
+	0x9c, 0x92, 0xc5, 0x82, 0x53, 0x21, 0xdc, 0x03, 0x55, 0xab, 0xa1, 0xe9, 0x40, 0x43, 0x3c, 0x03,
+	0x47, 0x72, 0x12, 0x0b, 0x32, 0xcf, 0x23, 0x9a, 0xae, 0x88, 0x58, 0xb9, 0x55, 0x65, 0x6c, 0x3d,
+	0xe0, 0x9f, 0x88, 0x58, 0xe1, 0x07, 0xa8, 0xcd, 0x39, 0x25, 0x92, 0x4e, 0xf3, 0xbc, 0x5d, 0xe8,
+	0x5a, 0xbd, 0x5a, 0xbf, 0xed, 0xeb, 0xac, 0xfd, 0x62, 0x19, 0xfe, 0x5d, 0xb1, 0x8c, 0x10, 0xb4,
+	0x3d, 0x07, 0x79, 0x18, 0x94, 0xf3, 0x84, 0x4f, 0x37, 0x54, 0x08, 0xb2, 0xa4, 0x6e, 0x4d, 0x87,
+	0xa1, 0xe0, 0x8d, 0x66, 0xde, 0x00, 0x8e, 0x86, 0xea, 0x8a, 0x19, 0x29, 0xa4, 0xdf, 0x52, 0x2a,
+	0x24, 0x9e, 0x41, 0xc5, 0x64, 0xab, 0x56, 0x55, 0xeb, 0xb7, 0x76, 0x66, 0x0f, 0x0b, 0xdd, 0x3b,
+	0x86, 0xc3, 0xeb, 0x48, 0x48, 0xc3, 0x85, 0xa9, 0xe0, 0x0d, 0xe1, 0x68, 0x1b, 0x0b, 0x96, 0xc4,
+	0x82, 0xe2, 0x5b, 0x38, 0x30, 0x37, 0x85, 0x6b, 0x75, 0xcb, 0xfb, 0x4a, 0xff, 0x37, 0xbc, 0xb9,
+	0x80, 0xc6, 0x56, 0xd6, 0xd8, 0x04, 0x18, 0x7e, 0xbe, 0xbd, 0x1a, 0x87, 0x37, 0xe3, 0xdb, 0x8f,
+	0xce, 0x23, 0x6c, 0x40, 0xd5, 0x9c, 0x2f, 0x47, 0x8e, 0x85, 0x00, 0xf6, 0xd5, 0x60, 0x7c, 0x7d,
+	0x39, 0x72, 0x4a, 0xfd, 0x3f, 0x16, 0xc0, 0x24, 0x9d, 0xad, 0xa3, 0xf9, 0x84, 0x64, 0x1c, 0x09,
+	0x34, 0xb6, 0x26, 0xc5, 0x4e, 0xd1, 0x76, 0x5f, 0x00, 0xed, 0xdd, 0x47, 0x79, 0xa7, 0x3f, 0x7e,
+	0xff, 0xfd, 0x59, 0x3a, 0xf1, 0x9c, 0xe0, 0xfe, 0x9c, 0xac, 0xd9, 0x8a, 0x04, 0xe6, 0x95, 0x17,
+	0x45, 0x12, 0xb8, 0x80, 0xfa, 0xc3, 0x91, 0xf1, 0xa4, 0xa8, 0xb1, 0x27, 0x9f, 0x76, 0x67, 0xbf,
+	0xa8, 0x53, 0xf2, 0x9e, 0xab, 0x6e, 0x87, 0xf8, 0x74, 0xb7, 0x9b, 0x98, 0xd9, 0x6a, 0xef, 0xef,
+	0xff, 0x05, 0x00, 0x00, 0xff, 0xff, 0x2e, 0x00, 0xe0, 0x7e, 0xb0, 0x03, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1523,295 +337,108 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// PayrClient is the client API for Payr service.
+// PublicPayrClient is the client API for PublicPayr service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type PayrClient interface {
-	CollectFee(ctx context.Context, in *CollectFeeRequest, opts ...grpc.CallOption) (*CollectFeeResponse, error)
-	PlanFee(ctx context.Context, in *PlanFeeRequest, opts ...grpc.CallOption) (*CollectFeeResponse, error)
-	NewOrder(ctx context.Context, in *NewOrderRequest, opts ...grpc.CallOption) (*NewOrderResponse, error)
-	OrderStatus(ctx context.Context, in *TeamID, opts ...grpc.CallOption) (*OrderStatusResponse, error)
-	CancelOrder(ctx context.Context, in *TeamID, opts ...grpc.CallOption) (*common.Empty, error)
-	ListPlan(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*ListPlanResponse, error)
-	ListSubs(ctx context.Context, in *ListSubsRequest, opts ...grpc.CallOption) (*ListSubsResponse, error)
-	PaymentHistory(ctx context.Context, in *TeamID, opts ...grpc.CallOption) (*PaymentHistoryResponse, error)
+type PublicPayrClient interface {
+	CreatePayment(ctx context.Context, in *CreatePaymentRequest, opts ...grpc.CallOption) (*Payment, error)
+	ListPayments(ctx context.Context, in *ListPaymentsRequest, opts ...grpc.CallOption) (*ListPaymentsResponse, error)
 }
 
-type payrClient struct {
+type publicPayrClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewPayrClient(cc *grpc.ClientConn) PayrClient {
-	return &payrClient{cc}
+func NewPublicPayrClient(cc *grpc.ClientConn) PublicPayrClient {
+	return &publicPayrClient{cc}
 }
 
-func (c *payrClient) CollectFee(ctx context.Context, in *CollectFeeRequest, opts ...grpc.CallOption) (*CollectFeeResponse, error) {
-	out := new(CollectFeeResponse)
-	err := c.cc.Invoke(ctx, "/gwpayr.Payr/CollectFee", in, out, opts...)
+func (c *publicPayrClient) CreatePayment(ctx context.Context, in *CreatePaymentRequest, opts ...grpc.CallOption) (*Payment, error) {
+	out := new(Payment)
+	err := c.cc.Invoke(ctx, "/gwpayr.PublicPayr/CreatePayment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *payrClient) PlanFee(ctx context.Context, in *PlanFeeRequest, opts ...grpc.CallOption) (*CollectFeeResponse, error) {
-	out := new(CollectFeeResponse)
-	err := c.cc.Invoke(ctx, "/gwpayr.Payr/PlanFee", in, out, opts...)
+func (c *publicPayrClient) ListPayments(ctx context.Context, in *ListPaymentsRequest, opts ...grpc.CallOption) (*ListPaymentsResponse, error) {
+	out := new(ListPaymentsResponse)
+	err := c.cc.Invoke(ctx, "/gwpayr.PublicPayr/ListPayments", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *payrClient) NewOrder(ctx context.Context, in *NewOrderRequest, opts ...grpc.CallOption) (*NewOrderResponse, error) {
-	out := new(NewOrderResponse)
-	err := c.cc.Invoke(ctx, "/gwpayr.Payr/NewOrder", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+// PublicPayrServer is the server API for PublicPayr service.
+type PublicPayrServer interface {
+	CreatePayment(context.Context, *CreatePaymentRequest) (*Payment, error)
+	ListPayments(context.Context, *ListPaymentsRequest) (*ListPaymentsResponse, error)
 }
 
-func (c *payrClient) OrderStatus(ctx context.Context, in *TeamID, opts ...grpc.CallOption) (*OrderStatusResponse, error) {
-	out := new(OrderStatusResponse)
-	err := c.cc.Invoke(ctx, "/gwpayr.Payr/OrderStatus", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+// UnimplementedPublicPayrServer can be embedded to have forward compatible implementations.
+type UnimplementedPublicPayrServer struct {
 }
 
-func (c *payrClient) CancelOrder(ctx context.Context, in *TeamID, opts ...grpc.CallOption) (*common.Empty, error) {
-	out := new(common.Empty)
-	err := c.cc.Invoke(ctx, "/gwpayr.Payr/CancelOrder", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+func (*UnimplementedPublicPayrServer) CreatePayment(ctx context.Context, req *CreatePaymentRequest) (*Payment, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePayment not implemented")
+}
+func (*UnimplementedPublicPayrServer) ListPayments(ctx context.Context, req *ListPaymentsRequest) (*ListPaymentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListPayments not implemented")
 }
 
-func (c *payrClient) ListPlan(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*ListPlanResponse, error) {
-	out := new(ListPlanResponse)
-	err := c.cc.Invoke(ctx, "/gwpayr.Payr/ListPlan", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+func RegisterPublicPayrServer(s *grpc.Server, srv PublicPayrServer) {
+	s.RegisterService(&_PublicPayr_serviceDesc, srv)
 }
 
-func (c *payrClient) ListSubs(ctx context.Context, in *ListSubsRequest, opts ...grpc.CallOption) (*ListSubsResponse, error) {
-	out := new(ListSubsResponse)
-	err := c.cc.Invoke(ctx, "/gwpayr.Payr/ListSubs", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *payrClient) PaymentHistory(ctx context.Context, in *TeamID, opts ...grpc.CallOption) (*PaymentHistoryResponse, error) {
-	out := new(PaymentHistoryResponse)
-	err := c.cc.Invoke(ctx, "/gwpayr.Payr/PaymentHistory", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// PayrServer is the server API for Payr service.
-type PayrServer interface {
-	CollectFee(context.Context, *CollectFeeRequest) (*CollectFeeResponse, error)
-	PlanFee(context.Context, *PlanFeeRequest) (*CollectFeeResponse, error)
-	NewOrder(context.Context, *NewOrderRequest) (*NewOrderResponse, error)
-	OrderStatus(context.Context, *TeamID) (*OrderStatusResponse, error)
-	CancelOrder(context.Context, *TeamID) (*common.Empty, error)
-	ListPlan(context.Context, *common.Empty) (*ListPlanResponse, error)
-	ListSubs(context.Context, *ListSubsRequest) (*ListSubsResponse, error)
-	PaymentHistory(context.Context, *TeamID) (*PaymentHistoryResponse, error)
-}
-
-func RegisterPayrServer(s *grpc.Server, srv PayrServer) {
-	s.RegisterService(&_Payr_serviceDesc, srv)
-}
-
-func _Payr_CollectFee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CollectFeeRequest)
+func _PublicPayr_CreatePayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePaymentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PayrServer).CollectFee(ctx, in)
+		return srv.(PublicPayrServer).CreatePayment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gwpayr.Payr/CollectFee",
+		FullMethod: "/gwpayr.PublicPayr/CreatePayment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayrServer).CollectFee(ctx, req.(*CollectFeeRequest))
+		return srv.(PublicPayrServer).CreatePayment(ctx, req.(*CreatePaymentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Payr_PlanFee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PlanFeeRequest)
+func _PublicPayr_ListPayments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPaymentsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PayrServer).PlanFee(ctx, in)
+		return srv.(PublicPayrServer).ListPayments(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/gwpayr.Payr/PlanFee",
+		FullMethod: "/gwpayr.PublicPayr/ListPayments",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayrServer).PlanFee(ctx, req.(*PlanFeeRequest))
+		return srv.(PublicPayrServer).ListPayments(ctx, req.(*ListPaymentsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Payr_NewOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NewOrderRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayrServer).NewOrder(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gwpayr.Payr/NewOrder",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayrServer).NewOrder(ctx, req.(*NewOrderRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Payr_OrderStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TeamID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayrServer).OrderStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gwpayr.Payr/OrderStatus",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayrServer).OrderStatus(ctx, req.(*TeamID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Payr_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TeamID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayrServer).CancelOrder(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gwpayr.Payr/CancelOrder",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayrServer).CancelOrder(ctx, req.(*TeamID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Payr_ListPlan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(common.Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayrServer).ListPlan(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gwpayr.Payr/ListPlan",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayrServer).ListPlan(ctx, req.(*common.Empty))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Payr_ListSubs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListSubsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayrServer).ListSubs(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gwpayr.Payr/ListSubs",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayrServer).ListSubs(ctx, req.(*ListSubsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Payr_PaymentHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TeamID)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PayrServer).PaymentHistory(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/gwpayr.Payr/PaymentHistory",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PayrServer).PaymentHistory(ctx, req.(*TeamID))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-var _Payr_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "gwpayr.Payr",
-	HandlerType: (*PayrServer)(nil),
+var _PublicPayr_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "gwpayr.PublicPayr",
+	HandlerType: (*PublicPayrServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CollectFee",
-			Handler:    _Payr_CollectFee_Handler,
+			MethodName: "CreatePayment",
+			Handler:    _PublicPayr_CreatePayment_Handler,
 		},
 		{
-			MethodName: "PlanFee",
-			Handler:    _Payr_PlanFee_Handler,
-		},
-		{
-			MethodName: "NewOrder",
-			Handler:    _Payr_NewOrder_Handler,
-		},
-		{
-			MethodName: "OrderStatus",
-			Handler:    _Payr_OrderStatus_Handler,
-		},
-		{
-			MethodName: "CancelOrder",
-			Handler:    _Payr_CancelOrder_Handler,
-		},
-		{
-			MethodName: "ListPlan",
-			Handler:    _Payr_ListPlan_Handler,
-		},
-		{
-			MethodName: "ListSubs",
-			Handler:    _Payr_ListSubs_Handler,
-		},
-		{
-			MethodName: "PaymentHistory",
-			Handler:    _Payr_PaymentHistory_Handler,
+			MethodName: "ListPayments",
+			Handler:    _PublicPayr_ListPayments_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
