@@ -2,15 +2,11 @@ package util
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"github.com/Ankr-network/dccn-common/protos/usermgr/v1/grpc"
 	"log"
-	"strings"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/Ankr-network/dccn-common/auth"
+	usermgr "github.com/Ankr-network/dccn-common/protos/usermgr/v1/grpc"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 )
 
 type Token struct {
@@ -19,52 +15,44 @@ type Token struct {
 	Iss string
 }
 
+var (
+	verifier auth.Verifier
+)
+
+func init() {
+	v, err := auth.NewVerifier()
+	if err != nil {
+		log.Fatalf("auth.NewVerifier error: %v", err)
+	}
+	verifier = v
+}
+
 const (
 	userMgrEndpoint = "usermgr:50051"
 )
 
+// Deprecated: use auth.GetUID instead
 func GetUserID(ctx context.Context) string {
-	meta, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		log.Printf("error: cannot get metadata from ctx")
-		return ""
-	}
-
-	tokenStringArray := meta["authorization"]
-	if tokenStringArray == nil || len(tokenStringArray) == 0 {
-		log.Printf("error: autorization header is missing")
-		return ""
-	}
-
-	tokenString := tokenStringArray[0]
-
-	tokenParts := strings.Split(tokenString, ".")
-
-	if len(tokenParts) != 3 {
-		log.Printf("error: parse token format error %s => %+v", tokenString, tokenParts)
-		return ""
-	}
-
-	raw, err := jwt.DecodeSegment(tokenParts[1])
+	ctx, err := verifier.VerifyContext(ctx)
 	if err != nil {
-		log.Printf("jwt.DecodeSegment error: %v", err)
+		log.Printf("verifier.VerifyContext error: %v", err)
 	}
 
-	var token Token
-
-	if err := json.Unmarshal(raw, &token); err != nil {
-		fmt.Println("Unmarshal error:", err)
+	uid, err := auth.GetUID(ctx)
+	if err != nil {
+		log.Printf("auth.GetUID error: %v", err)
 	}
-
-	return token.Jti
+	return uid
 }
 
+// Deprecated: current team id should not get from backend
 func GetUserIDAndTeamID(ctx context.Context) (string, string) {
 	uid := GetUserID(ctx)
 	teamID := GetTeamID(ctx, uid)
 	return uid, teamID
 }
 
+// Deprecated: current team id should not get from backend
 func GetTeamID(ctx context.Context, uid string) string {
 	conn, err := grpc.Dial(userMgrEndpoint, grpc.WithInsecure())
 	if err != nil {
