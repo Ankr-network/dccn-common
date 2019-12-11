@@ -27,6 +27,34 @@ service Payr {
     }
     rpc PaymentHistory (TeamID) returns (PaymentHistoryResponse){
     }
+    rpc RequestCode (RequestCodeRequest) returns (RequestCodeResponse){
+    }
+    rpc ReportCode (ReportCodeRequest) returns (ReportCodeResponse){
+    }
+}
+
+message RequestCodeRequest {
+    string number = 1;
+    float discount = 2;
+}
+
+message Code {
+    string code = 1;
+    string status = 2;
+    float discount = 3;
+    string revenue = 4;
+}
+
+message RequestCodeResponse {
+    repeated Code codes = 1;
+}
+
+message ReportCodeRequest {
+    string code = 1;
+}
+
+message ReportCodeResponse {
+    Code report = 1;
 }
 
 message Order {

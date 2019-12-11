@@ -44,6 +44,36 @@ service Payr {
     rpc PaymentHistory (TeamID) returns (PaymentHistoryResponse){
         option (google.api.http).get = "/payment/history";
     }
+    rpc RequestCode (RequestCodeRequest) returns (RequestCodeResponse){
+        option (google.api.http) = {
+            post: "/code/request"
+            body: "*"
+    };
+    }
+    rpc ReportCode (ReportCodeRequest) returns (ReportCodeResponse){
+        option (google.api.http).get = "/payment/history";
+    }
+}
+message RequestCodeRequest {
+    string number = 1;
+    float discount = 2;
+}
+message Code {
+    string code = 1;
+    string status = 2;
+    float discount = 3;
+    string revenue = 4;
+}
+message RequestCodeResponse {
+    repeated Code codes = 1;
+}
+
+message ReportCodeRequest {
+    string code = 1;
+}
+
+message ReportCodeResponse {
+    Code report = 1;
 }
 
 message Order {
