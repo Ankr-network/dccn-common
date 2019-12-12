@@ -55,7 +55,7 @@ service Payr {
     }
 }
 message RequestCodeRequest {
-    string number = 1;
+    int32 number = 1;
     double discount = 2;
 }
 message Code {
