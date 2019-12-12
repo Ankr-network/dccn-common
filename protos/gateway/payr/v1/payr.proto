@@ -165,7 +165,7 @@ message CollectFeeResponse {
     string plan = 1;
     string fee = 2;
     string token = 3;
-    double discount = 4;
+    string discount = 4;
 }
 
 enum OrderStatus {
