@@ -131,6 +131,7 @@ message CollectFeeRequest {
     string storage_number = 3;
     string time = 4;
     string time_unit = 5;
+    string code = 6;
 }
 
 message PlanFeeRequest {
@@ -138,12 +139,14 @@ message PlanFeeRequest {
     string time = 2;
     string team_id = 3;
     string time_unit = 4;
+    string code = 5;
 }
 
 message CollectFeeResponse {
     string plan = 1;
     string fee = 2;
     string token = 3;
+    double discount = 4;
 }
 
 enum OrderStatus {
