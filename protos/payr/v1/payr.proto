@@ -35,13 +35,13 @@ service Payr {
 
 message RequestCodeRequest {
     string number = 1;
-    float discount = 2;
+    double discount = 2;
 }
 
 message Code {
     string code = 1;
     string status = 2;
-    float discount = 3;
+    double discount = 3;
     string revenue = 4;
 }
 
