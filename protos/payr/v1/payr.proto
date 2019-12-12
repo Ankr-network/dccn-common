@@ -77,6 +77,7 @@ message Order {
     string balance_usdt = 15;
     string balance_original = 16;
     string token_original = 17;
+    string code = 18;
 }
 
 message Subscription {
@@ -165,6 +166,7 @@ message NewOrderRequest{
     string time_unit = 5;
     common.proto.App App = 6;
     string cluster_id = 7;
+    string code = 8;
 }
 
 message NewOrderResponse{
