@@ -451,7 +451,7 @@ var (
 
 	pattern_Payr_RequestCode_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"code", "request"}, ""))
 
-	pattern_Payr_ReportCode_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"payment", "history"}, ""))
+	pattern_Payr_ReportCode_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"code", "report"}, ""))
 )
 
 var (

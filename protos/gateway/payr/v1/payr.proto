@@ -51,7 +51,7 @@ service Payr {
     };
     }
     rpc ReportCode (ReportCodeRequest) returns (ReportCodeResponse){
-        option (google.api.http).get = "/payment/history";
+        option (google.api.http).get = "/code/report";
     }
 }
 message RequestCodeRequest {
