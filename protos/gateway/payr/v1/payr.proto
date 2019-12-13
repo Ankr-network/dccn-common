@@ -99,7 +99,7 @@ message Order {
     string code = 18;
     string discount = 19;
     string discount_usdt = 20;
-    string discoount_token = 21;
+    string discount_token = 21;
 }
 
 message Subscription {
@@ -120,7 +120,7 @@ message Subscription {
     string code = 15;
     string discount = 16;
     string discount_usd = 17;
-    string discoount_token = 18;
+    string discount_token = 18;
 }
 
 
