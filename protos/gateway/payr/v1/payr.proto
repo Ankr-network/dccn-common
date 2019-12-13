@@ -81,7 +81,6 @@ message Order {
     // Order type, marking the kind of currency using.
     string order_type = 2;
     // How much money left to pay.
-    string balance = 3; 
     OrderStatus status = 4;
     google.protobuf.Timestamp issued_at = 5;
     google.protobuf.Timestamp expiration = 6;
@@ -93,10 +92,14 @@ message Order {
     common.proto.App app = 12;
     string chart_name = 13;
     string chart_icon_url = 14;
+    string balance_token = 3; 
     string balance_usdt = 15;
-    string balance_original = 16;
-    string token_original = 17;
+    string balance_usdt_original = 16;
+    string token_token_original = 17;
     string code = 18;
+    string discount = 19;
+    string discount_usd = 20;
+    string discoount_token = 21;
 }
 
 message Subscription {
