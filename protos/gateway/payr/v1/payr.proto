@@ -93,8 +93,8 @@ message Order {
     string chart_name = 13;
     string chart_icon_url = 14;
     string balance_token = 3; 
-    string balance_usdt = 15;
-    string balance_usdt_original = 16;
+    string balance_usd = 15;
+    string balance_usd_original = 16;
     string balance_token_original = 17;
     string code = 18;
     string discount = 19;
@@ -115,8 +115,12 @@ message Subscription {
     string chart_name = 10;
     string chart_icon_url = 11;
     string order_type = 12;
-    string balance_original = 13;
-    string token_original = 14;
+    string balance_usd_original = 13;
+    string balance_token_original = 14;
+    string code = 15;
+    string discount = 16;
+    string discount_usd = 17;
+    string discoount_token = 18;
 }
 
 
