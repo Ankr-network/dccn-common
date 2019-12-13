@@ -98,7 +98,7 @@ message Order {
     string balance_token_original = 17;
     string code = 18;
     string discount = 19;
-    string discount_usdt = 20;
+    string discount_usd = 20;
     string discount_token = 21;
 }
 
