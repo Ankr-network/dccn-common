@@ -45,6 +45,8 @@ type PayrService interface {
 	ListSubs(ctx context.Context, in *ListSubsRequest, opts ...client.CallOption) (*ListSubsResponse, error)
 	Withdraw(ctx context.Context, in *WithdrawRequest, opts ...client.CallOption) (*WithdrawResponse, error)
 	PaymentHistory(ctx context.Context, in *TeamID, opts ...client.CallOption) (*PaymentHistoryResponse, error)
+	RequestCode(ctx context.Context, in *RequestCodeRequest, opts ...client.CallOption) (*RequestCodeResponse, error)
+	ReportCode(ctx context.Context, in *ReportCodeRequest, opts ...client.CallOption) (*ReportCodeResponse, error)
 }
 
 type payrService struct {
@@ -155,6 +157,26 @@ func (c *payrService) PaymentHistory(ctx context.Context, in *TeamID, opts ...cl
 	return out, nil
 }
 
+func (c *payrService) RequestCode(ctx context.Context, in *RequestCodeRequest, opts ...client.CallOption) (*RequestCodeResponse, error) {
+	req := c.c.NewRequest(c.name, "Payr.RequestCode", in)
+	out := new(RequestCodeResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *payrService) ReportCode(ctx context.Context, in *ReportCodeRequest, opts ...client.CallOption) (*ReportCodeResponse, error) {
+	req := c.c.NewRequest(c.name, "Payr.ReportCode", in)
+	out := new(ReportCodeResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Payr service
 
 type PayrHandler interface {
@@ -167,6 +189,8 @@ type PayrHandler interface {
 	ListSubs(context.Context, *ListSubsRequest, *ListSubsResponse) error
 	Withdraw(context.Context, *WithdrawRequest, *WithdrawResponse) error
 	PaymentHistory(context.Context, *TeamID, *PaymentHistoryResponse) error
+	RequestCode(context.Context, *RequestCodeRequest, *RequestCodeResponse) error
+	ReportCode(context.Context, *ReportCodeRequest, *ReportCodeResponse) error
 }
 
 func RegisterPayrHandler(s server.Server, hdlr PayrHandler, opts ...server.HandlerOption) error {
@@ -180,6 +204,8 @@ func RegisterPayrHandler(s server.Server, hdlr PayrHandler, opts ...server.Handl
 		ListSubs(ctx context.Context, in *ListSubsRequest, out *ListSubsResponse) error
 		Withdraw(ctx context.Context, in *WithdrawRequest, out *WithdrawResponse) error
 		PaymentHistory(ctx context.Context, in *TeamID, out *PaymentHistoryResponse) error
+		RequestCode(ctx context.Context, in *RequestCodeRequest, out *RequestCodeResponse) error
+		ReportCode(ctx context.Context, in *ReportCodeRequest, out *ReportCodeResponse) error
 	}
 	type Payr struct {
 		payr
@@ -226,4 +252,12 @@ func (h *payrHandler) Withdraw(ctx context.Context, in *WithdrawRequest, out *Wi
 
 func (h *payrHandler) PaymentHistory(ctx context.Context, in *TeamID, out *PaymentHistoryResponse) error {
 	return h.PayrHandler.PaymentHistory(ctx, in, out)
+}
+
+func (h *payrHandler) RequestCode(ctx context.Context, in *RequestCodeRequest, out *RequestCodeResponse) error {
+	return h.PayrHandler.RequestCode(ctx, in, out)
+}
+
+func (h *payrHandler) ReportCode(ctx context.Context, in *ReportCodeRequest, out *ReportCodeResponse) error {
+	return h.PayrHandler.ReportCode(ctx, in, out)
 }

@@ -44,6 +44,36 @@ service Payr {
     rpc PaymentHistory (TeamID) returns (PaymentHistoryResponse){
         option (google.api.http).get = "/payment/history";
     }
+    rpc RequestCode (RequestCodeRequest) returns (RequestCodeResponse){
+        option (google.api.http) = {
+            post: "/code/request"
+            body: "*"
+    };
+    }
+    rpc ReportCode (ReportCodeRequest) returns (ReportCodeResponse){
+        option (google.api.http).get = "/code/report";
+    }
+}
+message RequestCodeRequest {
+    int32 number = 1;
+    double discount = 2;
+}
+message Code {
+    string code = 1;
+    string status = 2;
+    double discount = 3;
+    string revenue = 4;
+}
+message RequestCodeResponse {
+    repeated Code codes = 1;
+}
+
+message ReportCodeRequest {
+    string code = 1;
+}
+
+message ReportCodeResponse {
+    Code report = 1;
 }
 
 message Order {
@@ -51,7 +81,6 @@ message Order {
     // Order type, marking the kind of currency using.
     string order_type = 2;
     // How much money left to pay.
-    string balance = 3; 
     OrderStatus status = 4;
     google.protobuf.Timestamp issued_at = 5;
     google.protobuf.Timestamp expiration = 6;
@@ -63,9 +92,14 @@ message Order {
     common.proto.App app = 12;
     string chart_name = 13;
     string chart_icon_url = 14;
-    string balance_usdt = 15;
-    string balance_original = 16;
-    string token_original = 17;
+    string balance_token = 3; 
+    string balance_usd = 15;
+    string balance_usd_original = 16;
+    string balance_token_original = 17;
+    string code = 18;
+    double discount = 19;
+    string discount_usd = 20;
+    string discount_token = 21;
 }
 
 message Subscription {
@@ -81,8 +115,12 @@ message Subscription {
     string chart_name = 10;
     string chart_icon_url = 11;
     string order_type = 12;
-    string balance_original = 13;
-    string token_original = 14;
+    string balance_usd_original = 13;
+    string balance_token_original = 14;
+    string code = 15;
+    double discount = 16;
+    string discount_usd = 17;
+    string discount_token = 18;
 }
 
 
@@ -119,6 +157,7 @@ message CollectFeeRequest {
     string storage_number = 3;
     string time = 4;
     string time_unit = 5;
+    string code = 6;
 }
 
 message PlanFeeRequest {
@@ -126,12 +165,15 @@ message PlanFeeRequest {
     string time = 2;
     string time_unit = 3;
     string team_id = 4;
+    string code = 5;
 }
 
 message CollectFeeResponse {
     string plan = 1;
     string fee = 2;
     string token = 3;
+    string discount_token = 4;
+    string discount_fee = 5;
 }
 
 enum OrderStatus {
@@ -154,6 +196,7 @@ message NewOrderRequest{
     string time_unit = 5;
     CreateAppConfig App = 6;
     string cluster_id = 7;
+    string code = 8;
 }
 
 message NewOrderResponse{
