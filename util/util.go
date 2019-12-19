@@ -36,11 +36,13 @@ func GetUserID(ctx context.Context) string {
 	ctx, err := verifier.VerifyContext(ctx)
 	if err != nil {
 		log.Printf("verifier.VerifyContext error: %v", err)
+		return ""
 	}
 
 	uid, err := auth.GetUID(ctx)
 	if err != nil {
 		log.Printf("auth.GetUID error: %v", err)
+		return ""
 	}
 	return uid
 }
@@ -57,6 +59,7 @@ func GetTeamID(ctx context.Context, uid string) string {
 	conn, err := grpc.Dial(userMgrEndpoint, grpc.WithInsecure())
 	if err != nil {
 		log.Printf("grpc.Dial %s error: %v", userMgrEndpoint, err)
+		return ""
 	}
 
 	client := usermgr.NewUserMgrClient(conn)
