@@ -5,6 +5,10 @@ package appmgr;
 
 service AppMgr {
     // Sends request to start a app and list app
+
+    // CreateApp HotFix
+    rpc CreateAppHotFix (CreateAppRequest) returns (CreateAppResponse) {}
+
     rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {}
     rpc AppList (AppListRequest) returns (AppListResponse) {}
     rpc AppDetail (AppRequest) returns (AppDetailResponse) {}
