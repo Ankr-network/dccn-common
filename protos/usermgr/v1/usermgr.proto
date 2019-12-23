@@ -346,3 +346,10 @@ message PasswordUpdateEvent {
     string new_password = 3; // TODO not pass password in domain event
     google.protobuf.Timestamp update_time = 4;
 }
+
+message NameUpdateEvent {
+    string uid = 1;
+    string old_name = 2;
+    string new_name = 3;
+    google.protobuf.Timestamp update_time = 4;
+}
