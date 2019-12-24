@@ -5,6 +5,10 @@ package appmgr;
 
 service AppMgr {
     // Sends request to start a app and list app
+
+    // CreateApp HotFix
+    rpc CreateAppHotFix (CreateAppHotFixRequest) returns (CreateAppResponse) {}
+
     rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {}
     rpc AppList (AppListRequest) returns (AppListResponse) {}
     rpc AppDetail (AppRequest) returns (AppDetailResponse) {}
@@ -34,6 +38,12 @@ message NamespaceCountRequest {
 message NamespaceCountResponse {
     uint64 namespace = 1;
     uint64 app       = 2;
+}
+
+message CreateAppHotFixRequest {
+    string uid              = 1;
+    common.proto.App app    = 2;
+    string team_id          = 3;
 }
 
 // The dccn client request message containing the user's token
