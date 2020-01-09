@@ -43,6 +43,7 @@ type PayrService interface {
 	CancelOrder(ctx context.Context, in *TeamID, opts ...client.CallOption) (*common.Empty, error)
 	ListPlan(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*ListPlanResponse, error)
 	ListSubs(ctx context.Context, in *ListSubsRequest, opts ...client.CallOption) (*ListSubsResponse, error)
+	ListAllSubs(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*ListSubsResponse, error)
 	Withdraw(ctx context.Context, in *WithdrawRequest, opts ...client.CallOption) (*WithdrawResponse, error)
 	PaymentHistory(ctx context.Context, in *TeamID, opts ...client.CallOption) (*PaymentHistoryResponse, error)
 	RequestCode(ctx context.Context, in *RequestCodeRequest, opts ...client.CallOption) (*RequestCodeResponse, error)
@@ -137,6 +138,16 @@ func (c *payrService) ListSubs(ctx context.Context, in *ListSubsRequest, opts ..
 	return out, nil
 }
 
+func (c *payrService) ListAllSubs(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*ListSubsResponse, error) {
+	req := c.c.NewRequest(c.name, "Payr.ListAllSubs", in)
+	out := new(ListSubsResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *payrService) Withdraw(ctx context.Context, in *WithdrawRequest, opts ...client.CallOption) (*WithdrawResponse, error) {
 	req := c.c.NewRequest(c.name, "Payr.Withdraw", in)
 	out := new(WithdrawResponse)
@@ -187,6 +198,7 @@ type PayrHandler interface {
 	CancelOrder(context.Context, *TeamID, *common.Empty) error
 	ListPlan(context.Context, *common.Empty, *ListPlanResponse) error
 	ListSubs(context.Context, *ListSubsRequest, *ListSubsResponse) error
+	ListAllSubs(context.Context, *common.Empty, *ListSubsResponse) error
 	Withdraw(context.Context, *WithdrawRequest, *WithdrawResponse) error
 	PaymentHistory(context.Context, *TeamID, *PaymentHistoryResponse) error
 	RequestCode(context.Context, *RequestCodeRequest, *RequestCodeResponse) error
@@ -202,6 +214,7 @@ func RegisterPayrHandler(s server.Server, hdlr PayrHandler, opts ...server.Handl
 		CancelOrder(ctx context.Context, in *TeamID, out *common.Empty) error
 		ListPlan(ctx context.Context, in *common.Empty, out *ListPlanResponse) error
 		ListSubs(ctx context.Context, in *ListSubsRequest, out *ListSubsResponse) error
+		ListAllSubs(ctx context.Context, in *common.Empty, out *ListSubsResponse) error
 		Withdraw(ctx context.Context, in *WithdrawRequest, out *WithdrawResponse) error
 		PaymentHistory(ctx context.Context, in *TeamID, out *PaymentHistoryResponse) error
 		RequestCode(ctx context.Context, in *RequestCodeRequest, out *RequestCodeResponse) error
@@ -244,6 +257,10 @@ func (h *payrHandler) ListPlan(ctx context.Context, in *common.Empty, out *ListP
 
 func (h *payrHandler) ListSubs(ctx context.Context, in *ListSubsRequest, out *ListSubsResponse) error {
 	return h.PayrHandler.ListSubs(ctx, in, out)
+}
+
+func (h *payrHandler) ListAllSubs(ctx context.Context, in *common.Empty, out *ListSubsResponse) error {
+	return h.PayrHandler.ListAllSubs(ctx, in, out)
 }
 
 func (h *payrHandler) Withdraw(ctx context.Context, in *WithdrawRequest, out *WithdrawResponse) error {

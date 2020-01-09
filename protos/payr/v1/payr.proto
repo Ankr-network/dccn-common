@@ -23,6 +23,8 @@ service Payr {
     }
     rpc ListSubs(ListSubsRequest) returns (ListSubsResponse){
     }
+    rpc ListAllSubs(common.proto.Empty) returns (ListSubsResponse){
+    }
     rpc Withdraw(WithdrawRequest) returns (WithdrawResponse) { 
     }
     rpc PaymentHistory (TeamID) returns (PaymentHistoryResponse){
