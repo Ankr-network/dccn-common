@@ -44,7 +44,7 @@ message UsdtCurrencyResponse {
 }
 
 message AnkrCurrencyResponse {
-    double rate = 1;
+    int32 rate = 1;
 }
 
 message RequestCodeRequest {
