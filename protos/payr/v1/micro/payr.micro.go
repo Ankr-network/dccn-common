@@ -48,6 +48,8 @@ type PayrService interface {
 	PaymentHistory(ctx context.Context, in *TeamID, opts ...client.CallOption) (*PaymentHistoryResponse, error)
 	RequestCode(ctx context.Context, in *RequestCodeRequest, opts ...client.CallOption) (*RequestCodeResponse, error)
 	ReportCode(ctx context.Context, in *ReportCodeRequest, opts ...client.CallOption) (*ReportCodeResponse, error)
+	UsdToUsdt(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*UsdtCurrencyResponse, error)
+	UsdToAnkr(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*AnkrCurrencyResponse, error)
 }
 
 type payrService struct {
@@ -188,6 +190,26 @@ func (c *payrService) ReportCode(ctx context.Context, in *ReportCodeRequest, opt
 	return out, nil
 }
 
+func (c *payrService) UsdToUsdt(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*UsdtCurrencyResponse, error) {
+	req := c.c.NewRequest(c.name, "Payr.UsdToUsdt", in)
+	out := new(UsdtCurrencyResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *payrService) UsdToAnkr(ctx context.Context, in *common.Empty, opts ...client.CallOption) (*AnkrCurrencyResponse, error) {
+	req := c.c.NewRequest(c.name, "Payr.UsdToAnkr", in)
+	out := new(AnkrCurrencyResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Payr service
 
 type PayrHandler interface {
@@ -203,6 +225,8 @@ type PayrHandler interface {
 	PaymentHistory(context.Context, *TeamID, *PaymentHistoryResponse) error
 	RequestCode(context.Context, *RequestCodeRequest, *RequestCodeResponse) error
 	ReportCode(context.Context, *ReportCodeRequest, *ReportCodeResponse) error
+	UsdToUsdt(context.Context, *common.Empty, *UsdtCurrencyResponse) error
+	UsdToAnkr(context.Context, *common.Empty, *AnkrCurrencyResponse) error
 }
 
 func RegisterPayrHandler(s server.Server, hdlr PayrHandler, opts ...server.HandlerOption) error {
@@ -219,6 +243,8 @@ func RegisterPayrHandler(s server.Server, hdlr PayrHandler, opts ...server.Handl
 		PaymentHistory(ctx context.Context, in *TeamID, out *PaymentHistoryResponse) error
 		RequestCode(ctx context.Context, in *RequestCodeRequest, out *RequestCodeResponse) error
 		ReportCode(ctx context.Context, in *ReportCodeRequest, out *ReportCodeResponse) error
+		UsdToUsdt(ctx context.Context, in *common.Empty, out *UsdtCurrencyResponse) error
+		UsdToAnkr(ctx context.Context, in *common.Empty, out *AnkrCurrencyResponse) error
 	}
 	type Payr struct {
 		payr
@@ -277,4 +303,12 @@ func (h *payrHandler) RequestCode(ctx context.Context, in *RequestCodeRequest, o
 
 func (h *payrHandler) ReportCode(ctx context.Context, in *ReportCodeRequest, out *ReportCodeResponse) error {
 	return h.PayrHandler.ReportCode(ctx, in, out)
+}
+
+func (h *payrHandler) UsdToUsdt(ctx context.Context, in *common.Empty, out *UsdtCurrencyResponse) error {
+	return h.PayrHandler.UsdToUsdt(ctx, in, out)
+}
+
+func (h *payrHandler) UsdToAnkr(ctx context.Context, in *common.Empty, out *AnkrCurrencyResponse) error {
+	return h.PayrHandler.UsdToAnkr(ctx, in, out)
 }

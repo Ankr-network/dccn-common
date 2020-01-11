@@ -33,6 +33,18 @@ service Payr {
     }
     rpc ReportCode (ReportCodeRequest) returns (ReportCodeResponse){
     }
+    rpc UsdToUsdt (common.proto.Empty) returns (UsdtCurrencyResponse){
+    }
+    rpc UsdToAnkr (common.proto.Empty) returns (AnkrCurrencyResponse){
+    }
+}
+
+message UsdtCurrencyResponse {
+    double rate = 1;
+}
+
+message AnkrCurrencyResponse {
+    double rate = 1;
 }
 
 message RequestCodeRequest {
