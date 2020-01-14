@@ -35,7 +35,8 @@ var _ server.Option
 // Client API for AppMgr service
 
 type AppMgrService interface {
-	// Sends request to start a app and list app
+	// CreateApp HotFix
+	CreateAppHotFix(ctx context.Context, in *CreateAppHotFixRequest, opts ...client.CallOption) (*CreateAppResponse, error)
 	CreateApp(ctx context.Context, in *CreateAppRequest, opts ...client.CallOption) (*CreateAppResponse, error)
 	AppList(ctx context.Context, in *AppListRequest, opts ...client.CallOption) (*AppListResponse, error)
 	AppDetail(ctx context.Context, in *AppRequest, opts ...client.CallOption) (*AppDetailResponse, error)
@@ -73,6 +74,16 @@ func NewAppMgrService(name string, c client.Client) AppMgrService {
 		c:    c,
 		name: name,
 	}
+}
+
+func (c *appMgrService) CreateAppHotFix(ctx context.Context, in *CreateAppHotFixRequest, opts ...client.CallOption) (*CreateAppResponse, error) {
+	req := c.c.NewRequest(c.name, "AppMgr.CreateAppHotFix", in)
+	out := new(CreateAppResponse)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *appMgrService) CreateApp(ctx context.Context, in *CreateAppRequest, opts ...client.CallOption) (*CreateAppResponse, error) {
@@ -268,7 +279,8 @@ func (c *appMgrService) NamespaceCount(ctx context.Context, in *NamespaceCountRe
 // Server API for AppMgr service
 
 type AppMgrHandler interface {
-	// Sends request to start a app and list app
+	// CreateApp HotFix
+	CreateAppHotFix(context.Context, *CreateAppHotFixRequest, *CreateAppResponse) error
 	CreateApp(context.Context, *CreateAppRequest, *CreateAppResponse) error
 	AppList(context.Context, *AppListRequest, *AppListResponse) error
 	AppDetail(context.Context, *AppRequest, *AppDetailResponse) error
@@ -292,6 +304,7 @@ type AppMgrHandler interface {
 
 func RegisterAppMgrHandler(s server.Server, hdlr AppMgrHandler, opts ...server.HandlerOption) error {
 	type appMgr interface {
+		CreateAppHotFix(ctx context.Context, in *CreateAppHotFixRequest, out *CreateAppResponse) error
 		CreateApp(ctx context.Context, in *CreateAppRequest, out *CreateAppResponse) error
 		AppList(ctx context.Context, in *AppListRequest, out *AppListResponse) error
 		AppDetail(ctx context.Context, in *AppRequest, out *AppDetailResponse) error
@@ -321,6 +334,10 @@ func RegisterAppMgrHandler(s server.Server, hdlr AppMgrHandler, opts ...server.H
 
 type appMgrHandler struct {
 	AppMgrHandler
+}
+
+func (h *appMgrHandler) CreateAppHotFix(ctx context.Context, in *CreateAppHotFixRequest, out *CreateAppResponse) error {
+	return h.AppMgrHandler.CreateAppHotFix(ctx, in, out)
 }
 
 func (h *appMgrHandler) CreateApp(ctx context.Context, in *CreateAppRequest, out *CreateAppResponse) error {
