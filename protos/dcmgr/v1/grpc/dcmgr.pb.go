@@ -10,8 +10,6 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -1619,35 +1617,6 @@ type DCServer interface {
 	Overview(context.Context, *DCOverviewRequest) (*DCOverviewResponse, error)
 }
 
-// UnimplementedDCServer can be embedded to have forward compatible implementations.
-type UnimplementedDCServer struct {
-}
-
-func (*UnimplementedDCServer) CreateApp(ctx context.Context, req *common.AppDeployment) (*common.AppResponce, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateApp not implemented")
-}
-func (*UnimplementedDCServer) UpdateApp(ctx context.Context, req *common.AppDeployment) (*common.AppResponce, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateApp not implemented")
-}
-func (*UnimplementedDCServer) DeleteApp(ctx context.Context, req *common.AppDeployment) (*common.AppResponce, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteApp not implemented")
-}
-func (*UnimplementedDCServer) CreateNamespace(ctx context.Context, req *common.Namespace) (*common.AppResponce, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateNamespace not implemented")
-}
-func (*UnimplementedDCServer) UpdateNamespace(ctx context.Context, req *common.Namespace) (*common.AppResponce, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateNamespace not implemented")
-}
-func (*UnimplementedDCServer) DeleteNamespace(ctx context.Context, req *common.Namespace) (*common.AppResponce, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteNamespace not implemented")
-}
-func (*UnimplementedDCServer) Status(ctx context.Context, req *common.AppID) (*common.AppRunStatus, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Status not implemented")
-}
-func (*UnimplementedDCServer) Overview(ctx context.Context, req *DCOverviewRequest) (*DCOverviewResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Overview not implemented")
-}
-
 func RegisterDCServer(s *grpc.Server, srv DCServer) {
 	s.RegisterService(&_DC_serviceDesc, srv)
 }
@@ -1943,35 +1912,6 @@ type DCAPIServer interface {
 	GetClusterCertificate(context.Context, *GetClusterCertificateRequest) (*GetClusterCertificateResponse, error)
 }
 
-// UnimplementedDCAPIServer can be embedded to have forward compatible implementations.
-type UnimplementedDCAPIServer struct {
-}
-
-func (*UnimplementedDCAPIServer) DataCenterList(ctx context.Context, req *common.Empty) (*DataCenterListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DataCenterList not implemented")
-}
-func (*UnimplementedDCAPIServer) DataCenterListWithFilter(ctx context.Context, req *DataCenterListWithFilterRequest) (*DataCenterListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DataCenterListWithFilter not implemented")
-}
-func (*UnimplementedDCAPIServer) DataCenterListWithCertification(ctx context.Context, req *common.Empty) (*DataCenterListWithCertificationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DataCenterListWithCertification not implemented")
-}
-func (*UnimplementedDCAPIServer) NetworkInfo(ctx context.Context, req *common.Empty) (*NetworkInfoResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method NetworkInfo not implemented")
-}
-func (*UnimplementedDCAPIServer) RegisterDataCenter(ctx context.Context, req *RegisterDataCenterRequest) (*RegisterDataCenterResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RegisterDataCenter not implemented")
-}
-func (*UnimplementedDCAPIServer) ResetDataCenter(ctx context.Context, req *RegisterDataCenterRequest) (*RegisterDataCenterResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ResetDataCenter not implemented")
-}
-func (*UnimplementedDCAPIServer) MyDataCenter(ctx context.Context, req *MyDataCenterRequest) (*common.DataCenterStatuses, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MyDataCenter not implemented")
-}
-func (*UnimplementedDCAPIServer) GetClusterCertificate(ctx context.Context, req *GetClusterCertificateRequest) (*GetClusterCertificateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetClusterCertificate not implemented")
-}
-
 func RegisterDCAPIServer(s *grpc.Server, srv DCAPIServer) {
 	s.RegisterService(&_DCAPI_serviceDesc, srv)
 }
@@ -2221,23 +2161,6 @@ type FeesServiceServer interface {
 	UserHistoryFeesList(context.Context, *HistoryFeesRequest) (*HistoryFeesResponse, error)
 	MonthFeesDetail(context.Context, *FeesDetailRequest) (*FeesDetailResponse, error)
 	InvoiceDetail(context.Context, *InvoiceDetailRequest) (*FeesDetailResponse, error)
-}
-
-// UnimplementedFeesServiceServer can be embedded to have forward compatible implementations.
-type UnimplementedFeesServiceServer struct {
-}
-
-func (*UnimplementedFeesServiceServer) ClusterDashBoard(ctx context.Context, req *DashBoardRequest) (*DashBoardResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ClusterDashBoard not implemented")
-}
-func (*UnimplementedFeesServiceServer) UserHistoryFeesList(ctx context.Context, req *HistoryFeesRequest) (*HistoryFeesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UserHistoryFeesList not implemented")
-}
-func (*UnimplementedFeesServiceServer) MonthFeesDetail(ctx context.Context, req *FeesDetailRequest) (*FeesDetailResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MonthFeesDetail not implemented")
-}
-func (*UnimplementedFeesServiceServer) InvoiceDetail(ctx context.Context, req *InvoiceDetailRequest) (*FeesDetailResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InvoiceDetail not implemented")
 }
 
 func RegisterFeesServiceServer(s *grpc.Server, srv FeesServiceServer) {
