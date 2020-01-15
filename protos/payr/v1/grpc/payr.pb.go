@@ -1929,53 +1929,6 @@ type PayrServer interface {
 	UsdToAnkr(context.Context, *common.Empty) (*AnkrCurrencyResponse, error)
 }
 
-// UnimplementedPayrServer can be embedded to have forward compatible implementations.
-type UnimplementedPayrServer struct {
-}
-
-func (*UnimplementedPayrServer) CollectFee(ctx context.Context, req *CollectFeeRequest) (*CollectFeeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CollectFee not implemented")
-}
-func (*UnimplementedPayrServer) PlanFee(ctx context.Context, req *PlanFeeRequest) (*CollectFeeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PlanFee not implemented")
-}
-func (*UnimplementedPayrServer) NewOrder(ctx context.Context, req *NewOrderRequest) (*NewOrderResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method NewOrder not implemented")
-}
-func (*UnimplementedPayrServer) OrderStatus(ctx context.Context, req *TeamID) (*OrderStatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrderStatus not implemented")
-}
-func (*UnimplementedPayrServer) CancelOrder(ctx context.Context, req *TeamID) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CancelOrder not implemented")
-}
-func (*UnimplementedPayrServer) ListPlan(ctx context.Context, req *common.Empty) (*ListPlanResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListPlan not implemented")
-}
-func (*UnimplementedPayrServer) ListSubs(ctx context.Context, req *ListSubsRequest) (*ListSubsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListSubs not implemented")
-}
-func (*UnimplementedPayrServer) ListAllSubs(ctx context.Context, req *common.Empty) (*ListSubsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListAllSubs not implemented")
-}
-func (*UnimplementedPayrServer) Withdraw(ctx context.Context, req *WithdrawRequest) (*WithdrawResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Withdraw not implemented")
-}
-func (*UnimplementedPayrServer) PaymentHistory(ctx context.Context, req *TeamID) (*PaymentHistoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PaymentHistory not implemented")
-}
-func (*UnimplementedPayrServer) RequestCode(ctx context.Context, req *RequestCodeRequest) (*RequestCodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RequestCode not implemented")
-}
-func (*UnimplementedPayrServer) ReportCode(ctx context.Context, req *ReportCodeRequest) (*ReportCodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReportCode not implemented")
-}
-func (*UnimplementedPayrServer) UsdToUsdt(ctx context.Context, req *common.Empty) (*UsdtCurrencyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UsdToUsdt not implemented")
-}
-func (*UnimplementedPayrServer) UsdToAnkr(ctx context.Context, req *common.Empty) (*AnkrCurrencyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UsdToAnkr not implemented")
-}
-
 func RegisterPayrServer(s *grpc.Server, srv PayrServer) {
 	s.RegisterService(&_Payr_serviceDesc, srv)
 }
