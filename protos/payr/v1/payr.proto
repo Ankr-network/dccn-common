@@ -23,6 +23,8 @@ service Payr {
     }
     rpc ListSubs(ListSubsRequest) returns (ListSubsResponse){
     }
+    rpc ListAllSubs(common.proto.Empty) returns (ListSubsResponse){
+    }
     rpc Withdraw(WithdrawRequest) returns (WithdrawResponse) { 
     }
     rpc PaymentHistory (TeamID) returns (PaymentHistoryResponse){
@@ -31,6 +33,18 @@ service Payr {
     }
     rpc ReportCode (ReportCodeRequest) returns (ReportCodeResponse){
     }
+    rpc UsdToUsdt (common.proto.Empty) returns (UsdtCurrencyResponse){
+    }
+    rpc UsdToAnkr (common.proto.Empty) returns (AnkrCurrencyResponse){
+    }
+}
+
+message UsdtCurrencyResponse {
+    double rate = 1;
+}
+
+message AnkrCurrencyResponse {
+    int32 rate = 1;
 }
 
 message RequestCodeRequest {
