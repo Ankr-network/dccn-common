@@ -9,8 +9,6 @@ import (
 	common "github.com/Ankr-network/dccn-common/protos/common"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -749,14 +747,6 @@ func (c *mailClient) Send(ctx context.Context, in *MailEvent, opts ...grpc.CallO
 // MailServer is the server API for Mail service.
 type MailServer interface {
 	Send(context.Context, *MailEvent) (*common.Empty, error)
-}
-
-// UnimplementedMailServer can be embedded to have forward compatible implementations.
-type UnimplementedMailServer struct {
-}
-
-func (*UnimplementedMailServer) Send(ctx context.Context, req *MailEvent) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Send not implemented")
 }
 
 func RegisterMailServer(s *grpc.Server, srv MailServer) {

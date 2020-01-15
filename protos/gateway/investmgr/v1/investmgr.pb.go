@@ -9,8 +9,6 @@ import (
 	proto "github.com/golang/protobuf/proto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -3212,53 +3210,6 @@ type InvestMgrServer interface {
 	ListFinancialRecord(context.Context, *FinancialRecordRequest) (*FinancialRecordResponse, error)
 	ListTransactionRecord(context.Context, *TransactionRecordRequest) (*TransactionRecordResponse, error)
 	ListProfitRecord(context.Context, *ProfitRecordRequest) (*ProfitRecordResponse, error)
-}
-
-// UnimplementedInvestMgrServer can be embedded to have forward compatible implementations.
-type UnimplementedInvestMgrServer struct {
-}
-
-func (*UnimplementedInvestMgrServer) ListFinancialProduct(ctx context.Context, req *ListFinancialProductRequest) (*ListFinancialProductResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListFinancialProduct not implemented")
-}
-func (*UnimplementedInvestMgrServer) StoreFinancialProduct(ctx context.Context, req *StoreFinancialProductRequest) (*StoreFinancialProductResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method StoreFinancialProduct not implemented")
-}
-func (*UnimplementedInvestMgrServer) UpdateFinancialProduct(ctx context.Context, req *UpdateFinancialProductRequest) (*UpdateFinancialProductResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateFinancialProduct not implemented")
-}
-func (*UnimplementedInvestMgrServer) GetBalance(ctx context.Context, req *AccountBalanceRequest) (*AccountBalanceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetBalance not implemented")
-}
-func (*UnimplementedInvestMgrServer) BuyAsset(ctx context.Context, req *BuyAssetRequest) (*BuyAssetResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method BuyAsset not implemented")
-}
-func (*UnimplementedInvestMgrServer) GetInvestItem(ctx context.Context, req *InvestItemRequest) (*InvestItemResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetInvestItem not implemented")
-}
-func (*UnimplementedInvestMgrServer) GetDailyProfit(ctx context.Context, req *DailyAssetProfitRequest) (*DailyAssetProfitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDailyProfit not implemented")
-}
-func (*UnimplementedInvestMgrServer) GetAccumulatedProfit(ctx context.Context, req *AccumulatedProfitRequest) (*AccumulatedProfitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAccumulatedProfit not implemented")
-}
-func (*UnimplementedInvestMgrServer) Withdraw(ctx context.Context, req *WithdrawRequest) (*WithdrawResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Withdraw not implemented")
-}
-func (*UnimplementedInvestMgrServer) UpdateRewardCurrency(ctx context.Context, req *UpdateRewardCurrencyRequest) (*UpdateRewardCurrencyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateRewardCurrency not implemented")
-}
-func (*UnimplementedInvestMgrServer) GetRewardCurrency(ctx context.Context, req *RewardCurrencyRequest) (*RewardCurrencyResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetRewardCurrency not implemented")
-}
-func (*UnimplementedInvestMgrServer) ListFinancialRecord(ctx context.Context, req *FinancialRecordRequest) (*FinancialRecordResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListFinancialRecord not implemented")
-}
-func (*UnimplementedInvestMgrServer) ListTransactionRecord(ctx context.Context, req *TransactionRecordRequest) (*TransactionRecordResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListTransactionRecord not implemented")
-}
-func (*UnimplementedInvestMgrServer) ListProfitRecord(ctx context.Context, req *ProfitRecordRequest) (*ProfitRecordResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListProfitRecord not implemented")
 }
 
 func RegisterInvestMgrServer(s *grpc.Server, srv InvestMgrServer) {

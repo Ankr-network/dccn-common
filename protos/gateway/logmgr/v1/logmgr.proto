@@ -130,6 +130,7 @@ message LogAppByK8SAPIRequest {
     uint32 limit      = 8;
     uint64 search_after = 9;
     string keywords     = 10;
+    string team_id = 11;
 }
 
 message K8SLogItem {
