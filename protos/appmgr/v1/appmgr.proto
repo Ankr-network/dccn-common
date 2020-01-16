@@ -5,13 +5,17 @@ package appmgr;
 
 service AppMgr {
     // Sends request to start a app and list app
+
+    // CreateApp HotFix
+    rpc CreateAppHotFix (CreateAppHotFixRequest) returns (CreateAppResponse) {}
+
     rpc CreateApp (CreateAppRequest) returns (CreateAppResponse) {}
-    rpc AppList (common.proto.Empty) returns (AppListResponse) {}
-    rpc AppDetail (AppID) returns (AppDetailResponse) {}
-    rpc CancelApp (AppID) returns (common.proto.Empty) {}
-    rpc PurgeApp (AppID) returns (common.proto.Empty) {}
+    rpc AppList (AppListRequest) returns (AppListResponse) {}
+    rpc AppDetail (AppRequest) returns (AppDetailResponse) {}
+    rpc CancelApp (AppRequest) returns (common.proto.Empty) {}
+    rpc PurgeApp (AppRequest) returns (common.proto.Empty) {}
     rpc UpdateApp (UpdateAppRequest) returns (common.proto.Empty) {}
-    rpc AppOverview (common.proto.Empty) returns (AppOverviewResponse) {}
+    rpc AppOverview (AppOverviewRequest) returns (AppOverviewResponse) {}
     rpc UploadChart (UploadChartRequest) returns (common.proto.Empty) {}
     rpc SaveAsChart (SaveAsChartRequest) returns (common.proto.Empty) {}
     rpc ChartList (ChartListRequest) returns (ChartListResponse) {}
@@ -19,19 +23,41 @@ service AppMgr {
     rpc DownloadChart (DownloadChartRequest) returns (DownloadChartResponse) {}
     rpc DeleteChart (DeleteChartRequest) returns (common.proto.Empty) {}
     rpc CreateNamespace (CreateNamespaceRequest) returns (CreateNamespaceResponse) {}
-    rpc NamespaceList (common.proto.Empty) returns (NamespaceListResponse) {}
+    rpc NamespaceList (NamespaceListRequest) returns (NamespaceListResponse) {}
     rpc UpdateNamespace (UpdateNamespaceRequest) returns (common.proto.Empty) {}
     rpc DeleteNamespace (DeleteNamespaceRequest) returns (common.proto.Empty) {}
     rpc AppCount (AppCountRequest) returns (AppCountResponse){}
+    rpc NamespaceCount (NamespaceCountRequest) returns (NamespaceCountResponse) {}
+}
+
+message NamespaceCountRequest {
+    string cluster_id = 1;
+    string team_id    = 2;
+}
+
+message NamespaceCountResponse {
+    uint64 namespace = 1;
+    uint64 app       = 2;
+}
+
+message CreateAppHotFixRequest {
+    string uid              = 1;
+    common.proto.App app    = 2;
+    string team_id          = 3;
 }
 
 // The dccn client request message containing the user's token
 message CreateAppRequest {
     common.proto.App app = 1;
+    string team_id       = 2;
 }
 
 message CreateAppResponse {
     string app_id = 1;
+}
+
+message AppListRequest {
+    string team_id = 1;
 }
 
 message AppListResponse {
@@ -42,12 +68,18 @@ message AppDetailResponse {
     common.proto.AppReport app_report = 1;
 }
 
-message AppID {
-    string app_id = 1;
+message AppRequest {
+    string app_id  = 1;
+    string team_id = 2;
 }
 
 message UpdateAppRequest{
     common.proto.AppDeployment app_deployment = 1;
+    string                     team_id        = 2;
+}
+
+message AppOverviewRequest {
+    string team_id  = 1;
 }
 
 message AppOverviewResponse{
@@ -64,7 +96,7 @@ message AppOverviewResponse{
 }
 
 message AppCountRequest{
-  string uid = 1;
+  string team_id    = 1;
   string cluster_id = 2;
 }
 
@@ -74,23 +106,26 @@ message AppCountResponse{
 
 message UploadChartRequest {
     string chart_repo = 1;
-    string chart_ver = 2;
+    string chart_ver  = 2;
     string chart_name = 3;
-    bytes chart_file = 4;
+    bytes  chart_file = 4;
+    string team_id    = 5;
 }
 
 message SaveAsChartRequest {
     string chart_repo = 1;
-    string chart_ver = 2;
+    string chart_ver  = 2;
     string chart_name = 3;
-    string save_repo = 4;
-    string save_ver = 5;
-    string save_name = 6;
-    bytes values_yaml = 7;
+    string save_repo  = 4;
+    string save_ver   = 5;
+    string save_name  = 6;
+    bytes  values_yaml = 7;
+    string team_id     = 8;
 }
 
 message ChartListRequest {
     string chart_repo = 1;
+    string team_id    = 2;
 }
 
 message ChartListResponse {
@@ -99,21 +134,25 @@ message ChartListResponse {
 
 message ChartDetailRequest {
     common.proto.Chart chart = 1;
-    string show_version = 2;
+    string show_version      = 2;
+    string team_id           = 3;
 }
 
 message ChartDetailResponse {
     string chart_name = 1;
     string chart_repo = 2;
-    repeated common.proto.ChartVersionDetail chart_version_details = 3; //for multiple version
-    string readme_md = 4; // readme.md for current version 
-	string values_yaml = 5; // value.yaml for current version 
+    string chart_description = 3;
+    repeated common.proto.ChartVersionDetail chart_version_details = 4; //for multiple version
+    string readme_md   = 5; // readme.md for current version 
+	string values_yaml = 6; // value.yaml for current version 
+    repeated common.proto.CustomValue custom_values = 7;
 }
 
 message DownloadChartRequest {
     string chart_repo = 1;
-    string chart_ver = 2;
+    string chart_ver  = 2;
     string chart_name = 3;
+    string team_id    = 4;
 }
 
 message DownloadChartResponse {
@@ -122,16 +161,22 @@ message DownloadChartResponse {
 
 message DeleteChartRequest {
     string chart_repo = 1;
-    string chart_ver = 2;
+    string chart_ver  = 2;
     string chart_name = 3;
+    string team_id    = 4;
 }
 
 message CreateNamespaceRequest {
     common.proto.Namespace namespace = 1;
+    string                 team_id   = 2;
 }
 
 message CreateNamespaceResponse {
     string ns_id = 1;
+}
+
+message NamespaceListRequest {
+    string team_id  = 1;
 }
 
 message NamespaceListResponse {
@@ -140,8 +185,10 @@ message NamespaceListResponse {
 
 message UpdateNamespaceRequest {
     common.proto.Namespace namespace = 1;
+    string                 team_id   = 2;
 }
 
 message DeleteNamespaceRequest {
-    string ns_id = 1;
+    string ns_id   = 1;
+    string team_id = 2;
 }

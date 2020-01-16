@@ -1,0 +1,249 @@
+syntax = "proto3";
+
+import "common/common.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+package gwpayr;
+
+// TODO: supports filter
+service Payr {
+    rpc CollectFee(CollectFeeRequest) returns (CollectFeeResponse) {
+        option (google.api.http) = {
+            post: "/fee/collection"
+            body: "*"
+    };
+    }
+    rpc PlanFee(PlanFeeRequest) returns (CollectFeeResponse){
+        option (google.api.http) = {
+            post: "/fee/plan"
+            body: "*"
+    };
+    }
+    rpc NewOrder(NewOrderRequest) returns (NewOrderResponse){
+        option (google.api.http) = {
+            post: "/order/new"
+            body: "*"
+    };
+    }
+    rpc OrderStatus(TeamID) returns (OrderStatusResponse){
+        option (google.api.http).get = "/order/status";
+    }
+    rpc CancelOrder(TeamID) returns (common.proto.Empty){
+        option (google.api.http) = {
+            post: "/order/cancel"
+            body: "*"
+    };
+    }
+    rpc ListPlan(common.proto.Empty) returns (ListPlanResponse){
+        option (google.api.http).get = "/plans/list";
+    }
+
+    rpc ListSubs(ListSubsRequest) returns (ListSubsResponse){
+        option (google.api.http).get = "/subs/list";
+    }
+    rpc PaymentHistory (TeamID) returns (PaymentHistoryResponse){
+        option (google.api.http).get = "/payment/history";
+    }
+    rpc RequestCode (RequestCodeRequest) returns (RequestCodeResponse){
+        option (google.api.http) = {
+            post: "/code/request"
+            body: "*"
+    };
+    }
+    rpc ReportCode (ReportCodeRequest) returns (ReportCodeResponse){
+        option (google.api.http).get = "/code/report";
+    }
+}
+message RequestCodeRequest {
+    int32 number = 1;
+    double discount = 2;
+}
+message Code {
+    string code = 1;
+    string status = 2;
+    double discount = 3;
+    string revenue = 4;
+}
+message RequestCodeResponse {
+    repeated Code codes = 1;
+}
+
+message ReportCodeRequest {
+    string code = 1;
+}
+
+message ReportCodeResponse {
+    Code report = 1;
+}
+
+message Order {
+    string id = 1;
+    // Order type, marking the kind of currency using.
+    string order_type = 2;
+    // How much money left to pay.
+    OrderStatus status = 4;
+    google.protobuf.Timestamp issued_at = 5;
+    google.protobuf.Timestamp expiration = 6;
+    string team_id = 7; //The order belongs to which team.
+    string plan_type = 8; //The related plan type. 
+    string time = 9;
+    string time_unit = 10;
+    string sub_id = 11; //After the plan is confirmed, arrange the plan id to order.
+    common.proto.App app = 12;
+    string chart_name = 13;
+    string chart_icon_url = 14;
+    string balance_token = 3; 
+    string balance_usd = 15;
+    string balance_usd_original = 16;
+    string balance_token_original = 17;
+    string code = 18;
+    double discount = 19;
+    string discount_usd = 20;
+    string discount_token = 21;
+}
+
+message Subscription {
+    string id = 1;
+    string order_id = 2;
+    string plan_type = 3; // Plan type, which should use a map or Enum in the future.
+    string team_id = 4; //which team is using it
+    PlanStatus status = 5; //The status of current plan
+    google.protobuf.Timestamp issued_at = 6;
+    google.protobuf.Timestamp expiration = 7;
+    string time = 8;
+    string time_unit = 9;
+    string chart_name = 10;
+    string chart_icon_url = 11;
+    string order_type = 12;
+    string balance_usd_original = 13;
+    string balance_token_original = 14;
+    string code = 15;
+    double discount = 16;
+    string discount_usd = 17;
+    string discount_token = 18;
+}
+
+
+message PlanType {
+    string   plan_type = 1;
+    string   cpu_number = 2;
+    string   memory_number = 3;
+    string   storage_number = 4;
+    string   price = 5;
+	string   price_week = 6;
+	string   price_month = 7;
+	string   price_hour = 8;
+	string   plan_title = 9;
+    string  plan_set = 10;
+    string  plan_status = 11;
+    bool    plan_featured = 12;
+}
+
+message ListSubsRequest {
+    string team_id = 1;
+}
+
+message ListSubsResponse {
+    repeated Subscription subs = 1;
+}
+
+message ListPlanResponse {
+    repeated PlanType plans = 1;
+}
+
+message CollectFeeRequest {
+    string cpu_number = 1;
+    string memory_number = 2;
+    string storage_number = 3;
+    string time = 4;
+    string time_unit = 5;
+    string code = 6;
+}
+
+message PlanFeeRequest {
+    string plan = 1;
+    string time = 2;
+    string time_unit = 3;
+    string team_id = 4;
+    string code = 5;
+}
+
+message CollectFeeResponse {
+    string plan = 1;
+    string fee = 2;
+    string token = 3;
+    string discount_token = 4;
+    string discount_fee = 5;
+}
+
+enum OrderStatus {
+    CONFIRMING = 0; // default when order is created
+    CONFIRMED = 1;
+    DEACTIVATED = 2;
+}
+
+enum PlanStatus {
+    UNPAID = 0; // default when plan is created
+    PAID = 1;
+    EXPRIED = 2;
+}
+
+message NewOrderRequest{
+    string team_id = 1;
+    string type = 2;
+    string plan = 3;
+    string time = 4;
+    string time_unit = 5;
+    CreateAppConfig App = 6;
+    string cluster_id = 7;
+    string code = 8;
+}
+
+message NewOrderResponse{
+    string order_id = 1;
+    int64 expiration = 2;
+}
+message TeamID{
+    string team_id = 1;
+}
+message OrderStatusResponse{
+    Order order = 1;
+}
+
+message GenerateAddressRequest {
+    string type = 1;
+    string purpose = 2;
+}
+
+message GenerateAddressResponse {
+    string typeaddress = 1;
+    string purposeaddress = 2;
+}
+
+
+message Chart {
+    string chart_name = 1;
+    string chart_repo = 2;
+    string chart_ver = 3;
+    string chart_icon_url = 4;
+    string chart_app_ver = 5;
+}
+message Namespace {
+    string ns_name = 1;
+    string cluster_id = 2;
+	uint32 ns_cpu_limit = 3;
+    uint32 ns_mem_limit = 4;
+    uint32 ns_storage_limit = 5;
+}
+message CreateAppConfig {
+    string app_name = 1;
+    Chart chart = 2;
+    string ns_id = 3;
+	Namespace namespace = 4;
+    repeated common.proto.CustomValue custom_values= 5;
+
+}
+
+message PaymentHistoryResponse {
+    repeated common.proto.Payment payments = 1;
+}

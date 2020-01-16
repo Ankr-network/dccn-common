@@ -15,6 +15,10 @@ type Config struct {
 	DatabaseName string
 	Listen       string
 	DevEnv       bool
+	VaultAddr    string // eg: http://127.0.0.1:8200
+	VaultRole    string
+	DataPath     string
+	DbAuth       bool // if true  then use kms
 }
 
 var config Config
@@ -61,7 +65,6 @@ func LoadConfigFromEnv() Config {
 		config.Listen = value
 	}
 
-
 	value = os.Getenv("DEV_EVN")
 
 	if len(value) > 0 {
@@ -71,6 +74,11 @@ func LoadConfigFromEnv() Config {
 		}
 
 	}
+
+	config.VaultAddr = os.Getenv("VAULT_ADDR")
+	config.VaultRole = os.Getenv("VAULT_ROLE")
+	config.DataPath = os.Getenv("DATA_PATH")
+	config.DbAuth = strings.ToLower(os.Getenv("DB_AUTH")) == "true"
 
 	return config
 }
@@ -83,4 +91,8 @@ func (config *Config) Show() {
 	fmt.Printf("DB_Name  : %s  \n", config.DatabaseName)
 	fmt.Printf("Listen   : %s \n", config.Listen)
 	fmt.Printf("DevEnv   : %t \n", config.DevEnv)
+	fmt.Printf("VAULT_ADDR   :%s  \n", config.VaultAddr)
+	fmt.Printf("VAULT_ROLE   :%s \n", config.VaultRole)
+	fmt.Printf("DATA_PATH   :%s  \n", config.DataPath)
+	fmt.Printf("DB_AUTH   : %v  \n", config.DbAuth)
 }

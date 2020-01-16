@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package pb;
+
+message Req {
+    string name =1;
+}
+
+message Rsp {
+    string message = 1;
+}
+
+service Hello {
+    rpc SayHello(Req) returns (Rsp);
+    rpc SayHelloInsecure(Req) returns (Rsp);
+}

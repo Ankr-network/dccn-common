@@ -10,9 +10,26 @@ service Mail {
 
 enum EmailType {
     CONFIRM_REGISTRATION = 0;
-	FORGET_PASSWORD = 1;
-	CHANGE_PASSWORD = 2;
+		FORGET_PASSWORD = 1;
+		CHANGE_PASSWORD = 2;
     CONFIRM_EMAIL = 3;
+    REACH_LIMIT = 4;
+    USER_REACH_LIMIT = 5;
+		INVITE_TEAM_MEMBER = 6;      // the user has registered with the email, invited by team admin
+		INVITE_NEW_TEAM_MEMBER = 7;    // the user never use the email to register the ankr account.
+}
+
+message ReachLimit {
+    string amount = 1;
+    string txhash = 2;
+    string toaddress = 3;
+}
+
+message UserReachLimit {
+    string name = 1;
+    string amount = 2;
+    string txhash = 3;
+    string toaddress = 4;
 }
 
 message ConfirmRegistration {
@@ -38,6 +55,15 @@ message ChangeEmail {
     string code = 3;
 }
 
+
+message InviteTeamMember {
+    string team_admin = 1;
+    string team_admin_email = 2;
+    string team_name = 3;
+		string code = 4;
+		string team_member_id = 5;
+}
+
 // MailEvent used to send email
 message MailEvent {
     EmailType type = 1;
@@ -48,5 +74,8 @@ message MailEvent {
         ForgetPassword forget_password = 5;
         ChangePassword change_password = 6;
         ChangeEmail change_email = 7;
+        ReachLimit reach_limit = 8;
+        UserReachLimit user_reach_limit = 9;
+				InviteTeamMember invite_team_member = 10;
 	}
 }

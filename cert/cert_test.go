@@ -7,6 +7,22 @@ import (
 	certmanager "github.com/Ankr-network/dccn-common/cert"
 )
 
+const        ECDSA_CLIENT_CERT = `
+-----BEGIN CERTIFICATE-----
+MIICJzCCAc6gAwIBAgIUQNK8zuB47TrjMK/9apa4+ODmGP8wCgYIKoZIzj0EAwIw
+dDELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMQswCQYDVQQHEwJTRjEUMBIGA1UE
+CRMLTUlTU0lPTiBTVC4xDjAMBgNVBBETBTk0MTA1MQ4wDAYDVQQKEwVIVUJDQTEV
+MBMGA1UEAxMMbXlodWItY2EuY29tMB4XDTE5MDUxMjAxNDY1NVoXDTI5MDUxMjAx
+NDY1NVowfTELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMQswCQYDVQQHEwJTRjEU
+MBIGA1UECRMLTUlTU0lPTiBTVC4xDjAMBgNVBBETBTk0MTA1MRMwEQYDVQQKEwpE
+YXRhQ2VudGVyMRkwFwYDVQQDExBteWRhdGFjZW50ZXIuY29tMFkwEwYHKoZIzj0C
+AQYIKoZIzj0DAQcDQgAEM49mdr428vS5+uHc0wjJBqyQ5n8d0QLra97C40uaEw94
+l6RWjMOGbQfHGg6YbZzQ6Zc0qIxf7xu+RX//sTmqCaM1MDMwDgYDVR0PAQH/BAQD
+AgeAMBMGA1UdJQQMMAoGCCsGAQUFBwMCMAwGA1UdEwEB/wQCMAAwCgYIKoZIzj0E
+AwIDRwAwRAIgUxRoNWAjjyvTmnzU8c8s02g0wZURKGo76kh9LNVXcp4CIBAvaZ5u
+Y88YwWeiSVJNBDC6MIcgPLAM4YuLvNjP6M6W
+-----END CERTIFICATE-----`
+
 func TestGenerateRsaKeys(t *testing.T) {
 	t.Log("Testing GenerateCA")
 
@@ -186,4 +202,14 @@ func TestGenerateEcdsaSelfsignCert(t *testing.T) {
         fmt.Println(scert)
         fmt.Println("ECDSA Metering KEY:")
         fmt.Println(sprivateKey)
+}
+
+func TestIsCommonNameMatch(t *testing.T) {
+	t.Log("Testing IsCommonNameMatch")
+
+	result := certmanager.IsCommomNameMatch("mydatacenter.com", ECDSA_CLIENT_CERT)
+
+	if !result {
+                t.Error(nil)
+	}
 }

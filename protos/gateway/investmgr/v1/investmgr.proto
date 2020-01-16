@@ -1,0 +1,380 @@
+syntax = "proto3";
+import "google/api/annotations.proto";
+package gwinvestmgr;
+
+service InvestMgr {
+    rpc ListFinancialProduct(ListFinancialProductRequest) returns (ListFinancialProductResponse) {
+        option (google.api.http).get = "/financial/list";
+    }
+    rpc StoreFinancialProduct(StoreFinancialProductRequest) returns (StoreFinancialProductResponse) {
+        option (google.api.http) = {
+            post: "/financial/store"
+            body: "*"
+        };
+    }
+    rpc UpdateFinancialProduct(UpdateFinancialProductRequest) returns (UpdateFinancialProductResponse) {
+        option (google.api.http) = {
+            post: "/financial/store"
+            body: "*"
+        };
+    }
+    rpc GetBalance(AccountBalanceRequest) returns (AccountBalanceResponse) {
+        option (google.api.http).get = "/account/balance";
+    }
+    rpc BuyAsset(BuyAssetRequest) returns (BuyAssetResponse) {
+        option (google.api.http) = {
+            post: "/asset/buy"
+            body: "*"
+        };
+    }
+    rpc GetInvestItem(InvestItemRequest) returns (InvestItemResponse) {
+        option (google.api.http).get = "/invest/list";
+    }
+    rpc GetDailyProfit(DailyAssetProfitRequest) returns (DailyAssetProfitResponse) {
+        option (google.api.http).get = "/profit/daily";
+    }
+    rpc GetAccumulatedProfit(AccumulatedProfitRequest) returns (AccumulatedProfitResponse) {
+        option (google.api.http).get = "/profit/accumulated";
+    }
+    rpc Withdraw(WithdrawRequest) returns (WithdrawResponse) {
+        option (google.api.http) = {
+            post: "/account/withdraw"
+            body: "*"
+        };
+    }
+    rpc UpdateRewardCurrency(UpdateRewardCurrencyRequest) returns (UpdateRewardCurrencyResponse) {
+        option (google.api.http) = {
+            post: "/reward/update"
+            body: "*"
+        };
+    }
+    rpc GetRewardCurrency(RewardCurrencyRequest) returns (RewardCurrencyResponse) {
+        option (google.api.http).get = "/reward/currency";
+    }
+    rpc ListFinancialRecord(FinancialRecordRequest) returns (FinancialRecordResponse) {
+        option (google.api.http).get = "/record/financial";
+    }
+    rpc ListTransactionRecord(TransactionRecordRequest) returns (TransactionRecordResponse) {
+        option (google.api.http).get = "/record/transaction";
+    }
+    rpc ListProfitRecord(ProfitRecordRequest) returns (ProfitRecordResponse) {
+        option (google.api.http).get = "/record/profit";
+    }
+}
+
+message RewardCurrencyRequest {
+    string req_id   = 1;
+    string uid      = 2;
+}
+
+message RewardCurrencyResponse {
+    string req_id  = 1;
+    int32  code    = 2;
+    string msg     = 3;
+    string currency_type = 4;
+}
+
+message UpdateRewardCurrencyRequest {
+    string req_id        = 1;
+    string uid    = 2;
+    string currency_type = 3; //USDT or ANKR
+}
+
+message UpdateRewardCurrencyResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+}
+
+message FinancialProduct {
+    string product_id   = 1;
+    string product_name = 2;
+    int32  total_count  = 3;
+    string origin       = 4;
+    string detail       = 5;
+    int32  participants = 6;
+    int32  status       = 7;
+    int32  min_invest   = 8;
+    double annualized_return = 9;
+    int64  create_time = 10;
+    int64  update_time = 11;
+}
+
+message ListFinancialProductRequest {
+    string req_id     = 1;
+    string product_id = 2;
+}
+
+message ListFinancialProductResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    repeated FinancialProduct financial_products = 4;
+}
+
+message StoreFinancialProductRequest {
+    string req_id = 1;
+    repeated FinancialProduct financial_products = 2;
+}
+
+message StoreFinancialProductResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+}
+
+message UpdateFinancialProductRequest {
+    string req_id  = 1;
+    repeated FinancialProduct financial_products = 2;
+}
+
+message UpdateFinancialProductResponse {
+    string req_id  = 1;
+    int32  code    = 2;
+    string msg     = 3;
+}
+
+message DepositRequest {
+    string req_id     = 1;
+    string uid        = 2;
+    string currency_type = 3;
+    string amount        = 4;
+}
+
+message DepositResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+}
+
+message AccountBalanceRequest {
+    string req_id = 1;
+    string uid    = 2;
+}
+
+message AccountBalance {
+     string uid          = 1;
+     string ankr_balance = 2;
+     string usdt_balance = 3;
+ }
+
+message AccountBalanceResponse {
+    string req_id  = 1;
+    int32  code    = 2;
+    string msg     = 3;
+    AccountBalance account_balance = 4;
+}
+
+message BuyAssetRequest {
+    string req_id     = 1;
+    string uid        = 2;
+    string product_id = 3;
+    string product_name = 4;
+    string amount       = 5;
+    string verify_type  = 6;
+    string verify_phone = 7;
+    string verify_code  = 8;
+}
+
+message BuyAssetResponse {
+    string req_id  = 1;
+    int32  code    = 2;
+    string msg     = 3;
+}
+
+message InvestItemRequest {
+    string req_id     = 1;
+    string uid        = 2;
+    string product_id = 3;
+    repeated int32 asset_ids = 4;
+}
+
+message InvestItem {
+    int32  asset_id     = 1;
+    string uid   = 2;
+    string product_id   = 3;
+    string product_name = 4;
+    string total_cost   = 5;
+    int64  create_time  = 6;
+    int64  update_time  = 7;
+}
+
+message InvestItemResponse {
+    string req_id  = 1;
+    int32  code    = 2;
+    string msg     = 3;
+    repeated InvestItem invest_items = 4;
+}
+
+message SellAssetRequest {
+    string req_id     = 1;
+    string uid        = 2;
+    string product_id = 3;
+    string product_name = 4;
+    string amount       = 5;
+    string verify_type  = 6;
+    string verify_phone = 7;
+    string verify_code  = 8;
+}
+
+message SellAssetResponse {
+    string req_id  = 1;
+    int32  code    = 2;
+    string msg     = 3;
+}
+
+message DailyAssetProfitRequest {
+    string          req_id    = 1;
+    string          uid       = 2;
+    repeated int32  asset_ids = 3;
+    int64           start_time  = 4;
+    int64           end_time    = 5;
+}
+
+message AssetProfitDetail {
+    string uid          = 1;
+    int32  asset_id     = 2;
+    string product_id   = 3;
+    string product_name = 4;
+    string profit       = 5;
+    int64  create_time  = 6;
+}
+
+message DailyAssetProfitResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    repeated AssetProfitDetail asset_profit_details = 4;
+}
+
+message AccumulatedProfit {
+    string uid = 1;
+    string product_id = 2;
+    string product_name = 3;
+    int32  asset_id     = 4;
+    double accumulated_profit = 5;
+}
+
+message AccumulatedProfitRequest {
+    string req_id = 1;
+    string uid = 2;
+    repeated int32 asset_ids = 3;
+}
+
+message AccumulatedProfitResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    repeated AccumulatedProfit accumulated_profits = 4;
+}
+
+message StoreDailyAssetProfitRequest {
+    string  req_id  = 1;
+    repeated AssetProfitDetail asset_profit_details = 2;
+}
+
+message StoreDailyAssetProfitResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+}
+
+message PayProfitRequest {
+    string req_id        = 1;
+    string uid           = 2;
+    string currency_type = 3;
+    string amount        = 4;
+}
+
+message PayProfitResponse {
+    string req_id   = 1;
+    int32  code     = 2;
+    string msg      = 3;
+}
+
+message WithdrawRequest {
+    string  req_id        = 1;
+    string  uid    = 2;
+    string  currency_type = 3;
+    string  from_addr     = 4;
+    string  to_addr       = 5;
+    string  amount        = 6;
+    string  verify_type   = 7;
+    string  verify_phone  = 8;
+    string  verify_code   = 9;
+}
+
+message WithdrawResponse {
+    string  req_id    = 1;
+    int32   code      = 2;
+    string  msg       = 3;
+}
+
+message ProfitRecordRequest {
+     string req_id = 1;
+     string uid    = 2;
+     int32  page   = 3;
+     int32  limit  = 4;
+ }
+
+ message ProfitRecord {
+     string uid           = 1;
+     string currency_type = 2;
+     string amount        = 3;
+     string create_time   = 4;
+ }
+
+ message ProfitRecordResponse {
+     string req_id  = 1;
+     int32  code    = 2;
+     string msg     = 3;
+     repeated ProfitRecord profit_records = 4;
+ }
+
+ message FinancialRecordRequest {
+     string req_id = 1;
+     string uid    = 2;
+     int32  page   = 3;
+     int32  limit  = 4;
+ }
+
+ message FinancialRecord {
+     string uid  = 1;
+     string type = 2;
+     string detail = 3;
+     int32  status = 4;
+     string create_time = 5;
+ }
+
+ message FinancialRecordResponse {
+     string req_id = 1;
+     int32  code   = 2;
+     string msg    = 3;
+     repeated FinancialRecord financial_records = 4;
+ }
+
+ message TransactionRecordRequest {
+     string req_id = 1;
+     string uid    = 2;
+     string product_id = 3;
+     int32  page       = 4;
+     int32  limit      = 5;
+ }
+
+ message TransactionRecord {
+     string uid        = 1;
+     int32  asset_id   = 2;
+     string product_id = 3;
+     int32  action     = 4;
+     string amount     = 5;
+     string detail     = 6;
+     int32  status       = 7;
+     string create_time  = 8;
+ }
+
+ message TransactionRecordResponse {
+     string  req_id = 1;
+     int32   code   = 2;
+     string  msg    = 3;
+     repeated TransactionRecord transaction_records = 4;
+ }

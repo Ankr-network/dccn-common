@@ -12,49 +12,63 @@ service DCStreamer {
 
 // The dclist service definition.
 service DCAPI {
-      rpc DataCenterList (common.proto.Empty) returns (DataCenterListResponse) {
-        option (google.api.http).get = "/dc/list";
-      }
-      rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){
-        option (google.api.http).get = "/dc/networkinfo";
-      }
-      rpc RegisterDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){
-        option (google.api.http) = {
-            post: "/dc/register"
-            body: "*"
+  rpc DataCenterList (common.proto.Empty) returns (DataCenterListResponse) {
+    option (google.api.http).get = "/dc/list";
+  }
+
+  rpc DataCenterListWithFilter (DataCenterListWithFilterRequest) returns (DataCenterListResponse) {
+    option (google.api.http) = {
+      post: "/dc/listwithfilter"
+      body: "*"
     };
-      }
-      rpc ResetDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){
-        option (google.api.http) = {
-            post: "/dc/reset"
-            body: "*"
+  }
+
+  rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){
+    option (google.api.http).get = "/dc/networkinfo";
+  }
+
+  rpc RegisterDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){
+    option (google.api.http) = {
+      post: "/dc/register"
+      body: "*"
     };
-      }
-      rpc MyDataCenter(common.proto.Empty) returns (common.proto.DataCenterStatus){
-        option (google.api.http).get = "/dc/mydc";
-      }
+  }
 
+  rpc ResetDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){
+    option (google.api.http) = {
+      post: "/dc/reset"
+      body: "*"
+    };
+  }
 
-    rpc ClusterDashBoard (DashBoardRequest) returns (DashBoardResponse) {
-       option (google.api.http).get = "/dc/dashboard";
-    }
-    rpc UserHistoryFeesList (HistoryFeesRequest) returns (HistoryFeesResponse) {
-        option (google.api.http).get = "/fees/history_list";
-    }
-    rpc MonthFeesDetail (FeesDetailRequest) returns (FeesDetailResponse) {
-         option (google.api.http).get = "/fees/month_detail";
-    }
+  rpc MyDataCenter(common.proto.Empty) returns (common.proto.DataCenterStatuses){
+    option (google.api.http).get = "/dc/mydc_list";
+  }
 
-    rpc InvoiceDetail (InvoiceDetailRequest) returns (FeesDetailResponse) {
-         option (google.api.http).get = "/fees/invoice_detail";
-    }
+  rpc ClusterDashBoard (DashBoardRequest) returns (DashBoardResponse) {
+    option (google.api.http).get = "/dc/dashboard";
+  }
+
+  rpc UserHistoryFeesList (HistoryFeesRequest) returns (HistoryFeesResponse) {
+    option (google.api.http).get = "/fees/history_list";
+  }
+
+  rpc MonthFeesDetail (FeesDetailRequest) returns (FeesDetailResponse) {
+    option (google.api.http).get = "/fees/month_detail";
+  }
+
+  rpc InvoiceDetail (InvoiceDetailRequest) returns (FeesDetailResponse) {
+    option (google.api.http).get = "/fees/invoice_detail";
+  }
 }
-
 
 message DataCenterListResponse {
   repeated common.proto.DataCenterStatus dcList= 1; // repeated groups of DataCenterInfo list
 }
 
+message DataCenterListWithFilterRequest {
+  common.proto.DataCenterListFilter dclist_filter = 1;
+}
 
 message NetworkInfoResponse {
   int32 user_count = 1;
@@ -69,6 +83,7 @@ message NetworkInfoResponse {
   string storage_total = 10;  // MB
   string storage_used = 11;  // MB
   int32 network_count = 12;
+  uint32 nodeport_count = 13;
 }
 
 message DataCenterLeaderBoardDetail {
@@ -90,11 +105,7 @@ message RegisterDataCenterResponse {
   string configmap = 6;
 }
 
-
-
-
 message DashBoardRequest {
-  string uid = 1;
 }
 message DashBoardResponse{
    int32 total_income = 1;
@@ -123,6 +134,7 @@ message Usage {
 message HistoryFeesRequest {
   string start = 1;
   string end = 2;
+  string team_id = 3;
 }
 
 
@@ -140,6 +152,7 @@ message HistoryFeesResponse {
 
 message FeesDetailRequest {
   string month = 1;
+  string team_id = 2;
 }
 
 message NamespaceFees {
@@ -164,6 +177,6 @@ message FeesDetailResponse {
 
 
 message InvoiceDetailRequest{
-   string uid = 1;
    string invoice_id = 2;
+   string team_id = 3;
 }

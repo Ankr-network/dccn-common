@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "common/common.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 package usermgr;
 
 // TODO: supports filter
@@ -19,13 +20,13 @@ service UserMgr {
     rpc RefreshSession(RefreshToken) returns (AuthenticationResult) {
     }
 
-    rpc ConfirmRegistration(ConfirmRegistrationRequest) returns (common.proto.Empty) {
+    rpc ConfirmRegistration(ConfirmRegistrationRequest) returns (ConfirmResponse) {
     }
 
     rpc ForgotPassword(ForgotPasswordRequest) returns (common.proto.Empty) {
     }
 
-    rpc ConfirmPassword(ConfirmPasswordRequest) returns (common.proto.Empty) {
+    rpc ConfirmPassword(ConfirmPasswordRequest) returns (ConfirmResponse) {
     }
 
     rpc ChangePassword(ChangePasswordRequest) returns (common.proto.Empty) {
@@ -40,10 +41,9 @@ service UserMgr {
     rpc VerifyAccessToken(common.proto.Empty) returns (common.proto.Empty){
     }
 
-    rpc ConfirmEmail(ConfirmEmailRequest) returns (common.proto.Empty){
+    rpc ConfirmEmail(ConfirmEmailRequest) returns (ConfirmResponse){
     }
-    rpc CreateAddress (GenerateAddressRequest) returns (GenerateAddressResponse){
-    }
+    
     rpc DepositHistory (common.proto.Empty) returns (DepositHistoryResponse){
 
     }
@@ -54,6 +54,98 @@ service UserMgr {
     rpc Fetch (FetchAccountsRequest) returns (FetchAccountsResponse) {}
 
     rpc ApplyBecomeClusterProvider(ClusterProviderApplyRequest) returns (common.proto.Empty) {}
+    rpc FakeToken (FakeTokenRequest) returns (FakeTokenResponse) {}
+
+    // mobile app api
+    rpc PhoneVerify(PhoneVerifyRequest) returns (common.proto.Empty) {}
+    rpc PhoneVerifyCheck(PhoneVerifyCheckRequest) returns (common.proto.Empty) {}
+    rpc PhoneRegister(PhoneRegisterRequest) returns (common.proto.Empty){}
+    rpc PhoneLogin(PhoneLoginRequest) returns (LoginResponse) {}
+    rpc PhoneResetPassword(PhoneResetPasswordRequest) returns (common.proto.Empty){}
+    rpc PhoneChange(PhoneChangeRequest) returns (common.proto.Empty) {}
+
+    // internal api
+    rpc PasswordVerify(PasswordVerifyRequest) returns (PasswordVerifyResponse);
+    rpc CreateAddress (GenerateAddressRequest) returns (GenerateAddressResponse){
+    }
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
+    rpc GetUserByEmail(GetUserByEmailRequest) returns (GetUserResponse);
+    rpc UpdateCurrentTeamID(UpdateCurrentTeamIDRequest) returns (google.protobuf.Empty);
+}
+
+message PhoneRegisterRequest {
+    string name = 1;
+    string phone = 2;
+    string password = 3;
+    string code = 4;
+}
+
+message PhoneVerifyRequest {
+    string phone = 1;
+}
+
+message PhoneVerifyCheckRequest {
+    string phone = 1;
+    string code = 2;
+}
+
+message PhoneResetPasswordRequest {
+    string phone = 1;
+    string code = 2;
+    string new_password = 3;
+} 
+
+enum MFAType {
+    TOTP = 0;
+}
+
+message PhoneLoginRequest {
+    string phone = 1;
+    string password = 2;
+    MFAType mfa_type = 3;
+    string code = 4;
+}
+
+message PhoneChangeRequest {
+    string new_phone = 1;
+    string code = 2;
+}
+
+message PasswordVerifyRequest {
+    string uid = 1;
+    string password = 2;
+}
+
+message PasswordVerifyResponse {
+    bool success = 1;
+}
+
+message GetUserRequest {
+    string uid = 1;
+}
+
+message GetUserResponse {
+    string uid = 1;
+    string name = 2;
+    string email = 3;
+    string current_team_id = 4;
+}
+
+message GetUserByEmailRequest {
+    string email = 1;
+}
+
+message UpdateCurrentTeamIDRequest {
+    string uid = 1;
+    string team_id = 2;
+}
+
+message FakeTokenRequest {
+    string email = 1;
+}
+
+message FakeTokenResponse {
+    string access_token = 1;
 }
 
  // cluster provider status
@@ -80,16 +172,6 @@ message SearchDepositRequest {
     google.protobuf.Timestamp end = 2;
 }
 
-message GenerateAddressRequest {
-    string type = 1;
-    string purpose = 2;
-}
-
-message GenerateAddressResponse {
-    string typeaddress = 1;
-    string purposeaddress = 2;
-}
-
 message DepositHistoryResponse {
     repeated common.proto.Deposit deposits = 1;
 }
@@ -102,6 +184,7 @@ message User {
     string email = 2;
     UserStatus status = 3;
     UserAttributes attributes = 4;
+    string phone = 5;
 }
 
 enum UserStatus {
@@ -160,8 +243,7 @@ message RefreshToken {
 }
 
 message ConfirmRegistrationRequest {
-    string email = 1;
-    string confirmation_code = 2;
+    string code = 3;
 }
 
 message ForgotPasswordRequest {
@@ -169,9 +251,8 @@ message ForgotPasswordRequest {
 }
 
 message ConfirmPasswordRequest {
-    string email = 1;
-    string confirmation_code = 2;
     string new_password = 3;
+    string code = 4;
 }
 
 message ChangePasswordRequest {
@@ -188,8 +269,7 @@ message UpdateAttributesRequest {
 }
 
 message ConfirmEmailRequest {
-  string ConfirmationCode = 1;
-  string NewEmail = 2;
+  string code = 3;
 }
 
 
@@ -199,6 +279,8 @@ enum FetchAccountsType {
     FetchAccountsEthereum = 1;
   	FetchAccountsDCCNTendermint = 2;
   	FetchAccountsBinance = 3;
+    FetchAccountsUSDT = 4;
+    FetchAccountsETH = 5;
 }
 
 message FetchAccountsRequest {
@@ -207,4 +289,67 @@ message FetchAccountsRequest {
 
 message FetchAccountsResponse {
    repeated string Address = 1;
+}
+
+message GenerateAddressRequest {
+    string type = 1;
+    string purpose = 2;
+    string team_id = 3;
+}
+
+message GenerateAddressResponse {
+    string typeaddress = 1;
+    string purposeaddress = 2;
+}
+
+message ConfirmResponse {
+    string email = 1;
+}
+
+// events, for tmp usage
+message EmailUserEnabledEvent {
+    string uid = 1;
+    string name = 2;
+    string email = 3;
+    google.protobuf.Timestamp enable_time = 4;
+}
+
+message UserCreatedEvent {
+    string uid = 1;
+    string password = 2; // TODO not pass password in domain event
+    string name = 3;
+    string email = 4;
+    string phone = 5;
+    bool enabled = 6;
+    google.protobuf.Timestamp create_time = 7;
+}
+
+message EmailUpdatedEvent {
+    string uid = 1;
+    string name = 2;
+    string old_email = 3;
+    string new_email = 4;
+    google.protobuf.Timestamp update_time = 5; 
+}
+
+message PhoneUpdateEvent {
+    string uid = 1;
+    string name = 2;
+    string old_phone = 3;
+    string new_phone =4;
+    google.protobuf.Timestamp update_time = 5; 
+}
+
+message PasswordUpdateEvent {
+    string uid = 1;
+    string name = 2;
+    string new_password = 3; // TODO not pass password in domain event
+    google.protobuf.Timestamp update_time = 4;
+}
+
+message NameUpdateEvent {
+    string uid = 1;
+    string old_name = 2;
+    string new_name = 3;
+    google.protobuf.Timestamp update_time = 4;
 }

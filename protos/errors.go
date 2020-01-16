@@ -23,6 +23,9 @@ const (
 	LogMgrError        = "LogMgrError:"
 	ClusterError       = "DcMgrError:"
 	AnkrMicroError     = "AnkrMicroError:"
+	ScheduleError      = "ScheduleError:"
+	RateLimitError     = "RateLimitError:"
+	VerifyError        = "VerifyError:"
 )
 
 var (
@@ -59,7 +62,7 @@ var (
 	ErrUserNotOwn                = errors.New(AuthError + "User does not own this app")
 	ErrUpdateFailed              = errors.New(LogicError + "App can not be updated")
 	ErrUserAlreadyExist          = errors.New(LogicError + "User already existed")
-	ErrPasswordError             = errors.New(LogicError + "Password does not match")
+	ErrPasswordError             = errors.New(LogicError + "Login/Register get something wrong")
 	ErrHashPassword              = errors.New(MarshalError + "Hash password failed")
 	ErrNamePasswordEmpty         = errors.New(NotFoundError + "Name or Password is empty")
 	ErrStatusNotSupportOperation = errors.New(LogicError + "Current status not support operation")
@@ -71,10 +74,11 @@ var (
 	ErrPublish                   = errors.New(PublishError + "mq publish message error")
 	ErrConnection                = errors.New(AuthError + "Connection error")
 	ErrNoAvailableDataCenter     = errors.New(NotFoundError + "No available data center")
+	ErrNotEnoughResource         = errors.New(ScheduleError + "Not enough resource")
 	ErrEmailFormat               = errors.New(ArgumentError + "Email invalid format")
 	ErrEmailShouldNotSame        = errors.New(ArgumentError + "Email should not same as before")
-	ErrPasswordFormat            = errors.New(AuthError + "Password invalid format")
-	ErrUserNameFormat            = errors.New(AuthError + "User name invalid format")
+	ErrPasswordFormat            = errors.New(ArgumentError + "Password invalid format")
+	ErrUserNameFormat            = errors.New(ArgumentError + "User name invalid format")
 	ErrPasswordLength            = errors.New(AuthError + "Password must be at least 6 characters long")
 	ErrCronJobScheduleFormat     = errors.New(ArgumentError + "Cronjob schedule invalid format")
 	ErrPassword                  = errors.New(AuthError + "Invalid password")
@@ -94,9 +98,10 @@ var (
 	ErrOldPassword               = errors.New(ArgumentError + "Old password does not match")
 	ErrEmailSame                 = errors.New(ArgumentError + "Email must be not same as before")
 	ErrUserNotVariyEmail         = errors.New(ArgumentError + "User's email has not been varified, please verify email first")
+	ErrUserNotVariyPhone         = errors.New(ArgumentError + "User's phone has not been varified, please verify phone first")
 	ErrUserDeactive              = errors.New(AuthError + "Login failed, account has been locked, please contact admin")
-	ErrEmailNoExit               = errors.New(ArgumentError + "Email does not exist")
-	ErrEmailNoMatch              = errors.New(ArgumentError + "Email does not match")
+	ErrEmailNoExit               = errors.New(ArgumentError + "Login/Register get something wrong")
+	ErrEmailNoMatch              = errors.New(ArgumentError + "Login/Register get something wrong")
 	ErrCanNotApplyAsProvider     = errors.New(LogicError + "User already has applied as a cluster provider")
 	ErrElasticsearchPing         = errors.New(LogMgrError + "Elasticsearch can not connect")
 	ErrElasticsearchSearchAfter  = errors.New(LogMgrError + "Elasticsearch search after failed")
@@ -107,4 +112,7 @@ var (
 	ErrRabbitMQConnection        = errors.New(AnkrMicroError + "RabbitMQ connection error")
 	ErrRabbitMQChannel           = errors.New(AnkrMicroError + "RabbitMQ channel error")
 	ErrRabbitMQPublishFailed     = errors.New(AnkrMicroError + "RabbitMQ failed to publish a message")
+	ErrPhoneFormat               = errors.New(ArgumentError + "Phone invalid format")
+	ErrPhoneNotExist             = errors.New(ArgumentError + "Phone not found")
+	ErrPhoneExist                = errors.New(ArgumentError + "This phone is already associated with an existing account")
 )

@@ -40,6 +40,7 @@ func NewClient(network, addr string, ipHook func(*net.Conn) string,
 		for {
 			conn, err := ln.Accept()
 			if err != nil {
+				Log.Println(err)
 				continue
 			}
 
@@ -55,6 +56,7 @@ func NewClient(network, addr string, ipHook func(*net.Conn) string,
 				buf := make([]byte, MAX_ID_LEN)
 				conn.SetDeadline(time.Now().Add(5 * time.Second))
 				if _, err := io.ReadFull(conn, buf); err != nil {
+					Log.Println(err)
 					conn.Close()
 					return
 				}
@@ -135,7 +137,6 @@ func (s *pool) Get(pingHook func(*grpc.ClientConn) error) (*grpc.ClientConn, []s
 	var (
 		ips []string
 		cc  *grpc.ClientConn
-		err = errors.New("no connection to " + s.id)
 	)
 
 	for i := 0; i < 10; i++ {
@@ -168,23 +169,25 @@ func (s *pool) Get(pingHook func(*grpc.ClientConn) error) (*grpc.ClientConn, []s
 		// dial client conn
 		opts := append(s.opts, grpc.WithContextDialer(
 			func(context.Context, string) (net.Conn, error) { return conn, nil }))
-		if cc, err = grpc.DialContext(context.Background(), s.id, opts...); err != nil {
+		if cc, err := grpc.DialContext(context.Background(), s.id, opts...); err != nil {
+			Log.Println(err)
 			conn.Close()
 			continue
-		}
-
-		if pingHook == nil || pingHook(cc) == nil {
+		} else if pingHook == nil || pingHook(cc) == nil {
 			return cc, ips, nil
+		} else {
+			cc.Close()
 		}
-		cc.Close()
 	}
 
-	return nil, nil, err
+	return nil, nil, errors.New("no connection to " + s.id)
 }
 
 func (s *pool) PutCC(cc *grpc.ClientConn, err error) {
 	if err != nil {
-		cc.Close()
+		if cc != nil {
+			cc.Close()
+		}
 		return
 	}
 

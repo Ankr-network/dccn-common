@@ -12,9 +12,10 @@ import (
 	_"math/big"
 	_"os"
 	"time"
-	_"fmt"
+	"fmt"
 	"bytes"
 	"math/big"
+	"errors"
 
 	"crypto/tls"
 )
@@ -394,6 +395,19 @@ func GenerateEcdsaSelfsignCert(name string) (scert string, priv_key string, err 
 	return certOut.String(), keyOut.String(), nil
 }
 
+func IsCommomNameMatch(common_name, crtPemStr string) bool {
+	cn, err := parseCommonNameFromPemStr(crtPemStr)
+	if err != nil {
+		return false
+	}
+
+	if common_name != cn {
+		return false
+	}
+
+	return true
+}
+
 // GenerateSerialNumber generates a serial number suitable for a certificate
 func generateSerialNumber() (*big.Int, error) {
         serial, err := rand.Int(rand.Reader, (&big.Int{}).Exp(big.NewInt(2), big.NewInt(159), nil))
@@ -403,3 +417,19 @@ func generateSerialNumber() (*big.Int, error) {
         return serial, nil
 }
 
+func parseCommonNameFromPemStr(pubPEM string) (string, error) {
+        block, _ := pem.Decode([]byte(pubPEM))
+        if block == nil {
+                fmt.Println("failed to parse certificate PEM")
+                return "", errors.New("failed to parse PEM block containing the cert")
+        }
+        cert, err := x509.ParseCertificate(block.Bytes)
+        if err != nil {
+                fmt.Println("failed to parse certificate: ", err.Error())
+                return "", err
+        }
+
+        cn := cert.Subject.CommonName
+
+        return cn, nil
+}

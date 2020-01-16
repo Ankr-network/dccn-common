@@ -9,8 +9,6 @@ import (
 	common "github.com/Ankr-network/dccn-common/protos/common"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -25,9 +23,159 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+type NamespaceCountRequest struct {
+	ClusterId            string   `protobuf:"bytes,1,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
+	TeamId               string   `protobuf:"bytes,2,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *NamespaceCountRequest) Reset()         { *m = NamespaceCountRequest{} }
+func (m *NamespaceCountRequest) String() string { return proto.CompactTextString(m) }
+func (*NamespaceCountRequest) ProtoMessage()    {}
+func (*NamespaceCountRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8b7c3ca3eef8e484, []int{0}
+}
+
+func (m *NamespaceCountRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_NamespaceCountRequest.Unmarshal(m, b)
+}
+func (m *NamespaceCountRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_NamespaceCountRequest.Marshal(b, m, deterministic)
+}
+func (m *NamespaceCountRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NamespaceCountRequest.Merge(m, src)
+}
+func (m *NamespaceCountRequest) XXX_Size() int {
+	return xxx_messageInfo_NamespaceCountRequest.Size(m)
+}
+func (m *NamespaceCountRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_NamespaceCountRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_NamespaceCountRequest proto.InternalMessageInfo
+
+func (m *NamespaceCountRequest) GetClusterId() string {
+	if m != nil {
+		return m.ClusterId
+	}
+	return ""
+}
+
+func (m *NamespaceCountRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
+type NamespaceCountResponse struct {
+	Namespace            uint64   `protobuf:"varint,1,opt,name=namespace,proto3" json:"namespace,omitempty"`
+	App                  uint64   `protobuf:"varint,2,opt,name=app,proto3" json:"app,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *NamespaceCountResponse) Reset()         { *m = NamespaceCountResponse{} }
+func (m *NamespaceCountResponse) String() string { return proto.CompactTextString(m) }
+func (*NamespaceCountResponse) ProtoMessage()    {}
+func (*NamespaceCountResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8b7c3ca3eef8e484, []int{1}
+}
+
+func (m *NamespaceCountResponse) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_NamespaceCountResponse.Unmarshal(m, b)
+}
+func (m *NamespaceCountResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_NamespaceCountResponse.Marshal(b, m, deterministic)
+}
+func (m *NamespaceCountResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NamespaceCountResponse.Merge(m, src)
+}
+func (m *NamespaceCountResponse) XXX_Size() int {
+	return xxx_messageInfo_NamespaceCountResponse.Size(m)
+}
+func (m *NamespaceCountResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_NamespaceCountResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_NamespaceCountResponse proto.InternalMessageInfo
+
+func (m *NamespaceCountResponse) GetNamespace() uint64 {
+	if m != nil {
+		return m.Namespace
+	}
+	return 0
+}
+
+func (m *NamespaceCountResponse) GetApp() uint64 {
+	if m != nil {
+		return m.App
+	}
+	return 0
+}
+
+type CreateAppHotFixRequest struct {
+	Uid                  string      `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	App                  *common.App `protobuf:"bytes,2,opt,name=app,proto3" json:"app,omitempty"`
+	TeamId               string      `protobuf:"bytes,3,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
+	XXX_unrecognized     []byte      `json:"-"`
+	XXX_sizecache        int32       `json:"-"`
+}
+
+func (m *CreateAppHotFixRequest) Reset()         { *m = CreateAppHotFixRequest{} }
+func (m *CreateAppHotFixRequest) String() string { return proto.CompactTextString(m) }
+func (*CreateAppHotFixRequest) ProtoMessage()    {}
+func (*CreateAppHotFixRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8b7c3ca3eef8e484, []int{2}
+}
+
+func (m *CreateAppHotFixRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_CreateAppHotFixRequest.Unmarshal(m, b)
+}
+func (m *CreateAppHotFixRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_CreateAppHotFixRequest.Marshal(b, m, deterministic)
+}
+func (m *CreateAppHotFixRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CreateAppHotFixRequest.Merge(m, src)
+}
+func (m *CreateAppHotFixRequest) XXX_Size() int {
+	return xxx_messageInfo_CreateAppHotFixRequest.Size(m)
+}
+func (m *CreateAppHotFixRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CreateAppHotFixRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CreateAppHotFixRequest proto.InternalMessageInfo
+
+func (m *CreateAppHotFixRequest) GetUid() string {
+	if m != nil {
+		return m.Uid
+	}
+	return ""
+}
+
+func (m *CreateAppHotFixRequest) GetApp() *common.App {
+	if m != nil {
+		return m.App
+	}
+	return nil
+}
+
+func (m *CreateAppHotFixRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 // The dccn client request message containing the user's token
 type CreateAppRequest struct {
 	App                  *common.App `protobuf:"bytes,1,opt,name=app,proto3" json:"app,omitempty"`
+	TeamId               string      `protobuf:"bytes,2,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}    `json:"-"`
 	XXX_unrecognized     []byte      `json:"-"`
 	XXX_sizecache        int32       `json:"-"`
@@ -37,7 +185,7 @@ func (m *CreateAppRequest) Reset()         { *m = CreateAppRequest{} }
 func (m *CreateAppRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateAppRequest) ProtoMessage()    {}
 func (*CreateAppRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{0}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{3}
 }
 
 func (m *CreateAppRequest) XXX_Unmarshal(b []byte) error {
@@ -65,6 +213,13 @@ func (m *CreateAppRequest) GetApp() *common.App {
 	return nil
 }
 
+func (m *CreateAppRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type CreateAppResponse struct {
 	AppId                string   `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -76,7 +231,7 @@ func (m *CreateAppResponse) Reset()         { *m = CreateAppResponse{} }
 func (m *CreateAppResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateAppResponse) ProtoMessage()    {}
 func (*CreateAppResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{1}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{4}
 }
 
 func (m *CreateAppResponse) XXX_Unmarshal(b []byte) error {
@@ -104,6 +259,45 @@ func (m *CreateAppResponse) GetAppId() string {
 	return ""
 }
 
+type AppListRequest struct {
+	TeamId               string   `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AppListRequest) Reset()         { *m = AppListRequest{} }
+func (m *AppListRequest) String() string { return proto.CompactTextString(m) }
+func (*AppListRequest) ProtoMessage()    {}
+func (*AppListRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8b7c3ca3eef8e484, []int{5}
+}
+
+func (m *AppListRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AppListRequest.Unmarshal(m, b)
+}
+func (m *AppListRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AppListRequest.Marshal(b, m, deterministic)
+}
+func (m *AppListRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AppListRequest.Merge(m, src)
+}
+func (m *AppListRequest) XXX_Size() int {
+	return xxx_messageInfo_AppListRequest.Size(m)
+}
+func (m *AppListRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AppListRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AppListRequest proto.InternalMessageInfo
+
+func (m *AppListRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type AppListResponse struct {
 	AppReports           []*common.AppReport `protobuf:"bytes,1,rep,name=app_reports,json=appReports,proto3" json:"app_reports,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}            `json:"-"`
@@ -115,7 +309,7 @@ func (m *AppListResponse) Reset()         { *m = AppListResponse{} }
 func (m *AppListResponse) String() string { return proto.CompactTextString(m) }
 func (*AppListResponse) ProtoMessage()    {}
 func (*AppListResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{2}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{6}
 }
 
 func (m *AppListResponse) XXX_Unmarshal(b []byte) error {
@@ -154,7 +348,7 @@ func (m *AppDetailResponse) Reset()         { *m = AppDetailResponse{} }
 func (m *AppDetailResponse) String() string { return proto.CompactTextString(m) }
 func (*AppDetailResponse) ProtoMessage()    {}
 func (*AppDetailResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{3}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{7}
 }
 
 func (m *AppDetailResponse) XXX_Unmarshal(b []byte) error {
@@ -182,47 +376,56 @@ func (m *AppDetailResponse) GetAppReport() *common.AppReport {
 	return nil
 }
 
-type AppID struct {
+type AppRequest struct {
 	AppId                string   `protobuf:"bytes,1,opt,name=app_id,json=appId,proto3" json:"app_id,omitempty"`
+	TeamId               string   `protobuf:"bytes,2,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *AppID) Reset()         { *m = AppID{} }
-func (m *AppID) String() string { return proto.CompactTextString(m) }
-func (*AppID) ProtoMessage()    {}
-func (*AppID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{4}
+func (m *AppRequest) Reset()         { *m = AppRequest{} }
+func (m *AppRequest) String() string { return proto.CompactTextString(m) }
+func (*AppRequest) ProtoMessage()    {}
+func (*AppRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8b7c3ca3eef8e484, []int{8}
 }
 
-func (m *AppID) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_AppID.Unmarshal(m, b)
+func (m *AppRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AppRequest.Unmarshal(m, b)
 }
-func (m *AppID) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_AppID.Marshal(b, m, deterministic)
+func (m *AppRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AppRequest.Marshal(b, m, deterministic)
 }
-func (m *AppID) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AppID.Merge(m, src)
+func (m *AppRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AppRequest.Merge(m, src)
 }
-func (m *AppID) XXX_Size() int {
-	return xxx_messageInfo_AppID.Size(m)
+func (m *AppRequest) XXX_Size() int {
+	return xxx_messageInfo_AppRequest.Size(m)
 }
-func (m *AppID) XXX_DiscardUnknown() {
-	xxx_messageInfo_AppID.DiscardUnknown(m)
+func (m *AppRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AppRequest.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_AppID proto.InternalMessageInfo
+var xxx_messageInfo_AppRequest proto.InternalMessageInfo
 
-func (m *AppID) GetAppId() string {
+func (m *AppRequest) GetAppId() string {
 	if m != nil {
 		return m.AppId
 	}
 	return ""
 }
 
+func (m *AppRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type UpdateAppRequest struct {
 	AppDeployment        *common.AppDeployment `protobuf:"bytes,1,opt,name=app_deployment,json=appDeployment,proto3" json:"app_deployment,omitempty"`
+	TeamId               string                `protobuf:"bytes,2,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -232,7 +435,7 @@ func (m *UpdateAppRequest) Reset()         { *m = UpdateAppRequest{} }
 func (m *UpdateAppRequest) String() string { return proto.CompactTextString(m) }
 func (*UpdateAppRequest) ProtoMessage()    {}
 func (*UpdateAppRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{5}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{9}
 }
 
 func (m *UpdateAppRequest) XXX_Unmarshal(b []byte) error {
@@ -260,6 +463,52 @@ func (m *UpdateAppRequest) GetAppDeployment() *common.AppDeployment {
 	return nil
 }
 
+func (m *UpdateAppRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
+type AppOverviewRequest struct {
+	TeamId               string   `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AppOverviewRequest) Reset()         { *m = AppOverviewRequest{} }
+func (m *AppOverviewRequest) String() string { return proto.CompactTextString(m) }
+func (*AppOverviewRequest) ProtoMessage()    {}
+func (*AppOverviewRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8b7c3ca3eef8e484, []int{10}
+}
+
+func (m *AppOverviewRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_AppOverviewRequest.Unmarshal(m, b)
+}
+func (m *AppOverviewRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_AppOverviewRequest.Marshal(b, m, deterministic)
+}
+func (m *AppOverviewRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AppOverviewRequest.Merge(m, src)
+}
+func (m *AppOverviewRequest) XXX_Size() int {
+	return xxx_messageInfo_AppOverviewRequest.Size(m)
+}
+func (m *AppOverviewRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AppOverviewRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AppOverviewRequest proto.InternalMessageInfo
+
+func (m *AppOverviewRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type AppOverviewResponse struct {
 	ClusterCount         uint32   `protobuf:"varint,1,opt,name=cluster_count,json=clusterCount,proto3" json:"cluster_count,omitempty"`
 	NamespaceCount       uint32   `protobuf:"varint,2,opt,name=namespace_count,json=namespaceCount,proto3" json:"namespace_count,omitempty"`
@@ -280,7 +529,7 @@ func (m *AppOverviewResponse) Reset()         { *m = AppOverviewResponse{} }
 func (m *AppOverviewResponse) String() string { return proto.CompactTextString(m) }
 func (*AppOverviewResponse) ProtoMessage()    {}
 func (*AppOverviewResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{6}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{11}
 }
 
 func (m *AppOverviewResponse) XXX_Unmarshal(b []byte) error {
@@ -372,7 +621,7 @@ func (m *AppOverviewResponse) GetStorageUsage() float32 {
 }
 
 type AppCountRequest struct {
-	Uid                  string   `protobuf:"bytes,1,opt,name=uid,proto3" json:"uid,omitempty"`
+	TeamId               string   `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	ClusterId            string   `protobuf:"bytes,2,opt,name=cluster_id,json=clusterId,proto3" json:"cluster_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
@@ -383,7 +632,7 @@ func (m *AppCountRequest) Reset()         { *m = AppCountRequest{} }
 func (m *AppCountRequest) String() string { return proto.CompactTextString(m) }
 func (*AppCountRequest) ProtoMessage()    {}
 func (*AppCountRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{7}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{12}
 }
 
 func (m *AppCountRequest) XXX_Unmarshal(b []byte) error {
@@ -404,9 +653,9 @@ func (m *AppCountRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_AppCountRequest proto.InternalMessageInfo
 
-func (m *AppCountRequest) GetUid() string {
+func (m *AppCountRequest) GetTeamId() string {
 	if m != nil {
-		return m.Uid
+		return m.TeamId
 	}
 	return ""
 }
@@ -429,7 +678,7 @@ func (m *AppCountResponse) Reset()         { *m = AppCountResponse{} }
 func (m *AppCountResponse) String() string { return proto.CompactTextString(m) }
 func (*AppCountResponse) ProtoMessage()    {}
 func (*AppCountResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{8}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{13}
 }
 
 func (m *AppCountResponse) XXX_Unmarshal(b []byte) error {
@@ -462,6 +711,7 @@ type UploadChartRequest struct {
 	ChartVer             string   `protobuf:"bytes,2,opt,name=chart_ver,json=chartVer,proto3" json:"chart_ver,omitempty"`
 	ChartName            string   `protobuf:"bytes,3,opt,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
 	ChartFile            []byte   `protobuf:"bytes,4,opt,name=chart_file,json=chartFile,proto3" json:"chart_file,omitempty"`
+	TeamId               string   `protobuf:"bytes,5,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -471,7 +721,7 @@ func (m *UploadChartRequest) Reset()         { *m = UploadChartRequest{} }
 func (m *UploadChartRequest) String() string { return proto.CompactTextString(m) }
 func (*UploadChartRequest) ProtoMessage()    {}
 func (*UploadChartRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{9}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{14}
 }
 
 func (m *UploadChartRequest) XXX_Unmarshal(b []byte) error {
@@ -520,6 +770,13 @@ func (m *UploadChartRequest) GetChartFile() []byte {
 	return nil
 }
 
+func (m *UploadChartRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type SaveAsChartRequest struct {
 	ChartRepo            string   `protobuf:"bytes,1,opt,name=chart_repo,json=chartRepo,proto3" json:"chart_repo,omitempty"`
 	ChartVer             string   `protobuf:"bytes,2,opt,name=chart_ver,json=chartVer,proto3" json:"chart_ver,omitempty"`
@@ -528,6 +785,7 @@ type SaveAsChartRequest struct {
 	SaveVer              string   `protobuf:"bytes,5,opt,name=save_ver,json=saveVer,proto3" json:"save_ver,omitempty"`
 	SaveName             string   `protobuf:"bytes,6,opt,name=save_name,json=saveName,proto3" json:"save_name,omitempty"`
 	ValuesYaml           []byte   `protobuf:"bytes,7,opt,name=values_yaml,json=valuesYaml,proto3" json:"values_yaml,omitempty"`
+	TeamId               string   `protobuf:"bytes,8,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -537,7 +795,7 @@ func (m *SaveAsChartRequest) Reset()         { *m = SaveAsChartRequest{} }
 func (m *SaveAsChartRequest) String() string { return proto.CompactTextString(m) }
 func (*SaveAsChartRequest) ProtoMessage()    {}
 func (*SaveAsChartRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{10}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{15}
 }
 
 func (m *SaveAsChartRequest) XXX_Unmarshal(b []byte) error {
@@ -607,8 +865,16 @@ func (m *SaveAsChartRequest) GetValuesYaml() []byte {
 	return nil
 }
 
+func (m *SaveAsChartRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type ChartListRequest struct {
 	ChartRepo            string   `protobuf:"bytes,1,opt,name=chart_repo,json=chartRepo,proto3" json:"chart_repo,omitempty"`
+	TeamId               string   `protobuf:"bytes,2,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -618,7 +884,7 @@ func (m *ChartListRequest) Reset()         { *m = ChartListRequest{} }
 func (m *ChartListRequest) String() string { return proto.CompactTextString(m) }
 func (*ChartListRequest) ProtoMessage()    {}
 func (*ChartListRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{11}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{16}
 }
 
 func (m *ChartListRequest) XXX_Unmarshal(b []byte) error {
@@ -646,6 +912,13 @@ func (m *ChartListRequest) GetChartRepo() string {
 	return ""
 }
 
+func (m *ChartListRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type ChartListResponse struct {
 	Charts               []*common.Chart `protobuf:"bytes,1,rep,name=charts,proto3" json:"charts,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}        `json:"-"`
@@ -657,7 +930,7 @@ func (m *ChartListResponse) Reset()         { *m = ChartListResponse{} }
 func (m *ChartListResponse) String() string { return proto.CompactTextString(m) }
 func (*ChartListResponse) ProtoMessage()    {}
 func (*ChartListResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{12}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{17}
 }
 
 func (m *ChartListResponse) XXX_Unmarshal(b []byte) error {
@@ -688,6 +961,7 @@ func (m *ChartListResponse) GetCharts() []*common.Chart {
 type ChartDetailRequest struct {
 	Chart                *common.Chart `protobuf:"bytes,1,opt,name=chart,proto3" json:"chart,omitempty"`
 	ShowVersion          string        `protobuf:"bytes,2,opt,name=show_version,json=showVersion,proto3" json:"show_version,omitempty"`
+	TeamId               string        `protobuf:"bytes,3,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}      `json:"-"`
 	XXX_unrecognized     []byte        `json:"-"`
 	XXX_sizecache        int32         `json:"-"`
@@ -697,7 +971,7 @@ func (m *ChartDetailRequest) Reset()         { *m = ChartDetailRequest{} }
 func (m *ChartDetailRequest) String() string { return proto.CompactTextString(m) }
 func (*ChartDetailRequest) ProtoMessage()    {}
 func (*ChartDetailRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{13}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{18}
 }
 
 func (m *ChartDetailRequest) XXX_Unmarshal(b []byte) error {
@@ -732,12 +1006,21 @@ func (m *ChartDetailRequest) GetShowVersion() string {
 	return ""
 }
 
+func (m *ChartDetailRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type ChartDetailResponse struct {
 	ChartName            string                       `protobuf:"bytes,1,opt,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
 	ChartRepo            string                       `protobuf:"bytes,2,opt,name=chart_repo,json=chartRepo,proto3" json:"chart_repo,omitempty"`
-	ChartVersionDetails  []*common.ChartVersionDetail `protobuf:"bytes,3,rep,name=chart_version_details,json=chartVersionDetails,proto3" json:"chart_version_details,omitempty"`
-	ReadmeMd             string                       `protobuf:"bytes,4,opt,name=readme_md,json=readmeMd,proto3" json:"readme_md,omitempty"`
-	ValuesYaml           string                       `protobuf:"bytes,5,opt,name=values_yaml,json=valuesYaml,proto3" json:"values_yaml,omitempty"`
+	ChartDescription     string                       `protobuf:"bytes,3,opt,name=chart_description,json=chartDescription,proto3" json:"chart_description,omitempty"`
+	ChartVersionDetails  []*common.ChartVersionDetail `protobuf:"bytes,4,rep,name=chart_version_details,json=chartVersionDetails,proto3" json:"chart_version_details,omitempty"`
+	ReadmeMd             string                       `protobuf:"bytes,5,opt,name=readme_md,json=readmeMd,proto3" json:"readme_md,omitempty"`
+	ValuesYaml           string                       `protobuf:"bytes,6,opt,name=values_yaml,json=valuesYaml,proto3" json:"values_yaml,omitempty"`
+	CustomValues         []*common.CustomValue        `protobuf:"bytes,7,rep,name=custom_values,json=customValues,proto3" json:"custom_values,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                     `json:"-"`
 	XXX_unrecognized     []byte                       `json:"-"`
 	XXX_sizecache        int32                        `json:"-"`
@@ -747,7 +1030,7 @@ func (m *ChartDetailResponse) Reset()         { *m = ChartDetailResponse{} }
 func (m *ChartDetailResponse) String() string { return proto.CompactTextString(m) }
 func (*ChartDetailResponse) ProtoMessage()    {}
 func (*ChartDetailResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{14}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{19}
 }
 
 func (m *ChartDetailResponse) XXX_Unmarshal(b []byte) error {
@@ -782,6 +1065,13 @@ func (m *ChartDetailResponse) GetChartRepo() string {
 	return ""
 }
 
+func (m *ChartDetailResponse) GetChartDescription() string {
+	if m != nil {
+		return m.ChartDescription
+	}
+	return ""
+}
+
 func (m *ChartDetailResponse) GetChartVersionDetails() []*common.ChartVersionDetail {
 	if m != nil {
 		return m.ChartVersionDetails
@@ -803,10 +1093,18 @@ func (m *ChartDetailResponse) GetValuesYaml() string {
 	return ""
 }
 
+func (m *ChartDetailResponse) GetCustomValues() []*common.CustomValue {
+	if m != nil {
+		return m.CustomValues
+	}
+	return nil
+}
+
 type DownloadChartRequest struct {
 	ChartRepo            string   `protobuf:"bytes,1,opt,name=chart_repo,json=chartRepo,proto3" json:"chart_repo,omitempty"`
 	ChartVer             string   `protobuf:"bytes,2,opt,name=chart_ver,json=chartVer,proto3" json:"chart_ver,omitempty"`
 	ChartName            string   `protobuf:"bytes,3,opt,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
+	TeamId               string   `protobuf:"bytes,4,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -816,7 +1114,7 @@ func (m *DownloadChartRequest) Reset()         { *m = DownloadChartRequest{} }
 func (m *DownloadChartRequest) String() string { return proto.CompactTextString(m) }
 func (*DownloadChartRequest) ProtoMessage()    {}
 func (*DownloadChartRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{15}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{20}
 }
 
 func (m *DownloadChartRequest) XXX_Unmarshal(b []byte) error {
@@ -858,6 +1156,13 @@ func (m *DownloadChartRequest) GetChartName() string {
 	return ""
 }
 
+func (m *DownloadChartRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type DownloadChartResponse struct {
 	ChartFile            []byte   `protobuf:"bytes,1,opt,name=chart_file,json=chartFile,proto3" json:"chart_file,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -869,7 +1174,7 @@ func (m *DownloadChartResponse) Reset()         { *m = DownloadChartResponse{} }
 func (m *DownloadChartResponse) String() string { return proto.CompactTextString(m) }
 func (*DownloadChartResponse) ProtoMessage()    {}
 func (*DownloadChartResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{16}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{21}
 }
 
 func (m *DownloadChartResponse) XXX_Unmarshal(b []byte) error {
@@ -901,6 +1206,7 @@ type DeleteChartRequest struct {
 	ChartRepo            string   `protobuf:"bytes,1,opt,name=chart_repo,json=chartRepo,proto3" json:"chart_repo,omitempty"`
 	ChartVer             string   `protobuf:"bytes,2,opt,name=chart_ver,json=chartVer,proto3" json:"chart_ver,omitempty"`
 	ChartName            string   `protobuf:"bytes,3,opt,name=chart_name,json=chartName,proto3" json:"chart_name,omitempty"`
+	TeamId               string   `protobuf:"bytes,4,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -910,7 +1216,7 @@ func (m *DeleteChartRequest) Reset()         { *m = DeleteChartRequest{} }
 func (m *DeleteChartRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteChartRequest) ProtoMessage()    {}
 func (*DeleteChartRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{17}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{22}
 }
 
 func (m *DeleteChartRequest) XXX_Unmarshal(b []byte) error {
@@ -952,8 +1258,16 @@ func (m *DeleteChartRequest) GetChartName() string {
 	return ""
 }
 
+func (m *DeleteChartRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type CreateNamespaceRequest struct {
 	Namespace            *common.Namespace `protobuf:"bytes,1,opt,name=namespace,proto3" json:"namespace,omitempty"`
+	TeamId               string            `protobuf:"bytes,2,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -963,7 +1277,7 @@ func (m *CreateNamespaceRequest) Reset()         { *m = CreateNamespaceRequest{}
 func (m *CreateNamespaceRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateNamespaceRequest) ProtoMessage()    {}
 func (*CreateNamespaceRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{18}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{23}
 }
 
 func (m *CreateNamespaceRequest) XXX_Unmarshal(b []byte) error {
@@ -991,6 +1305,13 @@ func (m *CreateNamespaceRequest) GetNamespace() *common.Namespace {
 	return nil
 }
 
+func (m *CreateNamespaceRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type CreateNamespaceResponse struct {
 	NsId                 string   `protobuf:"bytes,1,opt,name=ns_id,json=nsId,proto3" json:"ns_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
@@ -1002,7 +1323,7 @@ func (m *CreateNamespaceResponse) Reset()         { *m = CreateNamespaceResponse
 func (m *CreateNamespaceResponse) String() string { return proto.CompactTextString(m) }
 func (*CreateNamespaceResponse) ProtoMessage()    {}
 func (*CreateNamespaceResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{19}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{24}
 }
 
 func (m *CreateNamespaceResponse) XXX_Unmarshal(b []byte) error {
@@ -1030,6 +1351,45 @@ func (m *CreateNamespaceResponse) GetNsId() string {
 	return ""
 }
 
+type NamespaceListRequest struct {
+	TeamId               string   `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *NamespaceListRequest) Reset()         { *m = NamespaceListRequest{} }
+func (m *NamespaceListRequest) String() string { return proto.CompactTextString(m) }
+func (*NamespaceListRequest) ProtoMessage()    {}
+func (*NamespaceListRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8b7c3ca3eef8e484, []int{25}
+}
+
+func (m *NamespaceListRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_NamespaceListRequest.Unmarshal(m, b)
+}
+func (m *NamespaceListRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_NamespaceListRequest.Marshal(b, m, deterministic)
+}
+func (m *NamespaceListRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_NamespaceListRequest.Merge(m, src)
+}
+func (m *NamespaceListRequest) XXX_Size() int {
+	return xxx_messageInfo_NamespaceListRequest.Size(m)
+}
+func (m *NamespaceListRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_NamespaceListRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_NamespaceListRequest proto.InternalMessageInfo
+
+func (m *NamespaceListRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type NamespaceListResponse struct {
 	NamespaceReports     []*common.NamespaceReport `protobuf:"bytes,1,rep,name=namespace_reports,json=namespaceReports,proto3" json:"namespace_reports,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
@@ -1041,7 +1401,7 @@ func (m *NamespaceListResponse) Reset()         { *m = NamespaceListResponse{} }
 func (m *NamespaceListResponse) String() string { return proto.CompactTextString(m) }
 func (*NamespaceListResponse) ProtoMessage()    {}
 func (*NamespaceListResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{20}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{26}
 }
 
 func (m *NamespaceListResponse) XXX_Unmarshal(b []byte) error {
@@ -1071,6 +1431,7 @@ func (m *NamespaceListResponse) GetNamespaceReports() []*common.NamespaceReport 
 
 type UpdateNamespaceRequest struct {
 	Namespace            *common.Namespace `protobuf:"bytes,1,opt,name=namespace,proto3" json:"namespace,omitempty"`
+	TeamId               string            `protobuf:"bytes,2,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -1080,7 +1441,7 @@ func (m *UpdateNamespaceRequest) Reset()         { *m = UpdateNamespaceRequest{}
 func (m *UpdateNamespaceRequest) String() string { return proto.CompactTextString(m) }
 func (*UpdateNamespaceRequest) ProtoMessage()    {}
 func (*UpdateNamespaceRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{21}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{27}
 }
 
 func (m *UpdateNamespaceRequest) XXX_Unmarshal(b []byte) error {
@@ -1108,8 +1469,16 @@ func (m *UpdateNamespaceRequest) GetNamespace() *common.Namespace {
 	return nil
 }
 
+func (m *UpdateNamespaceRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 type DeleteNamespaceRequest struct {
 	NsId                 string   `protobuf:"bytes,1,opt,name=ns_id,json=nsId,proto3" json:"ns_id,omitempty"`
+	TeamId               string   `protobuf:"bytes,2,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -1119,7 +1488,7 @@ func (m *DeleteNamespaceRequest) Reset()         { *m = DeleteNamespaceRequest{}
 func (m *DeleteNamespaceRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteNamespaceRequest) ProtoMessage()    {}
 func (*DeleteNamespaceRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8b7c3ca3eef8e484, []int{22}
+	return fileDescriptor_8b7c3ca3eef8e484, []int{28}
 }
 
 func (m *DeleteNamespaceRequest) XXX_Unmarshal(b []byte) error {
@@ -1147,13 +1516,25 @@ func (m *DeleteNamespaceRequest) GetNsId() string {
 	return ""
 }
 
+func (m *DeleteNamespaceRequest) GetTeamId() string {
+	if m != nil {
+		return m.TeamId
+	}
+	return ""
+}
+
 func init() {
+	proto.RegisterType((*NamespaceCountRequest)(nil), "appmgr.NamespaceCountRequest")
+	proto.RegisterType((*NamespaceCountResponse)(nil), "appmgr.NamespaceCountResponse")
+	proto.RegisterType((*CreateAppHotFixRequest)(nil), "appmgr.CreateAppHotFixRequest")
 	proto.RegisterType((*CreateAppRequest)(nil), "appmgr.CreateAppRequest")
 	proto.RegisterType((*CreateAppResponse)(nil), "appmgr.CreateAppResponse")
+	proto.RegisterType((*AppListRequest)(nil), "appmgr.AppListRequest")
 	proto.RegisterType((*AppListResponse)(nil), "appmgr.AppListResponse")
 	proto.RegisterType((*AppDetailResponse)(nil), "appmgr.AppDetailResponse")
-	proto.RegisterType((*AppID)(nil), "appmgr.AppID")
+	proto.RegisterType((*AppRequest)(nil), "appmgr.AppRequest")
 	proto.RegisterType((*UpdateAppRequest)(nil), "appmgr.UpdateAppRequest")
+	proto.RegisterType((*AppOverviewRequest)(nil), "appmgr.AppOverviewRequest")
 	proto.RegisterType((*AppOverviewResponse)(nil), "appmgr.AppOverviewResponse")
 	proto.RegisterType((*AppCountRequest)(nil), "appmgr.AppCountRequest")
 	proto.RegisterType((*AppCountResponse)(nil), "appmgr.AppCountResponse")
@@ -1168,6 +1549,7 @@ func init() {
 	proto.RegisterType((*DeleteChartRequest)(nil), "appmgr.DeleteChartRequest")
 	proto.RegisterType((*CreateNamespaceRequest)(nil), "appmgr.CreateNamespaceRequest")
 	proto.RegisterType((*CreateNamespaceResponse)(nil), "appmgr.CreateNamespaceResponse")
+	proto.RegisterType((*NamespaceListRequest)(nil), "appmgr.NamespaceListRequest")
 	proto.RegisterType((*NamespaceListResponse)(nil), "appmgr.NamespaceListResponse")
 	proto.RegisterType((*UpdateNamespaceRequest)(nil), "appmgr.UpdateNamespaceRequest")
 	proto.RegisterType((*DeleteNamespaceRequest)(nil), "appmgr.DeleteNamespaceRequest")
@@ -1176,78 +1558,90 @@ func init() {
 func init() { proto.RegisterFile("appmgr/v1/grpc/appmgr.proto", fileDescriptor_8b7c3ca3eef8e484) }
 
 var fileDescriptor_8b7c3ca3eef8e484 = []byte{
-	// 1133 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x56, 0x6d, 0x6f, 0x1b, 0x45,
-	0x10, 0xb6, 0x93, 0xd8, 0xf1, 0x8d, 0xe3, 0xda, 0x59, 0x93, 0xc6, 0xb5, 0x49, 0x1b, 0x36, 0x12,
-	0x04, 0x10, 0x09, 0x09, 0xa2, 0x05, 0x09, 0x89, 0x38, 0x71, 0x51, 0x4d, 0x69, 0x8a, 0x4c, 0x12,
-	0x89, 0x4f, 0xd6, 0xf6, 0x6e, 0x71, 0x2d, 0x7c, 0x77, 0xdb, 0xdb, 0xb3, 0xa3, 0xfc, 0x09, 0x7e,
-	0x11, 0x7f, 0x07, 0xf1, 0x8d, 0xdf, 0x80, 0xf6, 0xe5, 0xf6, 0xde, 0xa5, 0x7e, 0xa8, 0xf2, 0xc9,
-	0xbe, 0x99, 0x67, 0x9e, 0x9d, 0x97, 0xdd, 0x99, 0x81, 0x01, 0x61, 0xcc, 0x9d, 0x05, 0xc7, 0xab,
-	0x93, 0xe3, 0x59, 0xc0, 0xec, 0x63, 0xf5, 0x79, 0xc4, 0x02, 0x3f, 0xf4, 0x51, 0x5d, 0x7d, 0xf5,
-	0xbb, 0xb6, 0xef, 0xba, 0xbe, 0x77, 0xac, 0x7e, 0x94, 0x12, 0x3f, 0x83, 0xce, 0x45, 0x40, 0x49,
-	0x48, 0x87, 0x8c, 0x4d, 0xe8, 0xbb, 0x25, 0xe5, 0x21, 0x3a, 0x80, 0x75, 0xc2, 0x58, 0xaf, 0xba,
-	0x5f, 0x3d, 0x6c, 0x9e, 0x6e, 0x1f, 0x25, 0xf1, 0x47, 0x02, 0x26, 0xb4, 0xf8, 0x0b, 0xd8, 0x4e,
-	0x18, 0x72, 0xe6, 0x7b, 0x9c, 0xa2, 0x1d, 0x10, 0x87, 0x4d, 0xe7, 0x8e, 0x34, 0xb6, 0x26, 0x35,
-	0xc2, 0xd8, 0xd8, 0xc1, 0x2f, 0xa1, 0x3d, 0x64, 0xec, 0x97, 0x39, 0x0f, 0x0d, 0xf2, 0x3b, 0x68,
-	0x0a, 0x64, 0x40, 0x99, 0x1f, 0x84, 0xbc, 0x57, 0xdd, 0x5f, 0x3f, 0x6c, 0x9e, 0xee, 0xe6, 0xcf,
-	0x92, 0xfa, 0x09, 0x90, 0xe8, 0x2f, 0xc7, 0x2f, 0x61, 0x7b, 0xc8, 0xd8, 0x88, 0x86, 0x64, 0xbe,
-	0x30, 0x74, 0x4f, 0x01, 0x62, 0x3a, 0xed, 0x79, 0x29, 0x9b, 0x65, 0xd8, 0xf0, 0x63, 0xa8, 0x0d,
-	0x19, 0x1b, 0x8f, 0xca, 0x3c, 0xbf, 0x81, 0xce, 0x35, 0x73, 0xd2, 0xe9, 0x39, 0x87, 0x07, 0x02,
-	0xea, 0x50, 0xb6, 0xf0, 0xef, 0x5c, 0xea, 0x45, 0xe7, 0x0d, 0x72, 0xe7, 0x8d, 0x0c, 0x64, 0xd2,
-	0x22, 0xc9, 0x4f, 0xfc, 0xdf, 0x1a, 0x74, 0x87, 0x8c, 0xbd, 0x5e, 0xd1, 0x60, 0x35, 0xa7, 0xb7,
-	0x26, 0x8e, 0x03, 0x68, 0xd9, 0x8b, 0x25, 0x0f, 0x69, 0x30, 0xb5, 0xfd, 0xa5, 0xa6, 0x6e, 0x4d,
-	0xb6, 0xb4, 0xf0, 0x42, 0xc8, 0xd0, 0x67, 0xd0, 0xf6, 0x88, 0x4b, 0x39, 0x23, 0x36, 0xd5, 0xb0,
-	0x35, 0x09, 0x7b, 0x60, 0xc4, 0x0a, 0x78, 0x00, 0x2d, 0x8f, 0x86, 0xb7, 0x7e, 0xf0, 0xa7, 0x86,
-	0xad, 0x2b, 0x36, 0x2d, 0x54, 0xa0, 0x4f, 0xa1, 0x1d, 0xfa, 0x21, 0x59, 0x4c, 0x45, 0x50, 0x0a,
-	0xb6, 0x21, 0x61, 0x2d, 0x29, 0x1e, 0x32, 0xa6, 0x70, 0x03, 0xb0, 0x6c, 0xb6, 0x9c, 0x4a, 0x61,
-	0xaf, 0xb6, 0x5f, 0x3d, 0x5c, 0x9b, 0x34, 0x6c, 0xb6, 0xbc, 0x12, 0xdf, 0x91, 0x72, 0xc9, 0xc9,
-	0x8c, 0xf6, 0xea, 0x46, 0x79, 0x2d, 0xbe, 0x85, 0xd2, 0xa5, 0xae, 0xb6, 0xdc, 0x54, 0x4a, 0x97,
-	0xba, 0xc6, 0x52, 0x28, 0x95, 0x65, 0xc3, 0x28, 0x95, 0xe5, 0x01, 0xb4, 0x78, 0xe8, 0x07, 0x64,
-	0x46, 0xb5, 0xb5, 0x25, 0x01, 0x5b, 0x5a, 0xa8, 0x18, 0x12, 0x20, 0xc5, 0x02, 0x29, 0x90, 0x64,
-	0xc2, 0xe7, 0xf2, 0x0a, 0xca, 0x48, 0xa2, 0x3a, 0x76, 0x60, 0x7d, 0x69, 0xea, 0x2d, 0xfe, 0xa2,
-	0x3d, 0x80, 0x28, 0xfb, 0x73, 0x47, 0xe6, 0xd4, 0x9a, 0x58, 0x5a, 0x32, 0x76, 0xf0, 0x31, 0x74,
-	0x62, 0x0e, 0x5d, 0xb0, 0x01, 0x58, 0x71, 0xde, 0x54, 0xb1, 0x1a, 0x44, 0x83, 0xf0, 0x5f, 0x55,
-	0x40, 0xd7, 0x6c, 0xe1, 0x13, 0xe7, 0xe2, 0x2d, 0x09, 0xcc, 0xc1, 0xe2, 0x18, 0xf1, 0x2d, 0xaf,
-	0xab, 0x3e, 0xdf, 0xb2, 0x15, 0x82, 0xf9, 0x32, 0x97, 0x52, 0xbd, 0xa2, 0x81, 0x76, 0xa2, 0x21,
-	0x05, 0x37, 0x34, 0x88, 0x6d, 0x45, 0xa9, 0x65, 0x3d, 0x23, 0xdb, 0x4b, 0xe2, 0xd2, 0x58, 0xfd,
-	0xc7, 0x7c, 0x41, 0x65, 0x1d, 0xb7, 0xb4, 0xfa, 0xa7, 0xf9, 0x82, 0xe2, 0x7f, 0xaa, 0x80, 0x7e,
-	0x23, 0x2b, 0x3a, 0xe4, 0xf7, 0xe5, 0xd0, 0x00, 0x2c, 0x4e, 0x56, 0x54, 0x31, 0x6f, 0x28, 0x5b,
-	0x21, 0x90, 0xc4, 0x8f, 0x40, 0xfe, 0x97, 0xbc, 0x35, 0xa9, 0xdb, 0x14, 0xdf, 0x82, 0x36, 0xb2,
-	0x93, 0xac, 0xf5, 0xd8, 0x4e, 0x92, 0x3e, 0x81, 0xe6, 0x8a, 0x2c, 0x96, 0x94, 0x4f, 0xef, 0x88,
-	0xab, 0xae, 0xd4, 0xd6, 0x04, 0x94, 0xe8, 0x77, 0xe2, 0x2e, 0xf0, 0x09, 0x74, 0x64, 0x80, 0xaa,
-	0xe5, 0xbc, 0x4f, 0x90, 0xf8, 0x0c, 0xb6, 0x13, 0x26, 0xba, 0xba, 0x5f, 0x42, 0x5d, 0x22, 0xa2,
-	0x06, 0xd5, 0x4d, 0x3f, 0x71, 0x95, 0x44, 0x0d, 0xc1, 0x6f, 0x00, 0x49, 0x41, 0xd4, 0x9a, 0xd4,
-	0xb1, 0x9f, 0x43, 0x4d, 0xea, 0x75, 0x93, 0x28, 0x64, 0x50, 0x08, 0xf4, 0x09, 0x6c, 0xf1, 0xb7,
-	0xfe, 0xad, 0x48, 0x07, 0x9f, 0xfb, 0x9e, 0x4e, 0x75, 0x53, 0xc8, 0x6e, 0x94, 0x08, 0xff, 0x5b,
-	0x85, 0x6e, 0xea, 0x10, 0xed, 0x68, 0xba, 0x0a, 0xd5, 0xd2, 0x6b, 0x21, 0x63, 0x5f, 0xcb, 0x16,
-	0xf8, 0x0a, 0x76, 0x4c, 0x81, 0xc5, 0x31, 0x53, 0x47, 0xb2, 0xf3, 0xde, 0xba, 0x8c, 0x7a, 0xbf,
-	0xc0, 0x67, 0xed, 0x90, 0x76, 0xa3, 0x6b, 0xe7, 0x64, 0x5c, 0x94, 0x30, 0xa0, 0xc4, 0x71, 0xe9,
-	0xd4, 0x75, 0xa2, 0xd2, 0x2b, 0xc1, 0x2b, 0x27, 0x5b, 0x42, 0x55, 0xfd, 0x64, 0x09, 0xdf, 0xc1,
-	0x47, 0x23, 0xff, 0xd6, 0xbb, 0xc7, 0xc7, 0x83, 0x9f, 0xc2, 0x4e, 0xe6, 0xc8, 0x6c, 0x76, 0xe5,
-	0xab, 0xaa, 0x66, 0x5f, 0x95, 0x0f, 0x68, 0x44, 0x17, 0x34, 0xa4, 0xf7, 0xe5, 0xe8, 0x6b, 0x78,
-	0xa8, 0x66, 0xef, 0x65, 0xd4, 0xef, 0xa3, 0x43, 0xbf, 0x05, 0xcb, 0xcc, 0x80, 0xe2, 0x31, 0x18,
-	0x9b, 0xc4, 0x48, 0x7c, 0x04, 0xbb, 0x39, 0x42, 0x1d, 0x7b, 0x17, 0x6a, 0x1e, 0x8f, 0xe7, 0xe2,
-	0x86, 0xc7, 0xc7, 0x0e, 0xb6, 0x61, 0xc7, 0x20, 0x53, 0x0f, 0xe6, 0x67, 0xd8, 0x8e, 0x47, 0x53,
-	0x7a, 0xb8, 0xef, 0x95, 0xf9, 0xa1, 0x86, 0x72, 0xc7, 0x4b, 0x0b, 0xb8, 0x88, 0x52, 0xcd, 0xde,
-	0x0f, 0x15, 0xe5, 0x57, 0xf0, 0x50, 0xd5, 0x29, 0x47, 0x58, 0x14, 0xe4, 0xe9, 0xdf, 0x16, 0xd4,
-	0x87, 0x8c, 0xbd, 0x9a, 0x05, 0xe8, 0x1c, 0x2c, 0xb3, 0xec, 0xa0, 0xde, 0x91, 0x5e, 0xaf, 0xb2,
-	0x8b, 0x53, 0xff, 0x51, 0x81, 0x46, 0x25, 0x06, 0x57, 0xd0, 0xf7, 0xb0, 0xa9, 0x97, 0x20, 0x94,
-	0x69, 0x02, 0xcf, 0x5d, 0x16, 0xde, 0xf5, 0x77, 0x23, 0xe3, 0xcc, 0xaa, 0x84, 0x2b, 0xe8, 0x19,
-	0x58, 0x66, 0xe5, 0x41, 0xad, 0x04, 0x6e, 0x3c, 0x8a, 0xcf, 0xcc, 0x2d, 0x45, 0xb8, 0x82, 0x4e,
-	0xc0, 0xba, 0x20, 0x9e, 0x4d, 0xc5, 0x14, 0xcf, 0x1a, 0x16, 0x39, 0x81, 0x2b, 0xe8, 0x6b, 0x68,
-	0xfc, 0xba, 0x0c, 0x66, 0xf4, 0xfd, 0x2d, 0x7e, 0x00, 0xcb, 0xec, 0x48, 0x71, 0x72, 0xb2, 0x6b,
-	0x53, 0x99, 0xf5, 0x10, 0x9a, 0x89, 0x45, 0xa8, 0x38, 0x35, 0x83, 0x84, 0x1f, 0xd9, 0x95, 0x09,
-	0x57, 0xd0, 0x19, 0x34, 0x13, 0x53, 0x16, 0xf5, 0x63, 0x17, 0xb2, 0xdd, 0xa3, 0xcc, 0x89, 0x33,
-	0x68, 0x26, 0xc6, 0x62, 0xcc, 0x90, 0x9f, 0x95, 0x65, 0x0c, 0xe2, 0x86, 0x44, 0xe3, 0x23, 0x71,
-	0x43, 0x32, 0x43, 0x28, 0x71, 0x43, 0xb2, 0xb3, 0x06, 0x57, 0xd0, 0x0b, 0x68, 0x26, 0x7a, 0x7b,
-	0xec, 0x45, 0x7e, 0xaa, 0xc4, 0x19, 0x29, 0x18, 0x06, 0xb8, 0x82, 0x2e, 0xa1, 0x95, 0xea, 0x64,
-	0xe8, 0xe3, 0x08, 0x5f, 0xd4, 0x53, 0xfb, 0x7b, 0x25, 0xda, 0x64, 0x86, 0x13, 0x1d, 0x2e, 0xf6,
-	0x2c, 0xdf, 0xf6, 0xca, 0xf2, 0x73, 0x05, 0xed, 0x4c, 0x87, 0x41, 0x8f, 0xd3, 0xaf, 0x25, 0xfb,
-	0x28, 0xfb, 0x4f, 0x4a, 0xf5, 0xc6, 0xaf, 0xe7, 0xd0, 0x4a, 0xf5, 0xa1, 0xe2, 0xeb, 0x63, 0xc2,
-	0x2b, 0xec, 0x59, 0x32, 0xf1, 0xed, 0x4c, 0xa7, 0x89, 0x9d, 0x2b, 0x6e, 0x41, 0x65, 0x61, 0xbe,
-	0x80, 0x76, 0xa6, 0xc5, 0xc4, 0x4c, 0xc5, 0xbd, 0xa7, 0x8c, 0xe9, 0x47, 0x68, 0x98, 0xd5, 0x3b,
-	0xd9, 0x1a, 0x92, 0x2b, 0x6c, 0xbf, 0x97, 0x57, 0x44, 0x41, 0xbd, 0xa9, 0x4b, 0xbe, 0x6f, 0xfe,
-	0x0f, 0x00, 0x00, 0xff, 0xff, 0x0a, 0x48, 0x82, 0xe4, 0x1c, 0x0e, 0x00, 0x00,
+	// 1326 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x58, 0xdd, 0x6e, 0x1b, 0x45,
+	0x14, 0xce, 0x3a, 0x8e, 0xe3, 0x3d, 0xb6, 0x63, 0x7b, 0xdc, 0x24, 0xae, 0xdd, 0x9f, 0xb0, 0x95,
+	0x20, 0xa5, 0x22, 0x11, 0x41, 0x8d, 0xb8, 0x88, 0x20, 0x6e, 0x42, 0x94, 0xb4, 0x34, 0x2d, 0x26,
+	0x89, 0xc4, 0x95, 0xb5, 0xac, 0x07, 0xc7, 0xc2, 0xbb, 0x3b, 0xec, 0xae, 0x1d, 0x22, 0xae, 0xb8,
+	0x43, 0xbc, 0x08, 0x2f, 0xc4, 0x73, 0xf0, 0x08, 0x08, 0xcd, 0xcf, 0xce, 0xce, 0xec, 0x8f, 0x1a,
+	0x2e, 0x28, 0x57, 0xd9, 0x39, 0x3f, 0xdf, 0x9c, 0x73, 0xe6, 0xcc, 0x37, 0xc7, 0x81, 0xbe, 0x4d,
+	0x88, 0x3b, 0x09, 0x76, 0x17, 0x9f, 0xee, 0x4e, 0x02, 0xe2, 0xec, 0xf2, 0xe5, 0x0e, 0x09, 0xfc,
+	0xc8, 0x47, 0x15, 0xbe, 0xea, 0x75, 0x1c, 0xdf, 0x75, 0x7d, 0x6f, 0x97, 0xff, 0xe1, 0x4a, 0xeb,
+	0x0d, 0xac, 0x9f, 0xdb, 0x2e, 0x0e, 0x89, 0xed, 0xe0, 0x23, 0x7f, 0xee, 0x45, 0x43, 0xfc, 0xd3,
+	0x1c, 0x87, 0x11, 0x7a, 0x08, 0xe0, 0xcc, 0xe6, 0x61, 0x84, 0x83, 0xd1, 0x74, 0xdc, 0x35, 0xb6,
+	0x8c, 0x6d, 0x73, 0x68, 0x0a, 0xc9, 0xd9, 0x18, 0x6d, 0xc2, 0x6a, 0x84, 0x6d, 0x97, 0xea, 0x4a,
+	0x4c, 0x57, 0xa1, 0xcb, 0xb3, 0xb1, 0x75, 0x0a, 0x1b, 0x69, 0xc0, 0x90, 0xf8, 0x5e, 0x88, 0xd1,
+	0x03, 0x30, 0xbd, 0x58, 0xc3, 0x00, 0xcb, 0xc3, 0x44, 0x80, 0x5a, 0xb0, 0x6c, 0x13, 0xc2, 0xc0,
+	0xca, 0x43, 0xfa, 0x69, 0x5d, 0xc3, 0xc6, 0x51, 0x80, 0xed, 0x08, 0x0f, 0x08, 0x39, 0xf5, 0xa3,
+	0x93, 0xe9, 0xcf, 0x71, 0x6c, 0x2d, 0x58, 0x9e, 0xcb, 0xa0, 0xe8, 0x27, 0x7a, 0x92, 0x78, 0xd7,
+	0xf6, 0xda, 0x3b, 0x6a, 0x8a, 0x3b, 0x03, 0x42, 0x18, 0xa0, 0x1a, 0xf3, 0xb2, 0x16, 0xf3, 0x5b,
+	0x68, 0xc9, 0x9d, 0xe2, 0x3d, 0x04, 0xa2, 0x71, 0x57, 0x44, 0xbd, 0x0a, 0x1f, 0x43, 0x5b, 0x41,
+	0x14, 0x05, 0x58, 0x07, 0x7a, 0x14, 0x49, 0x39, 0x57, 0x6c, 0x42, 0xce, 0xc6, 0xd6, 0x53, 0x58,
+	0x1b, 0x10, 0xf2, 0xf5, 0x34, 0x94, 0xb5, 0x57, 0x60, 0x0d, 0x0d, 0xf6, 0x15, 0x34, 0xa5, 0xa9,
+	0x00, 0xfd, 0x1c, 0x6a, 0x14, 0x34, 0xc0, 0xc4, 0x0f, 0xa2, 0xb0, 0x6b, 0x6c, 0x2d, 0x6f, 0xd7,
+	0xf6, 0x36, 0xb3, 0xf1, 0x32, 0xfd, 0x10, 0xec, 0xf8, 0x33, 0xb4, 0x5e, 0x41, 0x7b, 0x40, 0xc8,
+	0x31, 0x8e, 0xec, 0xe9, 0x4c, 0xc2, 0xed, 0x03, 0x24, 0x70, 0x22, 0xfb, 0x42, 0x34, 0x53, 0xa2,
+	0x59, 0x07, 0x00, 0x4a, 0xf1, 0xf2, 0x33, 0x2d, 0x2e, 0x97, 0x0f, 0xad, 0x4b, 0x32, 0xd6, 0x0f,
+	0xe0, 0x05, 0xac, 0x51, 0x8c, 0x31, 0x26, 0x33, 0xff, 0xd6, 0xc5, 0x5e, 0x1c, 0x4d, 0x3f, 0x13,
+	0xcd, 0xb1, 0x34, 0x19, 0x36, 0x6c, 0x75, 0x59, 0xbc, 0xe1, 0x27, 0x80, 0x06, 0x84, 0xbc, 0x59,
+	0xe0, 0x60, 0x31, 0xc5, 0x37, 0xef, 0xac, 0xfb, 0x5f, 0x25, 0xe8, 0x68, 0xf6, 0xa2, 0x5a, 0x4f,
+	0xa0, 0x11, 0x5f, 0x12, 0x87, 0xf6, 0x3a, 0x73, 0x6b, 0x0c, 0xeb, 0x42, 0xc8, 0xfa, 0x1f, 0x7d,
+	0x04, 0x4d, 0xd9, 0xe6, 0xc2, 0xac, 0xc4, 0xcc, 0xd6, 0x3c, 0xed, 0xa2, 0x50, 0x34, 0x0f, 0x47,
+	0x37, 0x7e, 0xf0, 0xa3, 0x30, 0x5b, 0xe6, 0x68, 0x42, 0xc8, 0x8d, 0x3e, 0x84, 0x66, 0xe4, 0x47,
+	0xf6, 0x6c, 0x44, 0x8b, 0xc3, 0xcd, 0xca, 0xcc, 0xac, 0xc1, 0xc4, 0x03, 0x42, 0xb8, 0x5d, 0x1f,
+	0x4c, 0x87, 0xcc, 0x47, 0x4c, 0xd8, 0x5d, 0xd9, 0x32, 0xb6, 0x4b, 0xc3, 0xaa, 0x43, 0xe6, 0x17,
+	0x74, 0x1d, 0x2b, 0xe7, 0xa1, 0x3d, 0xc1, 0xdd, 0x8a, 0x54, 0x5e, 0xd2, 0x35, 0x55, 0xba, 0xd8,
+	0x15, 0x9e, 0xab, 0x5c, 0xe9, 0x62, 0x57, 0x7a, 0x52, 0x25, 0xf7, 0xac, 0x4a, 0x25, 0xf7, 0x7c,
+	0x02, 0x8d, 0x30, 0xf2, 0x03, 0x7b, 0x82, 0x85, 0xb7, 0xc9, 0x0c, 0xea, 0x42, 0xc8, 0x11, 0x14,
+	0x23, 0x8e, 0x02, 0x9a, 0x11, 0x43, 0xb2, 0xce, 0x58, 0xa3, 0x6b, 0x84, 0x54, 0x74, 0x38, 0x29,
+	0xa6, 0x2a, 0xa5, 0x98, 0xca, 0xda, 0x85, 0x56, 0x02, 0x25, 0xce, 0xad, 0x0f, 0x66, 0x52, 0x3e,
+	0x7e, 0x66, 0x55, 0x5b, 0x18, 0x59, 0x7f, 0x18, 0x80, 0x2e, 0xc9, 0xcc, 0xb7, 0xc7, 0x47, 0xd7,
+	0x76, 0xa0, 0x11, 0x22, 0x5d, 0xb3, 0xbb, 0x21, 0x09, 0x91, 0x5b, 0x10, 0x9f, 0x95, 0x94, 0xa9,
+	0x17, 0x38, 0x10, 0x41, 0x54, 0x99, 0xe0, 0x0a, 0x07, 0x89, 0x2f, 0x3d, 0x71, 0x41, 0x3e, 0xdc,
+	0x9c, 0x72, 0x65, 0xa2, 0xfe, 0x61, 0x3a, 0xc3, 0xec, 0x38, 0xeb, 0x42, 0x7d, 0x32, 0x9d, 0x61,
+	0x35, 0xf3, 0x15, 0xad, 0x2d, 0xff, 0x36, 0x00, 0x7d, 0x6b, 0x2f, 0xf0, 0x20, 0x7c, 0x5f, 0x91,
+	0xf6, 0xc1, 0x0c, 0xed, 0x05, 0xe6, 0xc8, 0x65, 0xee, 0x4b, 0x05, 0x0c, 0xf8, 0x3e, 0xb0, 0x6f,
+	0x86, 0xcb, 0x03, 0x5d, 0xa5, 0x6b, 0x0a, 0x1b, 0xfb, 0x31, 0xd4, 0x4a, 0xe2, 0xc7, 0x40, 0x1f,
+	0x43, 0x6d, 0x61, 0xcf, 0xe6, 0x38, 0x1c, 0xdd, 0xda, 0x2e, 0x6f, 0xb9, 0xfa, 0x10, 0xb8, 0xe8,
+	0x3b, 0xdb, 0x9d, 0xa9, 0x05, 0xa8, 0x6a, 0x05, 0x78, 0x09, 0x2d, 0x96, 0xb9, 0x4a, 0x9e, 0xef,
+	0xc8, 0xbe, 0x90, 0x12, 0x0e, 0xa1, 0xad, 0x60, 0x89, 0x46, 0x79, 0x06, 0x15, 0xe6, 0x1a, 0x13,
+	0x6b, 0x47, 0x27, 0x1f, 0x5e, 0x76, 0x61, 0x62, 0xfd, 0x02, 0x88, 0x09, 0x62, 0x4a, 0xe5, 0xf1,
+	0x3c, 0x85, 0x15, 0xa6, 0x17, 0xf4, 0x95, 0x8b, 0xc0, 0x2d, 0xd0, 0x07, 0x50, 0x0f, 0xaf, 0xfd,
+	0x1b, 0x5a, 0xc0, 0x70, 0xea, 0x7b, 0x22, 0xc0, 0x1a, 0x95, 0x5d, 0x71, 0x51, 0xf1, 0x1b, 0xf6,
+	0x67, 0x09, 0x3a, 0xda, 0xee, 0x22, 0x03, 0xfd, 0x40, 0x8d, 0xc2, 0xd6, 0x63, 0xd5, 0x2a, 0xa5,
+	0xab, 0xf5, 0x0c, 0xda, 0x5c, 0x3d, 0xc6, 0xa1, 0x13, 0x4c, 0x49, 0x44, 0xc3, 0xe2, 0x1b, 0xb7,
+	0x1c, 0xbe, 0x9b, 0x94, 0xa3, 0x0b, 0x58, 0x97, 0x8d, 0x45, 0x83, 0x1d, 0x8d, 0x59, 0x28, 0x61,
+	0xb7, 0xcc, 0x6a, 0xb7, 0x95, 0x93, 0xb9, 0x48, 0x4b, 0xc4, 0xdc, 0x71, 0x32, 0xb2, 0x90, 0xb6,
+	0x4e, 0x80, 0xed, 0xb1, 0x8b, 0x47, 0x6e, 0xdc, 0xff, 0x55, 0x2e, 0x78, 0x3d, 0x4e, 0xb7, 0x0e,
+	0xef, 0x2c, 0xb5, 0x75, 0xbe, 0x80, 0x86, 0x33, 0x0f, 0x23, 0xdf, 0x1d, 0x71, 0x61, 0x77, 0x95,
+	0xc5, 0x72, 0x3f, 0x15, 0x0b, 0x33, 0xb9, 0xa2, 0x16, 0xc3, 0xba, 0x93, 0x2c, 0x42, 0xeb, 0x77,
+	0x03, 0xee, 0x1d, 0xfb, 0x37, 0xde, 0xfb, 0xa4, 0x03, 0xe5, 0x8c, 0xcb, 0xda, 0x19, 0xef, 0xc3,
+	0x7a, 0x2a, 0x96, 0xf4, 0x21, 0x33, 0x02, 0x31, 0x52, 0x04, 0x62, 0xfd, 0x66, 0x00, 0x3a, 0xc6,
+	0x33, 0x1c, 0xe1, 0xff, 0x3d, 0x05, 0x39, 0xd4, 0xc9, 0x21, 0x31, 0x8e, 0xe6, 0x79, 0x7a, 0x3c,
+	0xcc, 0x0c, 0x1e, 0x89, 0x8b, 0x32, 0x37, 0x16, 0xde, 0xe7, 0x1d, 0xd8, 0xcc, 0xec, 0x24, 0xca,
+	0xd5, 0x81, 0x15, 0x2f, 0x4c, 0x1e, 0x92, 0xb2, 0x17, 0xb2, 0x77, 0xe2, 0x9e, 0xb4, 0xbc, 0xd3,
+	0x30, 0xe6, 0x28, 0xa3, 0xb3, 0x46, 0x1a, 0x2f, 0xa1, 0x9d, 0x3c, 0xf8, 0xfa, 0x60, 0xf6, 0xb0,
+	0x28, 0x23, 0x3e, 0x50, 0xb5, 0x3c, 0x5d, 0x10, 0xd2, 0x7a, 0xf1, 0xc9, 0xe8, 0x3f, 0xaf, 0xd7,
+	0x09, 0x6c, 0xf0, 0x1e, 0xc9, 0xec, 0x94, 0x57, 0xae, 0x42, 0x9c, 0xbd, 0x5f, 0x6b, 0x50, 0x19,
+	0x10, 0xf2, 0x7a, 0x12, 0xa0, 0x73, 0x68, 0xa6, 0x26, 0x78, 0xf4, 0x68, 0x47, 0xfc, 0x36, 0xc9,
+	0x1f, 0xed, 0x7b, 0xf7, 0x33, 0xfa, 0xb8, 0xac, 0xd6, 0x12, 0x7a, 0x01, 0xa6, 0x14, 0xa3, 0x6e,
+	0x8e, 0xe5, 0x1d, 0x30, 0x0e, 0x60, 0x55, 0x8c, 0xd0, 0x68, 0x23, 0xb6, 0xd3, 0xc7, 0xef, 0xde,
+	0x66, 0x46, 0xae, 0x78, 0x9b, 0x72, 0x66, 0x46, 0x48, 0xb1, 0xcb, 0xec, 0x9d, 0x19, 0xad, 0xad,
+	0x25, 0xb4, 0x0f, 0xe6, 0x91, 0xed, 0x39, 0x98, 0x4e, 0x69, 0xb9, 0xde, 0xa9, 0xc7, 0xe1, 0x2b,
+	0x97, 0x44, 0xb7, 0xd6, 0x12, 0x7a, 0x0e, 0xd5, 0xb7, 0xf3, 0x60, 0x82, 0xff, 0xa5, 0xdb, 0x01,
+	0x98, 0x72, 0xaa, 0x4e, 0xca, 0x95, 0x1e, 0xb4, 0x8b, 0xbc, 0x4f, 0xa1, 0xa6, 0x8c, 0xbc, 0xa8,
+	0xa7, 0xec, 0x9b, 0x9a, 0x9b, 0x7b, 0xfd, 0x5c, 0x9d, 0x4c, 0xfb, 0x10, 0x6a, 0xca, 0x3c, 0x95,
+	0x20, 0x65, 0x87, 0xac, 0xa2, 0x58, 0x0e, 0xa1, 0xa6, 0xcc, 0x39, 0x09, 0x42, 0x76, 0xf8, 0x29,
+	0x42, 0xa0, 0xad, 0x13, 0xbf, 0xee, 0x4a, 0xeb, 0xa4, 0x86, 0x07, 0xa5, 0x75, 0xd2, 0xa3, 0x00,
+	0xaf, 0x88, 0xf2, 0xc2, 0x26, 0x51, 0x64, 0x1f, 0xfd, 0xa4, 0x22, 0x39, 0x4f, 0xb2, 0xb5, 0x84,
+	0xce, 0xa1, 0xa1, 0x11, 0x39, 0x7a, 0x10, 0xdb, 0xe7, 0xbd, 0x35, 0xbd, 0x87, 0x05, 0x5a, 0xb5,
+	0xc2, 0x0a, 0xbf, 0x27, 0x91, 0x65, 0x49, 0xbf, 0xa8, 0x3e, 0x17, 0xf1, 0x55, 0x95, 0xb7, 0x3f,
+	0x7d, 0x55, 0xd3, 0xb4, 0xd0, 0x7b, 0x5c, 0xa8, 0x57, 0xf3, 0xd4, 0x28, 0x32, 0xc9, 0x33, 0x8f,
+	0x6a, 0x93, 0x3c, 0x73, 0x79, 0x95, 0x9d, 0x40, 0x33, 0xc5, 0x86, 0x49, 0x94, 0xf9, 0x34, 0x59,
+	0xdc, 0xdd, 0xcd, 0x14, 0xdb, 0x25, 0x48, 0xf9, 0x34, 0x58, 0x84, 0xf4, 0x25, 0x54, 0xe5, 0x8f,
+	0x2e, 0x95, 0x39, 0xd4, 0x1f, 0x2f, 0xbd, 0x6e, 0x56, 0x21, 0x93, 0xfa, 0x06, 0xd6, 0xf4, 0xff,
+	0x98, 0xa0, 0x6c, 0x1d, 0x34, 0xb0, 0x47, 0x45, 0xea, 0x18, 0xf2, 0xfb, 0x0a, 0x0b, 0xf1, 0xb3,
+	0x7f, 0x02, 0x00, 0x00, 0xff, 0xff, 0x95, 0x68, 0x8d, 0x47, 0x18, 0x12, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -1262,14 +1656,15 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AppMgrClient interface {
-	// Sends request to start a app and list app
+	// CreateApp HotFix
+	CreateAppHotFix(ctx context.Context, in *CreateAppHotFixRequest, opts ...grpc.CallOption) (*CreateAppResponse, error)
 	CreateApp(ctx context.Context, in *CreateAppRequest, opts ...grpc.CallOption) (*CreateAppResponse, error)
-	AppList(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*AppListResponse, error)
-	AppDetail(ctx context.Context, in *AppID, opts ...grpc.CallOption) (*AppDetailResponse, error)
-	CancelApp(ctx context.Context, in *AppID, opts ...grpc.CallOption) (*common.Empty, error)
-	PurgeApp(ctx context.Context, in *AppID, opts ...grpc.CallOption) (*common.Empty, error)
+	AppList(ctx context.Context, in *AppListRequest, opts ...grpc.CallOption) (*AppListResponse, error)
+	AppDetail(ctx context.Context, in *AppRequest, opts ...grpc.CallOption) (*AppDetailResponse, error)
+	CancelApp(ctx context.Context, in *AppRequest, opts ...grpc.CallOption) (*common.Empty, error)
+	PurgeApp(ctx context.Context, in *AppRequest, opts ...grpc.CallOption) (*common.Empty, error)
 	UpdateApp(ctx context.Context, in *UpdateAppRequest, opts ...grpc.CallOption) (*common.Empty, error)
-	AppOverview(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*AppOverviewResponse, error)
+	AppOverview(ctx context.Context, in *AppOverviewRequest, opts ...grpc.CallOption) (*AppOverviewResponse, error)
 	UploadChart(ctx context.Context, in *UploadChartRequest, opts ...grpc.CallOption) (*common.Empty, error)
 	SaveAsChart(ctx context.Context, in *SaveAsChartRequest, opts ...grpc.CallOption) (*common.Empty, error)
 	ChartList(ctx context.Context, in *ChartListRequest, opts ...grpc.CallOption) (*ChartListResponse, error)
@@ -1277,10 +1672,11 @@ type AppMgrClient interface {
 	DownloadChart(ctx context.Context, in *DownloadChartRequest, opts ...grpc.CallOption) (*DownloadChartResponse, error)
 	DeleteChart(ctx context.Context, in *DeleteChartRequest, opts ...grpc.CallOption) (*common.Empty, error)
 	CreateNamespace(ctx context.Context, in *CreateNamespaceRequest, opts ...grpc.CallOption) (*CreateNamespaceResponse, error)
-	NamespaceList(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*NamespaceListResponse, error)
+	NamespaceList(ctx context.Context, in *NamespaceListRequest, opts ...grpc.CallOption) (*NamespaceListResponse, error)
 	UpdateNamespace(ctx context.Context, in *UpdateNamespaceRequest, opts ...grpc.CallOption) (*common.Empty, error)
 	DeleteNamespace(ctx context.Context, in *DeleteNamespaceRequest, opts ...grpc.CallOption) (*common.Empty, error)
 	AppCount(ctx context.Context, in *AppCountRequest, opts ...grpc.CallOption) (*AppCountResponse, error)
+	NamespaceCount(ctx context.Context, in *NamespaceCountRequest, opts ...grpc.CallOption) (*NamespaceCountResponse, error)
 }
 
 type appMgrClient struct {
@@ -1289,6 +1685,15 @@ type appMgrClient struct {
 
 func NewAppMgrClient(cc *grpc.ClientConn) AppMgrClient {
 	return &appMgrClient{cc}
+}
+
+func (c *appMgrClient) CreateAppHotFix(ctx context.Context, in *CreateAppHotFixRequest, opts ...grpc.CallOption) (*CreateAppResponse, error) {
+	out := new(CreateAppResponse)
+	err := c.cc.Invoke(ctx, "/appmgr.AppMgr/CreateAppHotFix", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *appMgrClient) CreateApp(ctx context.Context, in *CreateAppRequest, opts ...grpc.CallOption) (*CreateAppResponse, error) {
@@ -1300,7 +1705,7 @@ func (c *appMgrClient) CreateApp(ctx context.Context, in *CreateAppRequest, opts
 	return out, nil
 }
 
-func (c *appMgrClient) AppList(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*AppListResponse, error) {
+func (c *appMgrClient) AppList(ctx context.Context, in *AppListRequest, opts ...grpc.CallOption) (*AppListResponse, error) {
 	out := new(AppListResponse)
 	err := c.cc.Invoke(ctx, "/appmgr.AppMgr/AppList", in, out, opts...)
 	if err != nil {
@@ -1309,7 +1714,7 @@ func (c *appMgrClient) AppList(ctx context.Context, in *common.Empty, opts ...gr
 	return out, nil
 }
 
-func (c *appMgrClient) AppDetail(ctx context.Context, in *AppID, opts ...grpc.CallOption) (*AppDetailResponse, error) {
+func (c *appMgrClient) AppDetail(ctx context.Context, in *AppRequest, opts ...grpc.CallOption) (*AppDetailResponse, error) {
 	out := new(AppDetailResponse)
 	err := c.cc.Invoke(ctx, "/appmgr.AppMgr/AppDetail", in, out, opts...)
 	if err != nil {
@@ -1318,7 +1723,7 @@ func (c *appMgrClient) AppDetail(ctx context.Context, in *AppID, opts ...grpc.Ca
 	return out, nil
 }
 
-func (c *appMgrClient) CancelApp(ctx context.Context, in *AppID, opts ...grpc.CallOption) (*common.Empty, error) {
+func (c *appMgrClient) CancelApp(ctx context.Context, in *AppRequest, opts ...grpc.CallOption) (*common.Empty, error) {
 	out := new(common.Empty)
 	err := c.cc.Invoke(ctx, "/appmgr.AppMgr/CancelApp", in, out, opts...)
 	if err != nil {
@@ -1327,7 +1732,7 @@ func (c *appMgrClient) CancelApp(ctx context.Context, in *AppID, opts ...grpc.Ca
 	return out, nil
 }
 
-func (c *appMgrClient) PurgeApp(ctx context.Context, in *AppID, opts ...grpc.CallOption) (*common.Empty, error) {
+func (c *appMgrClient) PurgeApp(ctx context.Context, in *AppRequest, opts ...grpc.CallOption) (*common.Empty, error) {
 	out := new(common.Empty)
 	err := c.cc.Invoke(ctx, "/appmgr.AppMgr/PurgeApp", in, out, opts...)
 	if err != nil {
@@ -1345,7 +1750,7 @@ func (c *appMgrClient) UpdateApp(ctx context.Context, in *UpdateAppRequest, opts
 	return out, nil
 }
 
-func (c *appMgrClient) AppOverview(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*AppOverviewResponse, error) {
+func (c *appMgrClient) AppOverview(ctx context.Context, in *AppOverviewRequest, opts ...grpc.CallOption) (*AppOverviewResponse, error) {
 	out := new(AppOverviewResponse)
 	err := c.cc.Invoke(ctx, "/appmgr.AppMgr/AppOverview", in, out, opts...)
 	if err != nil {
@@ -1417,7 +1822,7 @@ func (c *appMgrClient) CreateNamespace(ctx context.Context, in *CreateNamespaceR
 	return out, nil
 }
 
-func (c *appMgrClient) NamespaceList(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*NamespaceListResponse, error) {
+func (c *appMgrClient) NamespaceList(ctx context.Context, in *NamespaceListRequest, opts ...grpc.CallOption) (*NamespaceListResponse, error) {
 	out := new(NamespaceListResponse)
 	err := c.cc.Invoke(ctx, "/appmgr.AppMgr/NamespaceList", in, out, opts...)
 	if err != nil {
@@ -1453,16 +1858,26 @@ func (c *appMgrClient) AppCount(ctx context.Context, in *AppCountRequest, opts .
 	return out, nil
 }
 
+func (c *appMgrClient) NamespaceCount(ctx context.Context, in *NamespaceCountRequest, opts ...grpc.CallOption) (*NamespaceCountResponse, error) {
+	out := new(NamespaceCountResponse)
+	err := c.cc.Invoke(ctx, "/appmgr.AppMgr/NamespaceCount", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AppMgrServer is the server API for AppMgr service.
 type AppMgrServer interface {
-	// Sends request to start a app and list app
+	// CreateApp HotFix
+	CreateAppHotFix(context.Context, *CreateAppHotFixRequest) (*CreateAppResponse, error)
 	CreateApp(context.Context, *CreateAppRequest) (*CreateAppResponse, error)
-	AppList(context.Context, *common.Empty) (*AppListResponse, error)
-	AppDetail(context.Context, *AppID) (*AppDetailResponse, error)
-	CancelApp(context.Context, *AppID) (*common.Empty, error)
-	PurgeApp(context.Context, *AppID) (*common.Empty, error)
+	AppList(context.Context, *AppListRequest) (*AppListResponse, error)
+	AppDetail(context.Context, *AppRequest) (*AppDetailResponse, error)
+	CancelApp(context.Context, *AppRequest) (*common.Empty, error)
+	PurgeApp(context.Context, *AppRequest) (*common.Empty, error)
 	UpdateApp(context.Context, *UpdateAppRequest) (*common.Empty, error)
-	AppOverview(context.Context, *common.Empty) (*AppOverviewResponse, error)
+	AppOverview(context.Context, *AppOverviewRequest) (*AppOverviewResponse, error)
 	UploadChart(context.Context, *UploadChartRequest) (*common.Empty, error)
 	SaveAsChart(context.Context, *SaveAsChartRequest) (*common.Empty, error)
 	ChartList(context.Context, *ChartListRequest) (*ChartListResponse, error)
@@ -1470,73 +1885,33 @@ type AppMgrServer interface {
 	DownloadChart(context.Context, *DownloadChartRequest) (*DownloadChartResponse, error)
 	DeleteChart(context.Context, *DeleteChartRequest) (*common.Empty, error)
 	CreateNamespace(context.Context, *CreateNamespaceRequest) (*CreateNamespaceResponse, error)
-	NamespaceList(context.Context, *common.Empty) (*NamespaceListResponse, error)
+	NamespaceList(context.Context, *NamespaceListRequest) (*NamespaceListResponse, error)
 	UpdateNamespace(context.Context, *UpdateNamespaceRequest) (*common.Empty, error)
 	DeleteNamespace(context.Context, *DeleteNamespaceRequest) (*common.Empty, error)
 	AppCount(context.Context, *AppCountRequest) (*AppCountResponse, error)
-}
-
-// UnimplementedAppMgrServer can be embedded to have forward compatible implementations.
-type UnimplementedAppMgrServer struct {
-}
-
-func (*UnimplementedAppMgrServer) CreateApp(ctx context.Context, req *CreateAppRequest) (*CreateAppResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateApp not implemented")
-}
-func (*UnimplementedAppMgrServer) AppList(ctx context.Context, req *common.Empty) (*AppListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AppList not implemented")
-}
-func (*UnimplementedAppMgrServer) AppDetail(ctx context.Context, req *AppID) (*AppDetailResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AppDetail not implemented")
-}
-func (*UnimplementedAppMgrServer) CancelApp(ctx context.Context, req *AppID) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CancelApp not implemented")
-}
-func (*UnimplementedAppMgrServer) PurgeApp(ctx context.Context, req *AppID) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PurgeApp not implemented")
-}
-func (*UnimplementedAppMgrServer) UpdateApp(ctx context.Context, req *UpdateAppRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateApp not implemented")
-}
-func (*UnimplementedAppMgrServer) AppOverview(ctx context.Context, req *common.Empty) (*AppOverviewResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AppOverview not implemented")
-}
-func (*UnimplementedAppMgrServer) UploadChart(ctx context.Context, req *UploadChartRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UploadChart not implemented")
-}
-func (*UnimplementedAppMgrServer) SaveAsChart(ctx context.Context, req *SaveAsChartRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SaveAsChart not implemented")
-}
-func (*UnimplementedAppMgrServer) ChartList(ctx context.Context, req *ChartListRequest) (*ChartListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChartList not implemented")
-}
-func (*UnimplementedAppMgrServer) ChartDetail(ctx context.Context, req *ChartDetailRequest) (*ChartDetailResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ChartDetail not implemented")
-}
-func (*UnimplementedAppMgrServer) DownloadChart(ctx context.Context, req *DownloadChartRequest) (*DownloadChartResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DownloadChart not implemented")
-}
-func (*UnimplementedAppMgrServer) DeleteChart(ctx context.Context, req *DeleteChartRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteChart not implemented")
-}
-func (*UnimplementedAppMgrServer) CreateNamespace(ctx context.Context, req *CreateNamespaceRequest) (*CreateNamespaceResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateNamespace not implemented")
-}
-func (*UnimplementedAppMgrServer) NamespaceList(ctx context.Context, req *common.Empty) (*NamespaceListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method NamespaceList not implemented")
-}
-func (*UnimplementedAppMgrServer) UpdateNamespace(ctx context.Context, req *UpdateNamespaceRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateNamespace not implemented")
-}
-func (*UnimplementedAppMgrServer) DeleteNamespace(ctx context.Context, req *DeleteNamespaceRequest) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteNamespace not implemented")
-}
-func (*UnimplementedAppMgrServer) AppCount(ctx context.Context, req *AppCountRequest) (*AppCountResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AppCount not implemented")
+	NamespaceCount(context.Context, *NamespaceCountRequest) (*NamespaceCountResponse, error)
 }
 
 func RegisterAppMgrServer(s *grpc.Server, srv AppMgrServer) {
 	s.RegisterService(&_AppMgr_serviceDesc, srv)
+}
+
+func _AppMgr_CreateAppHotFix_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateAppHotFixRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgrServer).CreateAppHotFix(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/appmgr.AppMgr/CreateAppHotFix",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgrServer).CreateAppHotFix(ctx, req.(*CreateAppHotFixRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _AppMgr_CreateApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -1558,7 +1933,7 @@ func _AppMgr_CreateApp_Handler(srv interface{}, ctx context.Context, dec func(in
 }
 
 func _AppMgr_AppList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(common.Empty)
+	in := new(AppListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1570,13 +1945,13 @@ func _AppMgr_AppList_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: "/appmgr.AppMgr/AppList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppMgrServer).AppList(ctx, req.(*common.Empty))
+		return srv.(AppMgrServer).AppList(ctx, req.(*AppListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _AppMgr_AppDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppID)
+	in := new(AppRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1588,13 +1963,13 @@ func _AppMgr_AppDetail_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: "/appmgr.AppMgr/AppDetail",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppMgrServer).AppDetail(ctx, req.(*AppID))
+		return srv.(AppMgrServer).AppDetail(ctx, req.(*AppRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _AppMgr_CancelApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppID)
+	in := new(AppRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1606,13 +1981,13 @@ func _AppMgr_CancelApp_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: "/appmgr.AppMgr/CancelApp",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppMgrServer).CancelApp(ctx, req.(*AppID))
+		return srv.(AppMgrServer).CancelApp(ctx, req.(*AppRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _AppMgr_PurgeApp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AppID)
+	in := new(AppRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1624,7 +1999,7 @@ func _AppMgr_PurgeApp_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: "/appmgr.AppMgr/PurgeApp",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppMgrServer).PurgeApp(ctx, req.(*AppID))
+		return srv.(AppMgrServer).PurgeApp(ctx, req.(*AppRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1648,7 +2023,7 @@ func _AppMgr_UpdateApp_Handler(srv interface{}, ctx context.Context, dec func(in
 }
 
 func _AppMgr_AppOverview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(common.Empty)
+	in := new(AppOverviewRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1660,7 +2035,7 @@ func _AppMgr_AppOverview_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/appmgr.AppMgr/AppOverview",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppMgrServer).AppOverview(ctx, req.(*common.Empty))
+		return srv.(AppMgrServer).AppOverview(ctx, req.(*AppOverviewRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1792,7 +2167,7 @@ func _AppMgr_CreateNamespace_Handler(srv interface{}, ctx context.Context, dec f
 }
 
 func _AppMgr_NamespaceList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(common.Empty)
+	in := new(NamespaceListRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -1804,7 +2179,7 @@ func _AppMgr_NamespaceList_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/appmgr.AppMgr/NamespaceList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AppMgrServer).NamespaceList(ctx, req.(*common.Empty))
+		return srv.(AppMgrServer).NamespaceList(ctx, req.(*NamespaceListRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1863,10 +2238,32 @@ func _AppMgr_AppCount_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AppMgr_NamespaceCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NamespaceCountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AppMgrServer).NamespaceCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/appmgr.AppMgr/NamespaceCount",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AppMgrServer).NamespaceCount(ctx, req.(*NamespaceCountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _AppMgr_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "appmgr.AppMgr",
 	HandlerType: (*AppMgrServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateAppHotFix",
+			Handler:    _AppMgr_CreateAppHotFix_Handler,
+		},
 		{
 			MethodName: "CreateApp",
 			Handler:    _AppMgr_CreateApp_Handler,
@@ -1938,6 +2335,10 @@ var _AppMgr_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AppCount",
 			Handler:    _AppMgr_AppCount_Handler,
+		},
+		{
+			MethodName: "NamespaceCount",
+			Handler:    _AppMgr_NamespaceCount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

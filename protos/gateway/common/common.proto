@@ -55,6 +55,7 @@ enum DCStatus {
 }
 
 
+
 // Emtpy Message
 message Empty {}
 
@@ -67,6 +68,7 @@ message AppDeployment {
     AppAttributes   attributes = 4;
     string  uid = 5;
     ChartDetail chart_detail = 6;
+    repeated CustomValue custom_values = 7;
 }
 
 message AppAttributes {
@@ -84,15 +86,25 @@ message DataCenter {
     DataCenterAttributes    dc_attributes = 4;
 }
 
+message DataCenterStatuses{
+  repeated DataCenterStatus statuses = 1;
+}
 
 // Data Center structure  this only used by deamon reply
 message DataCenterStatus {
-    string dc_id = 1;  //data center id
+    string dc_id = 1;   // data center id
     string dc_name = 2; // data center name
     GeoLocation geo_location = 3;
     DCStatus status = 4; // data center status // 1. online 2. offline
     DataCenterAttributes dc_attributes = 5;
     DCHeartbeatReport dc_heartbeat_report = 6;
+    repeated string dc_instance_type = 7; //data center instance type
+    map<string, int64>  dc_instance_metrics = 8; //data center instance metrics
+}
+
+// Data center filter
+message DataCenterListFilter {
+    map<string, string>  filtermap = 1; //data center instance type
 }
 
 message GeoLocation {
@@ -107,10 +119,29 @@ message DataCenterAttributes {
     uint64 last_modified_date = 3; //app creation date
 }
 
+message Resource {
+    int64 CPU = 1;
+    int64 Memory = 2;
+    int64 Storage = 3;
+}
+
 message DCHeartbeatReport {
-    string metrics = 1; //json string for Metrics structure which defined in constants
+    message Metrics {
+        repeated string Nodes = 1;
+        Resource total = 2;
+        Resource used = 3;
+        map<string,Resource> ns_hard = 4;
+        map<string,Resource> ns_used = 5;
+        int64 ImageCount = 6;
+        int64 EndPointCount = 7;
+        int64 NetworkIO = 8;
+        uint32 NodePortCount = 9;
+    }
+
+    string metrics = 1;
     string report = 2;
     uint64 report_time = 3;
+    Metrics metrics_raw = 4;
 }
 
 
@@ -122,14 +153,15 @@ message Chart {
     string chart_latest_ver = 5;
     string chart_latest_app_ver = 6;
 }
+
 message ChartDetail {
     string chart_name = 1;
     string chart_repo = 2;
-    string chart_ver = 3; //chart version 
-	string chart_app_ver = 4; //application version 
-    string chart_icon_url = 5; // Chart icon image url
+    string chart_description = 3;
+    string chart_icon_url = 4; // Chart icon image url
+    string chart_ver = 5; //chart version 
+	string chart_app_ver = 6; //application version 
 }
-
 
 message ChartVersionDetail{
     string chart_ver = 1; //chart version 
@@ -143,7 +175,7 @@ message Namespace {
     string cluster_name = 4; //name of cluster
 	google.protobuf.Timestamp creation_date = 5;
     google.protobuf.Timestamp last_modified_date = 6;
-    uint32 ns_cpu_limit = 7;  // number of mcpu 
+    uint32 ns_cpu_limit = 7;  // number of mcpu
     uint32 ns_mem_limit = 8; // number of Mi mem usage
     uint32 ns_storage_limit = 9; // number of Gi storage
     NamespaceStatus ns_status = 10;
@@ -153,6 +185,7 @@ message NamespaceReport{
     Namespace namespace = 1;
     NamespaceStatus ns_status = 2;
     NamespaceEvent ns_event = 3;
+    string report = 4;
 }
 
 message App {
@@ -162,6 +195,13 @@ message App {
         Namespace namespace = 3; // request for create new namespace
     }
     ChartDetail chart_detail = 4;
+    repeated CustomValue custom_values = 5;
+}
+
+
+message CustomValue{
+    string key = 1;
+    string value = 2;
 }
 
 // Used by dc-mgr to dc-facade rabbitmq
@@ -193,6 +233,8 @@ message AppReport {
     AppEvent app_event = 4;
     string detail = 5; //string for app resource detail
     string endpoint = 6;
+    repeated uint32 node_ports = 7;
+    string gateway_addr = 8;
 }
 
 enum TransactionState {
@@ -203,14 +245,29 @@ enum TransactionState {
 }
 
 message Deposit {
-    google.protobuf.Timestamp time = 1;
-    string fromAccountAddress = 2;
-    string fromAccountAddressType = 3;
-    string toAccountAddress = 4;
-    string toAccountAddressType = 5;
-    string txHash = 6;
-    string amount = 7;
-    string confirmedBlockHeight = 8;
-    TransactionState txState = 9;
-    string toTxHash = 10;
+  google.protobuf.Timestamp time = 1;
+  string fromAccountAddress = 2;
+  string fromAccountAddressType = 3;
+  string toAccountAddress = 4;
+  string toAccountAddressType = 5;
+  string txHash = 6;
+  string amount = 7;
+  string confirmedBlockHeight = 8;
+  TransactionState txState = 9;
+  string toTxHash = 10;
+  string toTxHashMemo = 11;
+}
+
+message Payment {
+  google.protobuf.Timestamp time = 1;
+  string fromAccountAddress = 2;
+  string teamId = 3;
+  string toAccountAddress = 4;
+  string paymentType = 5;
+  string txHash = 6;
+  string amount = 7;
+  string confirmedBlockHeight = 8;
+  TransactionState txState = 9;
+  string planType = 10;
+  string subId = 11;
 }

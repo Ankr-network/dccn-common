@@ -7,189 +7,243 @@ import "google/protobuf/timestamp.proto";
 
 // Data center status
 enum DCStatus {
-    AVAILABLE = 0;
-    UNAVAILABLE = 1;
-    REGISTER = 2; //only register , never connect to hub
+  AVAILABLE = 0;
+  UNAVAILABLE = 1;
+  REGISTER = 2; // only register , never connect to hub
 }
-
 
 // Emtpy Message
 message Empty {}
 
-
-
 // App Deployment structure
 message AppDeployment {
-    string  app_id = 1;
-    string  app_name = 2; // name of the app
-    Namespace   namespace = 3; // request for create new namespace
-    AppAttributes   attributes = 4;
-    string  uid = 5;
-    ChartDetail chart_detail = 6;
+  string app_id = 1;
+  string app_name = 2;     // name of the app
+  Namespace namespace = 3; // request for create new namespace
+  AppAttributes attributes = 4;
+  string team_id = 5;
+  ChartDetail chart_detail = 6;
+  repeated CustomValue custom_values = 7;
 }
+
+message CustomValue {
+  string key = 1;
+  string value = 2;
+}
+
 message AppID {
-    string  app_id = 1;
+  string app_id = 1;
+  string ns_id = 2;
 }
 
 message AppAttributes {
-    bool hidden = 1;
-    google.protobuf.Timestamp creation_date = 2; //app creation date
-    google.protobuf.Timestamp last_modified_date = 3; //app creation date
+  bool hidden = 1;
+  google.protobuf.Timestamp creation_date = 2;      // app creation date
+  google.protobuf.Timestamp last_modified_date = 3; // app creation date
 }
-
 
 // Data Center structure
 message DataCenter {
-    string  dc_id = 1;  //data center id
-    string  dc_name = 2; // data center name
-    bool    force_update = 3;
-    DataCenterAttributes    dc_attributes = 4;
+  string dc_id = 1;   // data center id
+  string dc_name = 2; // data center name
+  bool force_update = 3;
+  DataCenterAttributes dc_attributes = 4;
 }
 
-
+message DataCenterStatuses{
+  repeated DataCenterStatus statuses = 1;
+}
 // Data Center structure  this only used by deamon reply
 message DataCenterStatus {
-    string dc_id = 1;  //data center id
-    string dc_name = 2; // data center name
-    GeoLocation geo_location = 3;
-    DCStatus dc_status = 4; // data center status // 1. online 2. offline
-    DataCenterAttributes dc_attributes = 5;
-    DCHeartbeatReport dc_heartbeat_report = 6;
+  string dc_id = 1;   // data center id
+  string dc_name = 2; // data center name
+  GeoLocation geo_location = 3;
+  DCStatus dc_status = 4; // data center status // 1. online 2. offline
+  DataCenterAttributes dc_attributes = 5;
+  DCHeartbeatReport dc_heartbeat_report = 6;
+  repeated string dc_instance_type = 7; //data center instance type
+  map<string, int64>  dc_instance_metrics = 8; //data center instance metrics
+}
+
+// Data center filter
+message DataCenterListFilter {
+  map<string, string> filtermap = 1; //data center instance type
 }
 
 message GeoLocation {
-    string lat = 1; // latitude
-    string lng = 2; // longitude
-    string country = 3; // US
+  string lat = 1;     // latitude
+  string lng = 2;     // longitude
+  string country = 3; // US
 }
 
 message DataCenterAttributes {
-    string wallet_address = 1;  //datacenter wallet address
-    google.protobuf.Timestamp creation_date = 2; //app creation date
-    google.protobuf.Timestamp last_modified_date = 3; //app creation date
+  string wallet_address = 1;                        // datacenter wallet address
+  google.protobuf.Timestamp creation_date = 2;      // app creation date
+  google.protobuf.Timestamp last_modified_date = 3; // app creation date
+}
+
+message Resource {
+  int64 CPU = 1;
+  int64 Memory = 2;
+  int64 Storage = 3;
 }
 
 message DCHeartbeatReport {
-    string metrics = 1; //json string for Metrics structure which defined in constants
-    string report = 2;
-    uint64 report_time = 3;
+  message Metrics {
+    repeated string Nodes = 1;
+    Resource total = 2;
+    Resource used = 3;
+    map<string, Resource> ns_hard = 4;
+    map<string, Resource> ns_used = 5;
+    int64 ImageCount = 6;
+    int64 EndPointCount = 7;
+    int64 NetworkIO = 8;
+    uint32 NodePortCount = 9;// k8s used node port count
+  }
+
+  string metrics = 1;
+  string report = 2;
+  uint64 report_time = 3;
+  Metrics metrics_raw = 4; // json string for Metrics structure which defined in constants
 }
 
-
 message Chart {
-	string chart_name = 1; //chart name
-	string chart_repo = 2; //chart repo, e.g. app_store or user_catalog
-	string chart_description = 3;
-	string chart_icon_url = 4; // Chart icon image url
-    string chart_latest_version = 5;
-    string chart_latest_app_version = 6;
+  string chart_name = 1; // chart name
+  string chart_repo = 2; // chart repo, e.g. app_store or user_catalog
+  string chart_description = 3;
+  string chart_icon_url = 4; // Chart icon image url
+  string chart_latest_version = 5;
+  string chart_latest_app_version = 6;
 }
 
 message ChartDetail {
-    string chart_name = 1;
-    string chart_repo = 2;
-    string chart_ver = 3; //chart version 
-	string chart_app_ver = 4; //application version 
-    string chart_icon_url = 5; // Chart icon image url
+  string chart_name = 1;
+  string chart_repo = 2;
+  string chart_description = 3;
+  string chart_icon_url = 4; // Chart icon image url
+  string chart_ver = 5;      // chart version 
+  string chart_app_ver = 6;  // application version 
 }
 
-message ChartVersionDetail{
-    string chart_ver = 1; //chart version 
-	string chart_app_ver = 2; //application version 
+message ChartVersionDetail {
+  string chart_ver = 1;     // chart version 
+  string chart_app_ver = 2; // application version 
 }
 
 message Namespace {
-    string ns_id = 1; //short hash of uid+name+cluster_id
-	string ns_name = 2;
-	string cluster_id = 3; //id of cluster
-    string cluster_name = 4; //name of cluster
-	google.protobuf.Timestamp creation_date = 5;
-    google.protobuf.Timestamp last_modified_date = 6;
-    uint32 ns_cpu_limit = 7;  // number of mcpu
-    uint32 ns_mem_limit = 8; // number of Mi mem usage
-    uint32 ns_storage_limit = 9; // number of Gi storage
+  string ns_id = 1; // short hash of uid+name+cluster_id
+  string ns_name = 2;
+  string cluster_id = 3;   // id of cluster
+  string cluster_name = 4; // name of cluster
+  google.protobuf.Timestamp creation_date = 5;
+  google.protobuf.Timestamp last_modified_date = 6;
+  uint32 ns_cpu_limit = 7;     // number of mcpu
+  uint32 ns_mem_limit = 8;     // number of Mi mem usage
+  uint32 ns_storage_limit = 9; // number of Gi storage
+  string ns_dc_instance_type = 10; //data center instance type
 }
-
 
 // Used by appmgr
 message App {
-    string app_name = 1; // name of the app
-    oneof namespace_data {
-        string ns_id = 2; // namespace id
-        Namespace namespace = 3; // request for create new namespace
-    }
-    ChartDetail chart_detail = 4;
+  string app_name = 1; // name of the app
+  oneof namespace_data {
+    string ns_id = 2;        // namespace id
+    Namespace namespace = 3; // request for create new namespace
+  }
+  ChartDetail chart_detail = 4;
+  repeated CustomValue custom_values = 5;
 }
-
 
 // Used by dc-mgr to dc-facade rabbitmq
 message DCStream {
-    DCOperation op_type = 1; // HeartBeat or app operation
+  DCOperation op_type = 1; // HeartBeat or app operation
 
-    oneof op_payload {
-        AppDeployment app_deployment = 2; // Deploy app action
-        AppReport app_report = 3;
-        DataCenterStatus data_center = 4; // HearBeat Info with DataCenter message
-        Namespace namespace = 5; // Deploy namespace action
-        NamespaceReport ns_report = 6;
-    }
+  oneof op_payload {
+    AppDeployment app_deployment = 2; // Deploy app action
+    AppReport app_report = 3;
+    DataCenterStatus data_center = 4; // HearBeat Info with DataCenter message
+    Namespace namespace = 5;          // Deploy namespace action
+    NamespaceReport ns_report = 6;
+  }
 }
 // Task Events operation code
 enum DCOperation {
-    APP_CREATE = 0;
-    APP_CANCEL = 1;
-    APP_UPDATE = 2;
-    APP_DETAIL = 3;
-    HEARTBEAT = 4;
-    NS_CREATE = 5;
-    NS_CANCEL = 6;
-    NS_UPDATE = 7;
-    DCSTATUS_UPDATE = 8;
+  APP_CREATE = 0;
+  APP_CANCEL = 1;
+  APP_UPDATE = 2;
+  APP_DETAIL = 3;
+  HEARTBEAT = 4;
+  NS_CREATE = 5;
+  NS_CANCEL = 6;
+  NS_UPDATE = 7;
+  DCSTATUS_UPDATE = 8;
 }
 
 message AppReport {
-    AppDeployment app_deployment = 1;
-    string report = 2; //json string for Metrics structure which defined in constants
-    AppStatus app_status = 3;
-    AppEvent app_event = 4;
-    string detail = 5; //string for app resource detail
-    string endpoint = 6;
+  AppDeployment app_deployment = 1;
+  string report =
+      2; // json string for Metrics structure which defined in constants
+  AppStatus app_status = 3;
+  AppEvent app_event = 4;
+  string detail = 5; // string for app resource detail
+  string endpoint = 6;
+  repeated uint32 node_ports = 7;
+  string gateway_addr = 8;
 }
 
 message NamespaceReport {
-    Namespace namespace = 1;
-    NamespaceStatus ns_status = 2;
-    NamespaceEvent ns_event = 3;
+  Namespace namespace = 1;
+  NamespaceStatus ns_status = 2;
+  NamespaceEvent ns_event = 3;
+  string report = 4;
 }
 
 message AppResponce {
-    AppEvent        app_result  = 1;
-    NamespaceEvent  ns_result   = 2;
-    string          error       = 3;
-    string          message     = 4;
+  AppEvent app_result = 1;
+  NamespaceEvent ns_result = 2;
+  string error = 3;
+  string message = 4;
 }
 message AppRunStatus {
-    NamespaceStatus ns_status = 1;
-    AppStatus app_status = 2;
-    string          message     = 3;
+  NamespaceStatus ns_status = 1;
+  AppStatus app_status = 2;
+  string message = 3;
+  repeated uint32 node_ports = 4;
+  string gateway_addr = 5;
 }
 
 enum TransactionState {
-    TransactionUnknown = 0;
-    TransactionUnConfirmed = 1;
-   TransactionPending = 2;
-   TransactionConfirmed = 3;
+  TransactionUnknown = 0;
+  TransactionUnConfirmed = 1;
+  TransactionPending = 2;
+  TransactionConfirmed = 3;
 }
 
 message Deposit {
-    google.protobuf.Timestamp time = 1;
-    string fromAccountAddress = 2;
-    string fromAccountAddressType = 3;
-    string toAccountAddress = 4;
-    string toAccountAddressType = 5;
-    string txHash = 6;
-    string amount = 7;
-    string confirmedBlockHeight = 8;
-    TransactionState txState = 9;
-    string toTxHash = 10;
+  google.protobuf.Timestamp time = 1;
+  string fromAccountAddress = 2;
+  string fromAccountAddressType = 3;
+  string toAccountAddress = 4;
+  string toAccountAddressType = 5;
+  string txHash = 6;
+  string amount = 7;
+  string confirmedBlockHeight = 8;
+  TransactionState txState = 9;
+  string toTxHash = 10;
+  string toTxHashMemo = 11;
 }
+
+message Payment {
+  google.protobuf.Timestamp time = 1;
+  string fromAccountAddress = 2;
+  string teamId = 3;
+  string toAccountAddress = 4;
+  string paymentType = 5;
+  string txHash = 6;
+  string amount = 7;
+  string confirmedBlockHeight = 8;
+  TransactionState txState = 9;
+  string planType = 10;
+  string subId = 11;
+}
+

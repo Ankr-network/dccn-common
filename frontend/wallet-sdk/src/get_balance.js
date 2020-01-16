@@ -1,6 +1,6 @@
 let bc_addr = '//localhost:26657/abci_query';
 export const set_blockchain_addr = (blockchain_addr) => {
-    bc_addr = '//' + blockchain_addr + '/abci_query';
+    bc_addr = '//' + blockchain_addr + '/store/account';
 }
 
 export const get_balance = async (wallet_addr) => {

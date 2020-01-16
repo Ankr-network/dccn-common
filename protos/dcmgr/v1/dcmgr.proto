@@ -20,13 +20,14 @@ service DC {
 //
 // The dclist service definition.
 service DCAPI {
-      rpc DataCenterList (common.proto.Empty) returns (DataCenterListResponse) {}
-      rpc DataCenterListWithCertification (common.proto.Empty) returns (DataCenterListWithCertificationResponse) {}
-      rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){}
-      rpc RegisterDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
-      rpc ResetDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
-      rpc MyDataCenter(MyDataCenterRequest) returns (common.proto.DataCenterStatus){}
-      rpc GetClusterCertificate (GetClusterCertificateRequest) returns (GetClusterCertificateResponse) {}
+    rpc DataCenterList (common.proto.Empty) returns (DataCenterListResponse) {}
+    rpc DataCenterListWithFilter (DataCenterListWithFilterRequest) returns (DataCenterListResponse) {}
+    rpc DataCenterListWithCertification (common.proto.Empty) returns (DataCenterListWithCertificationResponse) {}
+    rpc NetworkInfo(common.proto.Empty) returns (NetworkInfoResponse){}
+    rpc RegisterDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
+    rpc ResetDataCenter(RegisterDataCenterRequest) returns (RegisterDataCenterResponse){}
+    rpc MyDataCenter(MyDataCenterRequest) returns (common.proto.DataCenterStatuses){}
+    rpc GetClusterCertificate (GetClusterCertificateRequest) returns (GetClusterCertificateResponse) {}
 }
 
 
@@ -45,10 +46,13 @@ message MyDataCenterRequest {
 }
 
 message RegisterDataCenterRequest {
-  string user_id = 1;
+  string uid = 1;
   string cluster_name = 2;
 }
 
+message DataCenterListWithFilterRequest {
+  common.proto.DataCenterListFilter dclist_filter = 1;
+}
 
 message RegisterDataCenterResponse {
   string client_key = 1;
@@ -58,8 +62,6 @@ message RegisterDataCenterResponse {
   string cluster_name = 5;
   string configmap = 6;
 }
-
-
 
 message ClusterRecord {
   string cluster_id = 1;
@@ -91,6 +93,7 @@ message NetworkInfoResponse {
   string storage_total = 10;  // MB
   string storage_used = 11;  // MB
   int32 network_count = 12;
+  uint32 nodeport_count = 13;
 }
 
 
@@ -110,7 +113,6 @@ message DCOverviewResponse {
 
 
 message DashBoardRequest {
-  string uid = 1;
 }
 message DashBoardResponse{
    int32 total_income = 1;
@@ -148,12 +150,12 @@ service FeesService {
 }
 
 message InvoiceDetailRequest{
-   string uid = 1;
+   string team_id = 1;
    string invoice_id = 2;
 }
 
 message HistoryFeesRequest {
-  string uid = 1;
+  string team_id = 1;
   string start = 2;
   string end = 3;
 }
@@ -172,7 +174,7 @@ message HistoryFeesResponse {
 }
 
 message FeesDetailRequest {
-  string uid = 1;
+  string team_id = 1;
   string month = 2;
 }
 

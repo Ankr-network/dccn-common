@@ -1,0 +1,306 @@
+syntax = "proto3";
+import "google/api/annotations.proto";
+package adminmgr;
+
+service AdminMgr {
+    rpc ListAllUser(UserRequest) returns (UserResponse) {
+        option (google.api.http) = {
+            get: "/api/user/list"
+        }; 
+    }
+    rpc GetUserByUserEmail(UserRequest) returns (UserResponse) {
+        option (google.api.http) = {
+            get: "/api/user/profile"
+        }; 
+    }
+
+    rpc GetUserToken(TokenRequest) returns (TokenResponse) {
+        option (google.api.http) = {
+            get: "/api/user/token" 
+        }; 
+    }
+    rpc GetAppAttributeByAppID (AppAttributeRequest) returns (AppAttributeResponse) {
+        option (google.api.http) = {
+            get: "/api/app/{app_id}"
+        }; 
+    }
+    rpc GetNamespaceAttributeByNamespaceID (NamespaceAttributeRequest) returns (NamespaceAttributeResponse) {
+        option (google.api.http) = {
+            get: "/api/namespace/{namespace_id}"
+        }; 
+    }
+    rpc ListAppResourceByUserEmail (AppResourceRequest) returns (AppResourceResponse) {
+        option (google.api.http) = {
+            get: "/api/app/list" 
+        }; 
+    }
+    rpc ListNamespaceResourceByUserEmail (NamespaceResourceRequest) returns (NamespaceResourceResponse) {
+        option (google.api.http) = {
+            get: "/api/namespace/list" 
+        }; 
+    }
+    rpc ListTransactionRecordByUserEmail (TransactionRecordRequest) returns (TransactionRecordResponse) {
+        option (google.api.http) = {
+            get: "/api/transaction/list" 
+        }; 
+    }
+    rpc ListTransactionDetailByTxID (TransactionDetailRequest) returns (TransactionDetailResponse) {
+        option (google.api.http) = {
+            get: "/api/transaction/{tx_hash_id}" 
+        };
+    }
+    rpc ListTransactionRecordByTokenAddr (TransactionRecordRequest) returns (TransactionRecordResponse) {
+        option (google.api.http) = {
+            get: "/api/transaction/{token_addr}" 
+        };
+    }
+    //invitation code
+    rpc GenerateInvitationCode(InvitationCodeRequest) returns (InvitationCodeResponse) {
+        option (google.api.http) = {
+            post: "/api/code/generate" 
+            body: "*"
+        };
+    }
+    rpc CheckInvitationCode(CheckInvitationCodeRequest) returns (CheckInvitationCodeResponse) {}
+    rpc ListInvitationCode(ListInvitationCodeRequest) returns (ListInvitationCodeResponse) {
+        option (google.api.http) = {
+            get: "/api/code/list" 
+        };
+    }
+    rpc DeleteInvitationCode(DeleteInvitationCodeRequest) returns (DeleteInvitationCodeResponse) {
+        option (google.api.http) = {
+            post: "/api/code/delete" 
+            body: "*"
+        };
+    }
+}
+
+//invitation code
+message InvitationCodeRequest {
+    string req_id = 1;
+    uint32 count  = 2;
+}
+
+message InvitationCodeResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+}
+
+message CheckInvitationCodeRequest {
+    string req_id = 1;
+    string invitation_code   = 2;
+}
+
+message CheckInvitationCodeResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    bool   ok     = 4; //1: valid 0: invalid
+}
+
+message ListInvitationCodeRequest {
+    string req_id = 1;
+    uint32 page   = 2;
+    uint32 limit  = 3;
+}
+
+message InvitationCode {
+    string code        = 1;
+    string create_time = 2;
+}
+
+message ListInvitationCodeResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    uint32 total_count = 4;
+    repeated InvitationCode invitation_codes = 5;
+}
+
+message DeleteInvitationCodeRequest {
+    string   req_id      = 1;
+    repeated string invitation_codes = 2;
+}
+
+message DeleteInvitationCodeResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+}
+
+message UserRequest {
+    string req_id = 1;
+    uint32 page   = 2;  
+    uint32 limit  = 3;
+    string email  = 4;
+}
+
+message UserResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    repeated User user = 4;
+    uint64 total_count = 5;
+}
+
+message User {
+    string id    = 1;
+    string name  = 2;
+    string email = 3;
+    string erc_to_mainnet_addr = 4;
+    string mainnet_to_erc_addr = 5;
+    string mainnet_to_bep_addr = 6;
+    string erc_to_bep_addr     = 7;
+    string bep_to_erc_addr     = 8;
+    string bep_to_mainnet_addr = 9;
+}
+
+message TokenRequest {
+    string req_id = 1;
+    string email  = 2;
+}
+
+message TokenResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    string access_token = 4;
+}
+
+message AppAttributeRequest {
+    string req_id = 1;
+    string app_id = 2;
+}
+
+message AppAttributeResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    User   user   = 4;
+    AppDetail app = 5;
+}
+
+message AppResourceRequest {
+    string req_id = 1;
+    string email  = 2;
+    uint32 status = 3; //0:all 1: Run 2: Deleted 3: Unknown
+    uint32 page   = 4;
+    uint32 limit  = 5;
+}
+
+message ChartDetail {
+    string chart_name    = 1;
+    string chart_repo    = 2;
+    string chart_version = 3;
+    string chart_app_version = 4;
+}
+
+message AppDetail {
+    string id   = 1;
+    string name = 2;
+    string cluster_name = 3;
+    string cluster_id   = 4;
+    string namespace_name = 5; 
+    string namespace_id   = 6;
+    uint32 status       = 7;//1: Run 2: Deleted 3: Unknown
+    string created_time = 8;
+    string last_modified_time = 9;
+    ChartDetail chart         = 10;
+}
+
+message AppResourceResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    repeated AppDetail app = 4;
+    uint64 total_count     = 5;
+}
+
+message NamespaceAttributeRequest {
+    string req_id       = 1;
+    string namespace_id = 2;
+}
+
+message NamespaceAttributeResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    User   user   = 4;
+    NamespaceDetail namespace = 5;
+}
+
+message NamespaceDetail {
+    string id   = 1;
+    string name = 2;
+    string cluster_name = 3;
+    string cluster_id   = 4;
+    uint64 cpu_limit  = 5;
+    uint64 cpu_used   = 6;
+    uint64 mem_limit  = 7;
+    uint64 mem_used   = 8;
+    uint64 disk_limit = 9;
+    uint64 disk_used  = 10;
+    uint32 status       = 11; //1: Run 2: Deleted 3: Unknown
+    string created_time = 12;
+    string last_modified_time = 13;
+}
+
+message NamespaceResourceRequest {
+    string req_id = 1;
+    string email  = 2;
+    uint32 status = 3;   //0:all 1: Run 2: Deleted 3: Unknown
+    uint32 page   = 4;
+    uint32 limit  = 5;
+}
+
+message NamespaceResourceResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    User   user   = 4;
+    repeated NamespaceDetail namespace = 5;
+    uint64 total_count = 6;
+}
+
+
+message TransactionRecordRequest {
+    string req_id = 1;
+    string email  = 2;
+    string token_addr = 3;
+    uint64 start_time = 4;
+    uint64 end_time   = 5;
+    uint32 page       = 6;
+    uint32 limit      = 7;
+}
+
+message TransactionRecordResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    User   user   = 4;
+    repeated Transaction transactions = 5;
+    uint64 total_count = 6;
+}
+
+message Transaction {
+    string time   = 1;
+    string amount = 2;
+    string tx_hash_id = 3;
+    string from       = 4;
+    string to         = 5;
+    string state      = 6; //1: confirmed 2: unconfirmed 3: pending 4: unknown
+}
+
+message TransactionDetailRequest {
+    string req_id = 1;
+    string tx_hash_id = 2;
+}
+
+message TransactionDetailResponse {
+    string req_id = 1;
+    int32  code   = 2;
+    string msg    = 3;
+    User   user   = 4;
+    Transaction transaction = 5;
+}
