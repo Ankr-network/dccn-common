@@ -38,7 +38,7 @@ func Logger(skip int) *zap.Logger {
 
 func Errorf(template string, args ...interface{}) error {
 	msg := fmtMsg(template, args...)
-	sugar.Fatalf(msg)
+	sugar.Errorf(msg)
 	return errors.New(msg)
 }
 func Errorw(msg string, keysAndValues ...interface{}) {
