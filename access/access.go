@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Ankr-network/dccn-teammgr/api/protos/v1alpha/role"
+	"github.com/Ankr-network/dccn-teammgr/api/protos/v1alpha/team"
 	//	"github.com/Ankr-network/dccn-tools/logger"
 	"google.golang.org/grpc"
 )
@@ -20,6 +21,7 @@ var (
 
 type AuthorizationService interface {
 	Authorize(ctx context.Context, sub, resource, action string) (bool, error)
+	IsEnterprise(ctx context.Context, teamId string) (bool, error)
 }
 
 func NewAuthorizationService(teamMgrEndpoint string) AuthorizationService {
@@ -48,6 +50,24 @@ func (p *teamMgrAuthorizationSvc) Authorize(ctx context.Context, sub, resource, 
 	return rsp.Ok, nil
 }
 
+func (p *teamMgrAuthorizationSvc) IsEnterprise(ctx context.Context, teamId string) (bool, error) {
+	conn, err := grpc.Dial(p.teamMgrEndpoint, grpc.WithInsecure())
+	if err != nil {
+		return false, fmt.Errorf("grpc dial %s error: %w", p.teamMgrEndpoint, err)
+	}
+	defer conn.Close()
+	client := team.NewInternalTeamClient(conn)
+	rsp, err := client.GetTeam(ctx, &team.TeamRequest{TeamId: teamId})
+	if err != nil {
+		return false, fmt.Errorf("grpc team.IsEnterprise error: %w", err)
+	}
+	return rsp.GetIsEnterpise(), nil
+}
+
 func Authorize(ctx context.Context, sub, resource, action string) (bool, error) {
 	return defaultAuthorizationSvc.Authorize(ctx, sub, resource, action)
+}
+
+func IsEnterprise(ctx context.Context, teamId string) (bool, error) {
+	return defaultAuthorizationSvc.IsEnterprise(ctx, teamId)
 }

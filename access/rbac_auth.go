@@ -2,6 +2,7 @@ package access
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Ankr-network/dccn-tools/logger"
 	go_rbac "github.com/Ankr-network/go-rbac"
@@ -35,4 +36,8 @@ func (r *rbac) Authorize(ctx context.Context, sub, resource, action string) (boo
 	}
 
 	return rsp.OK, nil
+}
+
+func (r *rbac) IsEnterprise(_ context.Context, _ string) (bool, error) {
+	return false, errors.New("not implement")
 }
