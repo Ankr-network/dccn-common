@@ -1,6 +1,8 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-github.com/Ankr-network/dccn-common v0.0.0-20191104185450-047a2bf5021a h1:rxlJItFQX4AXOev3zNjGii2+2xGc8Be9oKoD1ScMbRY=
-github.com/Ankr-network/dccn-common v0.0.0-20191104185450-047a2bf5021a/go.mod h1:WUt3X9WvObUhiLKzv6qb5rueU0URYmk0AHUuQ3shn6E=
+github.com/Ankr-network/dccn-common v0.0.0-20200730020606-0d1ea1ddc88e h1:J7pPNSdcbK2vcyIooYd3+r3yKDmPa0e2o5BvmBGeTbE=
+github.com/Ankr-network/dccn-common v0.0.0-20200730020606-0d1ea1ddc88e/go.mod h1:WUt3X9WvObUhiLKzv6qb5rueU0URYmk0AHUuQ3shn6E=
+github.com/Ankr-network/dccn-common/auth v0.0.0-20200730020606-0d1ea1ddc88e h1:+uWitT6PmjNQ7DQzLXcv3Sc9VJD2jZdxpxWCyyDMwNw=
+github.com/Ankr-network/dccn-common/auth v0.0.0-20200730020606-0d1ea1ddc88e/go.mod h1:xKi2JvUZIG/SpCW1N82cl7/a2B7343bTN3ymbjnbWWg=
 github.com/Ankr-network/dccn-teammgr/api v0.0.0-20200727100027-378880c361cd h1:iTihxVjNJDfQcAYse38ceOviMr0t2RruMGzjBtCwPwg=
 github.com/Ankr-network/dccn-teammgr/api v0.0.0-20200727100027-378880c361cd/go.mod h1:mg38ixh7Avnh2rYFep++48BGtHawrNG0TdPLa8LZbIo=
 github.com/Ankr-network/dccn-tools/logger v0.0.0-20191101025757-3dce8f80a842 h1:Vf/wzMa5y8rySSps4ligqQ8KHPbk8mwMrZkPPT0Cwlg=
