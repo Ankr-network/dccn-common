@@ -9,8 +9,19 @@ enum ApiOrderStatus {
 }
 
 message ApiOrderResponseMessage {
-  string order_id = 1;
-  string access_id = 2;
-  string request_time = 3;
-  ApiOrderStatus status = 4;
+  string order_id = 1; // 订单ID
+  string access_id = 2; // 由订单管理系统生成
+  string request_time = 3; // 格式：20200920215323
+  ApiOrderStatus status = 4; // 处理结果：1-成功 2-失败 3+-异常
+}
+
+message ApiOrderRequestMessage {
+  string order_id = 1; //  订单ID
+  string node_type = 2; // node类型编码
+  string access_id = 3; // 由订单管理系统生成
+  string flag_prefix = 4; // 订阅者logo
+  int64 max_req_daily = 5; // 一天最多请求次数
+  int64 rate_limit_sec = 6; // 每秒最多请求次数
+  string request_time = 7; // 格式：20200920215323
+  string op_type = 8; // 10-insert 11-delete
 }
