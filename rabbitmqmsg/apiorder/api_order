@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package apiOrder;
+
+enum ApiOrderStatus {
+  unknown = 0;
+  Success = 1;
+  Fail = 2;
+}
+
+message ApiOrderResponseMessage {
+  string order_id = 1;
+  string access_id = 2;
+  string request_time = 3;
+  ApiOrderStatus status = 4;
+}
