@@ -4,15 +4,24 @@ package apiOrder;
 
 enum ApiOrderStatus {
   unknown = 0;
-  Success = 1;
-  Fail = 2;
+  success = 1;
+  fail = 2;
+  request_error = 3;
+}
+
+enum OperationType {
+  not_known = 0;
+  insert = 1;
+  delete = 2;
+  update = 3;
 }
 
 message ApiOrderResponseMessage {
   string order_id = 1; // 订单ID
   string access_id = 2; // 由订单管理系统生成
   string request_time = 3; // 格式：20200920215323
-  ApiOrderStatus status = 4; // 处理结果：1-成功 2-失败 3+-异常
+  OperationType op_type = 4;
+  ApiOrderStatus status = 5;
 }
 
 message ApiOrderRequestMessage {
@@ -23,5 +32,5 @@ message ApiOrderRequestMessage {
   int64 max_req_daily = 5; // 一天最多请求次数
   int64 rate_limit_sec = 6; // 每秒最多请求次数
   string request_time = 7; // 格式：20200920215323
-  string op_type = 8; // 10-insert 11-delete
+  OperationType op_type = 8;
 }

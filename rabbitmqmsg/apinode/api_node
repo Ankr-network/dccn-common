@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package apiNode;
+
+enum OperationType {
+  unknown = 0;
+  create = 1;
+  delete = 2;
+}
+
+message AppManageRequest {
+  string app_id = 1;
+  string node_type = 2;
+  string node_ip = 3;
+  int32 node_port = 4;
+  OperationType op = 5;
+}
