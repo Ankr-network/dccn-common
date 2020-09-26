@@ -1,4 +1,4 @@
-package apinode
+package apiNode
 
 const (
 	NodeType_EthMainNet     = "0011"

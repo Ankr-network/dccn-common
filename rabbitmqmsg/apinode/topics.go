@@ -1,4 +1,4 @@
-package apinode
+package apiNode
 
 //go:generate protoc -I. --go_out=plugins=grpc:. api_node
 
