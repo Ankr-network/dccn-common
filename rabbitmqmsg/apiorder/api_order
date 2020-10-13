@@ -16,12 +16,19 @@ enum OperationType {
   update = 3;
 }
 
+message APIInfo {
+  string node_type_code = 1;
+  string node_type_describe = 2;
+  string node_api_url = 3;
+}
+
 message ApiOrderResponseMessage {
   string order_id = 1; // 订单ID
   string access_id = 2; // 由订单管理系统生成
   string request_time = 3; // 格式：20200920215323
   OperationType op_type = 4;
   ApiOrderStatus status = 5;
+  repeated APIInfo api = 6;
 }
 
 enum AuthorizationType {
