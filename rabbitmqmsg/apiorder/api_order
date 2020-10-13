@@ -56,4 +56,5 @@ message ApiOrderRequestMessage {
   string uid = 9;
   int64 max_req_monthly = 10; // 一月最多请求次数
   authorization auth = 11;
+  string origin_order_id = 12;
 }
