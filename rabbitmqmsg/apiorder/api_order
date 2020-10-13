@@ -14,6 +14,7 @@ enum OperationType {
   insert = 1;
   delete = 2;
   update = 3;
+  update_auth = 4;
 }
 
 message APIInfo {
