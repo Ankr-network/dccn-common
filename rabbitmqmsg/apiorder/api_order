@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package apiOrder;
+
+option go_package="github.com/Ankr-network/dccn-common/rabbitmqmsg/apiorder;apiOrder";
+
+enum ApiOrderStatus {
+  unknown = 0;
+  success = 1;
+  fail = 2;
+  request_error = 3;
+}
+
+enum OperationType {
+  not_known = 0;
+  insert = 1;
+  delete = 2;
+  update = 3;
+  update_auth = 4;
+  delete_order = 5;
+}
+
+message APIInfo {
+  string node_type_code = 1;
+  string node_type_describe = 2;
+  string node_api_url = 3;
+  string node_wss_url = 4;
+}
+
+message ApiOrderResponseMessage {
+  string order_id = 1; // 订单ID
+  string access_id = 2; // 由订单管理系统生成
+  string request_time = 3; // 格式：20200920215323
+  OperationType op_type = 4;
+  ApiOrderStatus status = 5;
+  repeated APIInfo api = 6;
+}
+
+message ApiOrderV2ResponseMessage {
+  string order_id = 1; // 订单ID
+  string api_id = 2;
+  string request_time = 3; // 格式：20200920215323
+  OperationType op_type = 4;
+  ApiOrderStatus status = 5;
+  repeated APIInfo api = 6;
+}
+
+enum AuthorizationType {
+  invalid = 0;
+  pass = 1;
+  token = 2;
+}
+
+message authorization {
+    AuthorizationType authType = 1;
+    string username = 2;
+    string password = 3;
+    string token = 4;
+}
+
+message ApiOrderRequestMessage {
+  string order_id = 1; //  订单ID
+  string node_type = 2; // node类型编码
+  string access_id = 3; // 由订单管理系统生成
+  string flag_prefix = 4; // 订阅者logo
+  int64 max_req_daily = 5; // 一天最多请求次数
+  int64 rate_limit_sec = 6; // 每秒最多请求次数
+  string request_time = 7; // 格式：20200920215323
+  OperationType op_type = 8;
+  string uid = 9;
+  int64 max_req_monthly = 10; // 一月最多请求次数
+  authorization auth = 11;
+  string origin_order_id = 12;
+}
+
+
+message ApiOrderV2RequestMessage {
+  string order_id = 1; //  订单ID
+  string api_id = 2;   // api ID
+  string node_code = 3; // node类型编码
+  string access_id = 4; // 由订单管理系统生成
+  string flag_prefix = 5; // 订阅者logo
+  int64 max_req_daily = 6; // 一天最多请求次数
+  int64 rate_limit_sec = 7; // 每秒最多请求次数
+  string request_time = 8; // 格式：20200920215323
+  OperationType op_type = 9;
+  string uid = 10;
+  int64 max_req_monthly = 11; // 一月最多请求次数
+  authorization auth = 12;
+  string origin_order_id = 13;
+  repeated string origin_api_ids = 14; // only update
+}

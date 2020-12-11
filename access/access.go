@@ -21,7 +21,7 @@ var (
 
 type AuthorizationService interface {
 	Authorize(ctx context.Context, sub, resource, action string) (bool, error)
-	IsEnterprise(ctx context.Context, teamId string) (bool, error)
+	IsEnterprise(ctx context.Context, teamId string) (bool, string, error)
 }
 
 func NewAuthorizationService(teamMgrEndpoint string) AuthorizationService {
@@ -50,24 +50,32 @@ func (p *teamMgrAuthorizationSvc) Authorize(ctx context.Context, sub, resource, 
 	return rsp.Ok, nil
 }
 
-func (p *teamMgrAuthorizationSvc) IsEnterprise(ctx context.Context, teamId string) (bool, error) {
+func (p *teamMgrAuthorizationSvc) IsEnterprise(ctx context.Context, teamId string) (bool, string, error) {
 	conn, err := grpc.Dial(p.teamMgrEndpoint, grpc.WithInsecure())
 	if err != nil {
-		return false, fmt.Errorf("grpc dial %s error: %w", p.teamMgrEndpoint, err)
+		return false, "", fmt.Errorf("grpc dial %s error: %w", p.teamMgrEndpoint, err)
 	}
 	defer conn.Close()
 	client := team.NewInternalTeamClient(conn)
 	rsp, err := client.GetTeam(ctx, &team.TeamRequest{TeamId: teamId})
 	if err != nil {
-		return false, fmt.Errorf("grpc team.IsEnterprise error: %w", err)
+		return false, "", fmt.Errorf("grpc team.IsEnterprise error: %w", err)
 	}
-	return rsp.GetIsEnterpise(), nil
+	isEnterprise := rsp.GetIsEnterpise()
+	if !isEnterprise {
+		return isEnterprise, "", nil
+	}
+	enterprise, err := client.GetEnterPriseDetail(ctx, &team.GetEnterPriseRequest{TeamId: teamId})
+	if err != nil {
+		return false, "", fmt.Errorf("grpc team.GetEnterPriseDetail error: %w", err)
+	}
+	return isEnterprise, enterprise.GetShortName(), nil
 }
 
 func Authorize(ctx context.Context, sub, resource, action string) (bool, error) {
 	return defaultAuthorizationSvc.Authorize(ctx, sub, resource, action)
 }
 
-func IsEnterprise(ctx context.Context, teamId string) (bool, error) {
+func IsEnterprise(ctx context.Context, teamId string) (bool, string, error) {
 	return defaultAuthorizationSvc.IsEnterprise(ctx, teamId)
 }
