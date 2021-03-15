@@ -89,4 +89,5 @@ message ApiOrderV2RequestMessage {
   authorization auth = 12;
   string origin_order_id = 13;
   repeated string origin_api_ids = 14; // only update
+  string api_plan_id = 15;
 }
