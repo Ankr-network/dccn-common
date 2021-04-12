@@ -71,7 +71,6 @@ message ApiOrderRequestMessage {
   int64 max_req_monthly = 10; // 一月最多请求次数
   authorization auth = 11;
   string origin_order_id = 12;
-  string project_name = 13;
 }
 
 
@@ -91,4 +90,5 @@ message ApiOrderV2RequestMessage {
   string origin_order_id = 13;
   repeated string origin_api_ids = 14; // only update
   string api_plan_id = 15;
+  string project_name = 16;
 }
