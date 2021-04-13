@@ -90,4 +90,5 @@ message ApiOrderV2RequestMessage {
   string origin_order_id = 13;
   repeated string origin_api_ids = 14; // only update
   string api_plan_id = 15;
+  string project_name = 16;
 }
